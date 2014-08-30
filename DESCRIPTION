@@ -1,0 +1,10 @@
+Package: hyper.fit
+Type: Package
+Title: Hyperplane fitting with intrinsic scatter
+Version: 0.1
+Date: 2014-08-29
+Author: Aaron Robotham and Danail Obreschkow
+Maintainer: Aaron Robotham <aaron.robotham@uwa.edu.au>
+Description: This package includes two main high level codes for hyperplane fitting (hyper.fit) and visualising (hyper.plot2d / hyper.plot3d). In simple terms this allows the user to produce robust 1D linear fits for 2D x vs y type data, and robust 2D plane fits to 3D x vs y vs z type data. This hyperplane fitting works generically for any N-1 hyperplane model being fit to a N dimension dataset. All fits include intrinsic scatter in the generative model orthogonal to the hyperplane.
+License: GPL-2
+Depends: R (>= 3.00), magicaxis, MASS, rgl, LaplacesDemon
