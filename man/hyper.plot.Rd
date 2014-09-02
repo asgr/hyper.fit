@@ -8,10 +8,10 @@ A 2d and 3d likelihood diagnostic plot for optimal line fitting
 These functions produce helpful 2d and 3d diagnostic plots for post hyper.fit analysis and for manual experimentation with parameter options. Error llipses and ellipsodis are added to the plots, with colouring scaled by 'sigma-tension' of the data points (where red is high tension). It also overplots the current line (2d) or plane (3d).
 }
 \usage{
-hyper.plot2d(X, covarray, fitobj, parm.coord, parm.beta, parm.scat, coord.type = 'alpha', 
-proj.type = 'orth', errorscale = 1, clip = 0.05, trans = 1, ...)
-hyper.plot3d(X, covarray, fitobj, parm.coord, parm.beta, parm.scat, coord.type = 'alpha', 
-proj.type = 'orth', errorscale = 1, clip = 0.05, trans = 1, ...)
+hyper.plot2d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat,
+coord.type = 'alpha', proj.type = 'orth', errorscale = 1, clip = 0.05, trans = 1, ...)
+hyper.plot3d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat,
+coord.type = 'alpha', proj.type = 'orth', errorscale = 1, clip = 0.05, trans = 1, ...)
 %X,covarray,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,clip=0.05,trans=0.5,...
 }
 %- maybe also 'usage' for other objects documented here.
@@ -21,6 +21,9 @@ A position matrix with the N (number of data points) rows by d (number of dimens
 }
   \item{covarray}{
 A dxdxN array containing the full covariance (d=dimensions, N=number of dxd matrices in the array stack). The 'makecovarray2d' and 'makecovarray3d' are convenience functions that make populating 2x2xN and 3x3xN arrays easier for a novice user.
+}
+  \item{vars}{
+A variance matrix with the N (numver of data points) rows by Dim (number of dimensions) columns. In effect this is the diagonal elements of the 'covarray' array where all other terms are zero. If 'covarray' is also provided that is used instead.
 }
   \item{fitobj}{
 For simplicity the user can provide the direct output of hyper.fit to this argument. If this is not provided then parm.coord / parm.beta / parm.scat must all be specified.

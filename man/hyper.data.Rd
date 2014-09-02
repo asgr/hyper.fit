@@ -8,11 +8,11 @@
 Data included in hyper.fit package
 }
 \description{
-hogg: Toy ASCII table taken from Hogg 2010 (http://arxiv.org/pdf/1008.4686v1.pdf).
+hogg:     Toy ASCII table taken from Hogg 2010. Contains x/y/sx/sy/corxy columns. Provided by David Hogg: http://arxiv.org/pdf/1008.4686v1.pdf.
 
-intrin: Toy ASCII table that has intrinsic scatter.
+intrin:   Toy ASCII table that has intrinsic scatter. Contains x/y/sx/sy/corxy columns. Provided by Michelle Cluver.
 
-trumpet: Toy ASCII table that has trumpet-like covariance errors and no intrinsic scatter.
+trumpet:  Toy ASCII table that has trumpet-like covariance errors and no intrinsic scatter. Contains x/y/sx/sy/corxy columns. Provided by Johannes Buchner.
 }
 \references{
 Robotham, A.S.G., & Obreschkow, D., 2014

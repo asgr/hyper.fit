@@ -1,4 +1,8 @@
-hyper.plot2d=function(X,covarray,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,clip=0.05,trans=1,...){
+hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,clip=0.05,trans=1,...){
+  if(missing(X)){stop('You must provide X matrix!')}
+  N=dim(X)[1] #Number of data points
+  dims=dim(X)[2] #Number of dimensions
+  if(dims<2){stop('The X matrix must have 2 or more columns (i.e. 2 or more dimensions for fitting)')}
   if(!missing(fitobj)){
     coord=fitobj$parm.vert.axis[1]
     beta=fitobj$parm.vert.axis[2]
@@ -10,6 +14,17 @@ hyper.plot2d=function(X,covarray,fitobj,parm.coord,parm.beta,parm.scat,coord.typ
     beta=parm.beta
     scat=parm.scat
   }
+  
+  if(missing(covarray)){
+    if(!missing(vars)){
+      if(any(dim(vars) != dim(X))){stop('vars matrix must be the same size as X matrix!')}
+      covarray=array(0,dim = c(dims,dims,N))
+      for(i in 1:dims){covarray[i,i,]=vars[i,]}
+    }else{
+      covarray=array(0,dim = c(dims,dims,N))
+    }
+  }
+  
   alpha=coord.convert(coord,in.coord.type=coord.type,out.coord.type='alpha')
   coord.orth=c(alpha,-1)
   beta.orth=beta.convert(beta=beta,coord=alpha,in.proj.type=proj.type,out.proj.type='orth',in.coord.type='alpha')
@@ -32,7 +47,11 @@ hyper.plot2d=function(X,covarray,fitobj,parm.coord,parm.beta,parm.scat,coord.typ
   return=LL
 }
 
-hyper.plot3d=function(X,covarray,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,clip=0.05,trans=1,...){
+hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,clip=0.05,trans=1,...){
+  if(missing(X)){stop('You must provide X matrix!')}
+  N=dim(X)[1] #Number of data points
+  dims=dim(X)[2] #Number of dimensions
+  if(dims<2){stop('The X matrix must have 2 or more columns (i.e. 2 or more dimensions for fitting)')}
   if(!missing(fitobj)){
     coord=fitobj$parm.vert.axis[1:2]
     beta=fitobj$parm.vert.axis[3]
@@ -44,6 +63,17 @@ hyper.plot3d=function(X,covarray,fitobj,parm.coord,parm.beta,parm.scat,coord.typ
     beta=parm.beta
     scat=parm.scat
   }
+  
+  if(missing(covarray)){
+    if(!missing(vars)){
+      if(any(dim(vars) != dim(X))){stop('vars matrix must be the same size as X matrix!')}
+      covarray=array(0,dim = c(dims,dims,N))
+      for(i in 1:dims){covarray[i,i,]=vars[i,]}
+    }else{
+      covarray=array(0,dim = c(dims,dims,N))
+    }
+  }
+  
   alpha=coord.convert(coord,in.coord.type=coord.type,out.coord.type='alpha')
   coord.orth=c(alpha,-1)
   beta.orth=beta.convert(beta=beta,coord=alpha,in.proj.type=proj.type,out.proj.type='orth',in.coord.type='alpha')
