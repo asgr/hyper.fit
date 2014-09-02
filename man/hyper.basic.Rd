@@ -54,21 +54,21 @@ arrayvecmult: Matrix multiply array elements by a vector. To behave sensibly the
 }
 \usage{
 %Utility rotation functions:
-rotdata2d(x,y,theta)
-rotdata3d(x,y,z,theta,dim='z')
+rotdata2d(x, y, theta)
+rotdata3d(x, y, z, theta, dim = 'z')
 makerotmat2d(theta)
-makerotmat3d(theta,dim='z')
-rotcovmat(covmat,theta,dim='x')
+makerotmat3d(theta, dim = 'z')
+rotcovmat(covmat, theta, dim = 'x')
 ranrotcovmat2d(covmat)
 ranrotcovmat3d(covmat)
 %Utility covariance array/matrix functions:
-makecovarray2d(sx,sy,corxy)
-makecovarray3d(sx,sy,sz,corxy,corxz,coryz)
-makecovmat2d(sx,sy,corxy)
-makecovmat3d(sx,sy,sz,corxy,corxz,coryz)
-projX(X,projvec)
-projcovmat(covmat,projvec)
-projcovarray(covarray,projvec)
+makecovarray2d(sx, sy, corxy)
+makecovarray3d(sx, sy, sz, corxy, corxz, coryz)
+makecovmat2d(sx, sy, corxy)
+makecovmat3d(sx, sy, sz, corxy, corxz, coryz)
+projX(X, projvec)
+projcovmat(covmat, projvec)
+projcovarray(covarray, projvec)
 arrayvecmult(array, vec)
 }
 \arguments{
@@ -216,20 +216,28 @@ print(projcovarray(excovarray3d, exprojvec3d))
 #of the 2d/3d projcovmat examples.
 
 #First for comparison:
+
 print(t(matrix(1:9,3) \%*\% 1:3))
 print(t(matrix(10:18,3) \%*\% 1:3))
 print(t(matrix(19:27,3) \%*\% 1:3))
+
 #And now an array example of the above operations:
+
 print(arrayvecmult(array(1:27,c(3,3,3)),1:3))
 
 #And an example where all array dimensions are different:
+
 print(matrix(1:6,2) \%*\% 1:3)
 print(matrix(7:12,2) \%*\% 1:3)
 print(matrix(13:18,2) \%*\% 1:3)
-print(matrix(18:24,2) \%*\% 1:3)
+print(matrix(19:24,2) \%*\% 1:3)
 print(arrayvecmult(array(1:24,c(2,3,4)),1:3))
+
 #Note that the following is not allowed:
+
+\dontrun{
 print(arrayvecmult(array(1:24,c(3,2,4)),1:3))
+}
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

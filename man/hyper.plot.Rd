@@ -8,10 +8,10 @@ A 2d and 3d likelihood diagnostic plot for optimal line fitting
 These functions produce helpful 2d and 3d diagnostic plots for post hyper.fit analysis and for manual experimentation with parameter options. Error llipses and ellipsodis are added to the plots, with colouring scaled by 'sigma-tension' of the data points (where red is high tension). It also overplots the current line (2d) or plane (3d).
 }
 \usage{
-hyper.plot2d(X, covarray, fitobj, parm.coord, parm.beta, parm.scat, coord.type='alpha', 
-proj.type='orth', errorscale=1, clip=0.05, trans=1, ...)
-hyper.plot3d(X, covarray, fitobj, parm.coord, parm.beta, parm.scat, coord.type='alpha', 
-proj.type='orth', errorscale=1, clip=0.05, trans=1, ...)
+hyper.plot2d(X, covarray, fitobj, parm.coord, parm.beta, parm.scat, coord.type = 'alpha', 
+proj.type = 'orth', errorscale = 1, clip = 0.05, trans = 1, ...)
+hyper.plot3d(X, covarray, fitobj, parm.coord, parm.beta, parm.scat, coord.type = 'alpha', 
+proj.type = 'orth', errorscale = 1, clip = 0.05, trans = 1, ...)
 %X,covarray,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,clip=0.05,trans=0.5,...
 }
 %- maybe also 'usage' for other objects documented here.

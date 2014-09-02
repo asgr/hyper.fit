@@ -4,7 +4,11 @@ hyper.like=function(X,covarray,coord.orth,beta.orth=0,scat.orth=1,errorscale=1,k
   eTce=projcovarray(covarray,coord.orth)  #The component of covariance along our vector coord.orth
   eTe=sum(coord.orth^2) #Sum of squares of normal vec to renormalise properly
   orthvariance=scat.orth^2+(eTce/eTe)*(errorscale^2)
-  if(k.vec[1] != FALSE){X=X+arrayvecmult(covarray,k.vec)}
+  #if(length(k.vec)> 1){X=X+arrayvecmult(covarray,k.vec)}
+  if(length(k.vec)> 1){
+    scat.vec=scat.orth/(coord.orth/sqrt(eTe))
+    X=t(t(X)-k.vec*scat.vec^2)-arrayvecmult(covarray,k.vec)
+  }
   originoffset=(X %*% coord.orth)/sqrt(eTe)-beta.orth
   if(output=='sum' | output=='val'){
     #Here we fully compute the loglikelihood for all N elements   
