@@ -1,4 +1,4 @@
-hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,itermax=1e4,coord.type='alpha',proj.type='orth',algo.func='optim',algo.method='default',Specs=list(alpha.star=0.44),doerrorscale=FALSE){
+hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,k.vec,itermax=1e4,coord.type='alpha',proj.type='orth',algo.func='optim',algo.method='default',Specs=list(alpha.star=0.44),doerrorscale=FALSE){
   if(missing(X)){stop('You must provide X matrix!')}
   N=dim(X)[1] #Number of data points
   dims=dim(X)[2] #Number of dimensions
@@ -64,6 +64,11 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,iter
     Data=list(data=list(X=X,covarray=covarray),mon.names='',parm.names=parm.names,N=N,doerrorscale=doerrorscale)
   }
 
+  if(!missing(k.vec)){
+    if(length(k.vec) != dims){stop(paste('The length of k.vec (',length(k.vec),') must be the same as the dimensions provided (',dims,')',sep=''))}
+    Data$k.vec=k.vec
+  }else{Data$k.vec=FALSE}
+  
   linelikemodel=function(parm,Data){
     if(vert.axis==1){coord.orth=c(-1,parm[1:(vert.axis-1)])}
     if(vert.axis>1 & vert.axis<dims){coord.orth=c(parm[1:(vert.axis-1)],-1,parm[vert.axis:(dims-1)])}
@@ -78,7 +83,7 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,iter
       errorscale=parm[dims+2]
     }else{errorscale=1}
     if(proj.type=='vert.axis'){scat.orth=scat/sqrt(sum(coord.orth^2))}else{scat.orth=scat}
-    LL=hyper.like(X=Data$data$X,covarray=Data$data$covarray,coord.orth = coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,errorscale=errorscale)
+    LL=hyper.like(X=Data$data$X, covarray=Data$data$covarray, coord.orth=coord.orth, beta.orth=beta.orth, scat.orth=scat.orth, errorscale=errorscale, k.vec=Data$k.vec)
     LP=LL
     if(algo.func=='optim'){out=LP}
     if(algo.func=='LA' | algo.func=='LD'){out=list(LP=LP,Dev=2*LL,Monitor=1,yhat=1,parm=parm)}

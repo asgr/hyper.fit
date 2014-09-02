@@ -8,16 +8,16 @@ The likelihood of a given set of data and an specified hyperplane
 This is the mid-level likelihood solving function. Most users will not use this directly, but it is called by hyper.fit and hyper.plot2d/hyper.plot3d. Users can interact with the function directly, but it only takes arguments using the normal vector (coord.orth) orthogonal offset of the origin to the hyperplane (beta.orth) and orthogonal scatter to the hyperplane (scat.orth).
 }
 \usage{
-hyper.like(X, covarray, coord.orth, beta.orth = 0, scat.orth = 1, errorscale=1,
+hyper.like(X, covarray, coord.orth, beta.orth = 0, scat.orth = 1, errorscale=1, k.vec=FALSE,
 output = "sum")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{X}{
-A position matrix with the N (numver of data points) rows by Dim (number of dimensions) columns.
+A position matrix with the N (number of data points) rows by d (number of dimensions) columns.
 }
   \item{covarray}{
-A Dim x Dim x N array containing the full covariance. The 'makecovarray2d' and 'makecovarray3d' are convenience functions that make populating 2x2xN and 3x3xN arrays easier for a novice user.
+A dxdxN array containing the full covariance (d=dimensions, N=number of dxd matrices in the array stack). The 'makecovarray2d' and 'makecovarray3d' are convenience functions that make populating 2x2xN and 3x3xN arrays easier for a novice user.
 }
   \item{coord.orth}{
 The vector that defines the normal to the hyper-plane. This does not need to be normalised.
@@ -31,6 +31,9 @@ The intrinsic scatter orthogonal to the hyperplane.
  \item{errorscale}{
 Value to multiplicatively rescale the errors by (i.e. the covarince array become scaled by errorscale^2). This might be useful when trying to decide if the provided errors are too large.
 }
+\item{k.vec}{
+A vector defining the direction of an exponential sampling distribution in the data. The length is the magnitude of the exponent, and it points in the direction of *increasing* density (see example below). Must be the same length as coord.orth, or FALSE.
+}
   \item{output}{
 If 'sum' then the output is the sum of the log likelihood. If 'val' then the output is the individual log likelihoods of the data provided. If 'sig' then the output represents the sigma tension of the data point with the current model, and can be thought of as -0.5chi^2 for each data point. 
 }
@@ -42,7 +45,7 @@ If 'sum' then the output is the sum of the log likelihood. If 'val' then the out
 If output='sum' then the output is the sum of the log likelihood. If output='val' then the output is the individual log likelihoods of the data provided. If output='sig' then the output represents the sigma tension of the data point with the current model, and can be thought of as -0.5chi^2 for each data point. 
 }
 \references{
-Robotham & Obreschkow 2014
+Robotham, A.S.G., & Obreschkow, D., 2014
 }
 \author{
 Aaron Robotham and Danail Obreschkow

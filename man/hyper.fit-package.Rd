@@ -23,7 +23,7 @@ Aaron Robotham and Danail Obreschkow
 Maintainer: Aaron Robotham <aaron.robotham@uwa.edu.au>
 }
 \references{
-Robotham & Obreschkow 2014
+Robotham, A.S.G., & Obreschkow, D., 2014
 }
 \keyword{ package }
 \keyword{ fit }

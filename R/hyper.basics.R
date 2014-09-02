@@ -104,4 +104,22 @@ makecovmat2d=function(sx,sy,corxy){makecovarray2d(sx,sy,corxy)[,,1]}
 
 makecovmat3d=function(sx,sy,sz,corxy,corxz,coryz){makecovarray3d(sx,sy,sz,corxy,corxz,coryz)[,,1]}
 
+projX=function(X,projvec){
+  return=abs(as.numeric(rbind(projvec) %*% t(X)))
+}
 
+projcovmat=function(covmat,projvec){
+  return=abs(as.numeric(rbind(projvec) %*% (covmat %*% cbind(projvec))))
+}
+
+projcovarray=function(covarray,projvec){
+  #This is the same, but faster than the following using the tensor package:
+  #projvec=array(c(1,2),c(length(projvec),1,1))
+  #as.numeric(tensor(projvec,tensor(covarray,projvec,2,1),1,1))
+  return=abs(as.numeric(colSums(projvec*colSums(aperm(covarray,perm = c(2,1,3))*projvec))))
+}
+
+arrayvecmult=function(array,vec){
+  if(dim(array)[2] != length(vec)){stop('Non-conformable arguments. Second dimension of array must be the same length as vec.')}
+  t(colSums(aperm(array,perm = c(2,1,3))*vec))
+}

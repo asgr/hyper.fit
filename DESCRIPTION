@@ -1,6 +1,6 @@
 Package: hyper.fit
 Type: Package
-Title: Hyperplane fitting with intrinsic scatter
+Title: Generic N-dimensional hyperplane fitting with heteroscedastic covariant errors and intrinsic scatter
 Version: 0.1
 Date: 2014-08-29
 Author: Aaron Robotham and Danail Obreschkow

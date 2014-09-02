@@ -44,7 +44,7 @@ This specifies whether the output beta/scat should be defined as orthogonal to t
 In all cases the output will be a vector the same length as the first argument provided (i.e. coord / beta / scat) but converted to the desired system.
 }
 \references{
-Robotham & Obreschkow 2014
+Robotham, A.S.G., & Obreschkow, D., 2014
 }
 \author{
 Aaron Robotham and Danail Obreschkow
