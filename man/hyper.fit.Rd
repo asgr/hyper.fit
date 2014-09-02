@@ -267,6 +267,7 @@ abline(v=quantile(fithoggtrimMCMC$fit$Posterior2[,3], c(0.95,0.99)), lty=2)
 }
 
 ################### Example using 'real' data with intrinsic scatter ###################
+
 intrin=read.table(system.file('data/intrin.tab', package='hyper.fit'), header=TRUE)
 
 fitintrin=hyper.fit(X=cbind(intrin$x, intrin$y), covarray=makecovarray2d(intrin$sx,

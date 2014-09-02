@@ -198,6 +198,7 @@ hyper.plot2d(cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$sx,
 hoggtrim$sy, hoggtrim$corxy), fitobj=fithogg, trans=0.2, xlim=c(0, 300), ylim=c(0, 700))
 
 ################### Example using 'real' data with intrinsic scatter ###################
+
 intrin=read.table(system.file('data/intrin.tab', package='hyper.fit'), header=TRUE)
 fitintrin=hyper.fit(X=cbind(intrin$x, intrin$y), covarray=makecovarray2d(intrin$sx,
 intrin$sy, intrin$corxy), coord.type='theta', proj.type='orth')
