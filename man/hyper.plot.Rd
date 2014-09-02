@@ -9,9 +9,11 @@ These functions produce helpful 2d and 3d diagnostic plots for post hyper.fit an
 }
 \usage{
 hyper.plot2d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat,
-coord.type = 'alpha', proj.type = 'orth', errorscale = 1, clip = 0.05, trans = 1, ...)
+coord.type = 'alpha', proj.type = 'orth', errorscale = 1, doellipse = TRUE, clip = 0.05,
+trans = 1, ...)
 hyper.plot3d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat,
-coord.type = 'alpha', proj.type = 'orth', errorscale = 1, clip = 0.05, trans = 1, ...)
+coord.type = 'alpha', proj.type = 'orth', errorscale = 1, doellipse = TRUE, clip = 0.05,
+trans = 1, ...)
 %X,covarray,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,clip=0.05,trans=0.5,...
 }
 %- maybe also 'usage' for other objects documented here.
@@ -45,6 +47,9 @@ This specifies whether the parm.beta and the parm.scat are defined as orthogonal
 }
   \item{errorscale}{
 Value to multiplicatively rescale the errors by (i.e. the covarince array become scaled by errorscale^2). This might be useful when trying to decide if the provided errors are too large.
+}
+  \item{doellipse}{
+Should 2d/3d error ellipses be drawn on the plot? This should only be TRUE if data errors are actually provided, else it should be FALSE.  
 }
   \item{clip}{
 Quantile to colour clip the least likely data point. All data points below this value will be coloured red, and from there scaing progresses linearly via green to the most likely data point which will be blue.

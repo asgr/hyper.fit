@@ -1,4 +1,4 @@
-hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,clip=0.05,trans=1,...){
+hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,doellipse=TRUE,clip=0.05,trans=1,...){
   if(missing(X)){stop('You must provide X matrix!')}
   N=dim(X)[1] #Number of data points
   dims=dim(X)[2] #Number of dimensions
@@ -38,8 +38,8 @@ hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coor
   
   LL=hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,output='sig',errorscale=errorscale)
   colscale=hsv(magmap(LL,lo=clip)$map,alpha=trans)
-  magplot(X,...)
-  magerr(x=X[,1],y=X[,2],xlo=sx,ylo=sy,corxy=corxy,col=colscale,fill=TRUE)
+  magplot(X,col=colscale,...)
+  if(doellipse){magerr(x=X[,1],y=X[,2],xlo=sx,ylo=sy,corxy=corxy,col=colscale,fill=TRUE)}
   abline(beta.vert,alpha)
   abline(beta.vert+scat.vert,alpha,lty=2)
   abline(beta.vert-scat.vert,alpha,lty=2)
@@ -47,7 +47,7 @@ hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coor
   return=LL
 }
 
-hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,clip=0.05,trans=1,...){
+hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,doellipse=TRUE,clip=0.05,trans=1,...){
   if(missing(X)){stop('You must provide X matrix!')}
   N=dim(X)[1] #Number of data points
   dims=dim(X)[2] #Number of dimensions
@@ -84,15 +84,16 @@ hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coor
   LL=hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,output='sig',errorscale=errorscale)
   colscale=hsv(magmap(LL,lo=clip)$map,alpha=trans)
   
-  plot3d(X,...)
+  plot3d(X,col=colscale,...)
   lim=max(abs(X))
   decorate3d(xlim=c(-lim,lim),ylim=c(-lim,lim),zlim=c(-lim,lim),aspect=1)
   planes3d(alpha[1], alpha[2],-1, beta.vert,alpha=0.2)
-  par3d(skipRedraw=T)
-  for(i in 1:length(X[,1])){
-    plot3d(ellipse3d(covarray[,,i],centre=X[i,],level=0.6826895,subdivide=2,smooth=T),col=colscale[i],add=T,lit=FALSE,alpha=trans)
+  if(doellipse){
+    par3d(skipRedraw=T)
+    for(i in 1:length(X[,1])){
+      plot3d(ellipse3d(covarray[,,i],centre=X[i,],level=0.6826895,subdivide=2,smooth=T),col=colscale[i],add=T,lit=FALSE,alpha=trans)
+    }
+    par3d(skipRedraw=F)
   }
-  par3d(skipRedraw=F)
-  
   return=LL
 }
