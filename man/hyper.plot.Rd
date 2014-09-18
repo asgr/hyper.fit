@@ -1,13 +1,16 @@
 \name{hyper.plot}
+\alias{hyper.plot}
 \alias{hyper.plot2d}
 \alias{hyper.plot3d}
+\alias{plot.hyper.fit}
 \title{
 A 2d and 3d likelihood diagnostic plot for optimal line fitting
 }
 \description{
-These functions produce helpful 2d and 3d diagnostic plots for post hyper.fit analysis and for manual experimentation with parameter options. Error llipses and ellipsodis are added to the plots, with colouring scaled by 'sigma-tension' of the data points (where red is high tension). It also overplots the current line (2d) or plane (3d).
+These functions produce helpful 2d and 3d diagnostic plots for post hyper.fit analysis and for manual experimentation with parameter options. Error llipses and ellipsodis are added to the plots, with colouring scaled by 'sigma-tension' of the data points (where red is high tension). It also overplots the current line (2d) or plane (3d). If the data is either 2d/3d then a simple interface to the relevant plot.hyper function is provided by the hyper.fit class dependent function plot.hyper.fit, where the user only has to execute plot(fitoutput).
 }
 \usage{
+\method{plot}{hyper.fit}(x, ...)
 hyper.plot2d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat,
 coord.type = 'alpha', proj.type = 'orth', errorscale = 1, doellipse = TRUE, clip = 0.05,
 trans = 1, ...)
@@ -18,6 +21,9 @@ trans = 1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{x}{
+An object of class hyper.fit. This is the only structure that needs to be provided when executing plot(fitobj) class dependent plotting, which will use the plot.hyper.fit function.  
+}
   \item{X}{
 A position matrix with the N (number of data points) rows by d (number of dimensions) columns.
 }
@@ -58,7 +64,7 @@ Quantile to colour clip the least likely data point. All data points below this 
 Transparency of the ellipses (hyper.plot2d) or ellipsoids (hyper.plot3d).
 }
   \item{\dots}{
-Arguments to pass to magplot (hyper.plot2d) or plot3d (hyper.plot3d).
+Arguments to pass to magplot (hyper.plot2d) or plot3d (hyper.plot3d). When executing the hyper.fit class function plot.hyper.fit then ellipses are first passed to hyper.plot2d / hyper.plot3d and then onto magplot / plot3d for any unmatched arguments.
 }
 }
 \value{
@@ -115,6 +121,8 @@ X=cbind(mock$x, mock$y)
 covarray=makecovarray2d(mock$sx, mock$sy, mock$corxy)
 fitline=hyper.fit(X=X, covarray=covarray, coord.type='theta')
 hyper.plot2d(X=X, covarray=covarray, fitobj=fitline, trans=0.2, asp=1)
+#Or even easier:
+plot(fitline)
 
 ################### A 3D example with fitting a plane ###################
 
@@ -177,6 +185,8 @@ covarray=makecovarray3d(mockplane$sx, mockplane$sy, mockplane$sz, mockplane$corx
 mockplane$corxz, mockplane$coryz)
 fitplane=hyper.fit(X=X, covarray=covarray, coord.type='theta', proj='orth')
 hyper.plot3d(X=X, covarray=covarray, fitobj=fitplane)
+#Or even easier:
+plot(fitplane)
 }
 
 ################### Example using the data from Hogg 2010 ###################

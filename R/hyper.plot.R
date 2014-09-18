@@ -1,9 +1,27 @@
+plot.hyper.fit=function(x,...){
+  if(class(x)!='hyper.fit'){stop('Object must be of type hyper.fit')}
+  X=x$X
+  covarray=x$covarray
+  coord=x$parm.vert.axis[1]
+  beta=x$parm.vert.axis[2]
+  scat=x$parm.vert.axis[3]
+  coord.type='alpha'
+  proj.type='vert.axis'
+  if(x$dims>3){stop('Default plots only exist for 2d/3d data!')}
+  if(x$dims==2){hyper.plot2d(X=X, covarray=covarray, fitobj=x,...)}
+  if(x$dims==3){hyper.plot3d(X=X, covarray=covarray, fitobj=x,...)}
+}
+
 hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,doellipse=TRUE,clip=0.05,trans=1,...){
-  if(missing(X)){stop('You must provide X matrix!')}
+  if(missing(X)){stop('You must provide X matrix/ data-frame !')}
+  checkX=as.numeric(unlist(X))
+  if(any(is.null(checkX) | is.na(as.numeric(checkX)) | is.nan(as.numeric(checkX)) | is.infinite(as.numeric(checkX)))){stop('All elements of X must be real numbers, with no NULL, NA, NAN or infinite values.')}
+  X=as.matrix(X)
   N=dim(X)[1] #Number of data points
   dims=dim(X)[2] #Number of dimensions
   if(dims<2){stop('The X matrix must have 2 or more columns (i.e. 2 or more dimensions for fitting)')}
   if(!missing(fitobj)){
+    if(class(fitobj)!='hyper.fit'){stop('fitobj class is of the wrong type!. Must be of type \'hyper.fit\'.')}
     coord=fitobj$parm.vert.axis[1]
     beta=fitobj$parm.vert.axis[2]
     scat=fitobj$parm.vert.axis[3]
@@ -19,11 +37,13 @@ hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coor
     if(!missing(vars)){
       if(any(dim(vars) != dim(X))){stop('vars matrix must be the same size as X matrix!')}
       covarray=array(0,dim = c(dims,dims,N))
-      for(i in 1:dims){covarray[i,i,]=vars[i,]}
+      for(i in 1:dims){covarray[i,i,]=vars[,i]}
     }else{
       covarray=array(0,dim = c(dims,dims,N))
     }
   }
+  checkcovarray=as.numeric(unlist(covarray))
+  if(any(is.null(checkcovarray) | is.na(as.numeric(checkcovarray)) | is.nan(as.numeric(checkcovarray)) | is.infinite(as.numeric(checkcovarray)))){stop('All elements of covarray must be real numbers, with no NULL, NA, NAN or infinite values.')}
   
   alpha=coord.convert(coord,in.coord.type=coord.type,out.coord.type='alpha')
   coord.orth=c(alpha,-1)
@@ -48,11 +68,15 @@ hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coor
 }
 
 hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,doellipse=TRUE,clip=0.05,trans=1,...){
-  if(missing(X)){stop('You must provide X matrix!')}
+  if(missing(X)){stop('You must provide X matrix/ data-frame !')}
+  checkX=as.numeric(unlist(X))
+  if(any(is.null(checkX) | is.na(as.numeric(checkX)) | is.nan(as.numeric(checkX)) | is.infinite(as.numeric(checkX)))){stop('All elements of X must be real numbers, with no NULL, NA, NAN or infinite values.')}
+  X=as.matrix(X)
   N=dim(X)[1] #Number of data points
   dims=dim(X)[2] #Number of dimensions
   if(dims<2){stop('The X matrix must have 2 or more columns (i.e. 2 or more dimensions for fitting)')}
   if(!missing(fitobj)){
+    if(class(fitobj)!='hyper.fit'){stop('fitobj class is of the wrong type!. Must be of type \'hyper.fit\'.')}
     coord=fitobj$parm.vert.axis[1:2]
     beta=fitobj$parm.vert.axis[3]
     scat=fitobj$parm.vert.axis[4]
@@ -73,6 +97,8 @@ hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coor
       covarray=array(0,dim = c(dims,dims,N))
     }
   }
+  checkcovarray=as.numeric(unlist(covarray))
+  if(any(is.null(checkcovarray) | is.na(as.numeric(checkcovarray)) | is.nan(as.numeric(checkcovarray)) | is.infinite(as.numeric(checkcovarray)))){stop('All elements of covarray must be real numbers, with no NULL, NA, NAN or infinite values.')}
   
   alpha=coord.convert(coord,in.coord.type=coord.type,out.coord.type='alpha')
   coord.orth=c(alpha,-1)
@@ -85,8 +111,11 @@ hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coor
   colscale=hsv(magmap(LL,lo=clip)$map,alpha=trans)
   
   plot3d(X,col=colscale,...)
-  lim=max(abs(X))
-  decorate3d(xlim=c(-lim,lim),ylim=c(-lim,lim),zlim=c(-lim,lim),aspect=1)
+  limx=c(min(X[,1]),max(abs(X[,1])))
+  limy=c(min(X[,2]),max(abs(X[,2])))
+  limz=c(min(X[,3]),max(abs(X[,3])))
+  maxrange=max(c(range(limx),range(limy),range(limz)))
+  decorate3d(xlim=c(limx,limx+maxrange),ylim=c(limy,limy+maxrange),zlim=c(limz,limz+maxrange),aspect=1)
   planes3d(alpha[1], alpha[2],-1, beta.vert,alpha=0.2)
   if(doellipse){
     par3d(skipRedraw=T)

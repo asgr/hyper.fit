@@ -2,6 +2,7 @@
 \alias{coord.convert}
 \alias{beta.convert}
 \alias{scat.convert}
+\alias{vert.axis.convert}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Parameterisation conversion functions.
@@ -11,10 +12,12 @@ These functions allow the user to generically convert their current plane defini
 }
 \usage{
 coord.convert(coord, in.coord.type = "alpha", out.coord.type = "alpha")
-beta.convert(beta,coord,in.proj.type='vert.axis',out.proj.type='vert.axis',
+beta.convert(beta, coord, in.proj.type='vert.axis', out.proj.type='vert.axis',
 in.coord.type='alpha')
-scat.convert(scat,coord,in.proj.type='vert.axis',out.proj.type='vert.axis',
+scat.convert(scat,coord, in.proj.type='vert.axis', out.proj.type='vert.axis',
 in.coord.type='alpha')
+vert.axis.convert(coord, beta=0, scat=0, in.vert.axis, out.vert.axis,
+in.proj.type='vert.axis', in.coord.type='alpha')
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,9 +42,23 @@ This specifies whether the input beta/scat are defined as orthogonal to the plan
   \item{out.proj.type}{
 This specifies whether the output beta/scat should be defined as orthogonal to the plane (orth) or along the vert.axis of interest (vert.axis).
 }
+  \item{in.vert.axis}{
+This specifies the input vertical projection axis.  
+}
+  \item{out.vert.axis}{
+This specifies the output/requested vertical projection axis.  
+}
+  
 }
 \value{
-In all cases the output will be a vector the same length as the first argument provided (i.e. coord / beta / scat) but converted to the desired system.
+coord.convert: The new coordinates, which will be the same length as the input coord.
+
+beta.convert: The new beta, of length 1.
+
+scat.convert: The new scat, of length 1.
+
+vert.axis.convert: A list with 3 elements. The first is the coord, which will be the same length as the input coord. The second is the new beta, or length 1. The third is the new scat, of length 1.
+
 }
 \references{
 Robotham, A.S.G., & Obreschkow, D., 2014

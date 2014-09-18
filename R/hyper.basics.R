@@ -123,3 +123,16 @@ arrayvecmult=function(array,vec){
   if(dim(array)[2] != length(vec)){stop('Non-conformable arguments. Second dimension of array must be the same length as vec.')}
   t(colSums(aperm(array,perm = c(2,1,3))*vec))
 }
+
+summary.hyper.fit=function(object,...){
+  if(class(object)!='hyper.fit'){stop('Object must be of type hyper.fit')}
+  cat(paste('Call used was:\n\n'))
+  print(object$call)
+  cat(paste('\nData supplied was ',object$dims,'d\n\n',sep=''))
+  cat(paste('Requested parameters:\n\n'))
+  print(object$parm)
+  cat(paste('\nStandardised vertically projected parameters:\n\n'))
+  print(object$parm.vert.axis)
+  parmname=colnames(object$X)
+  #Need to write final pretty equation here!
+}

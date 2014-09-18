@@ -48,7 +48,7 @@ This specifies whether the fit should be done in terms of the unit vector of the
 This specifies whether the fit offset beta and the intrinsic scatter should be defined orthogonal to the plane (orth) or along the vert.axis of interest (vert.axis).
 }
   \item{algo.func}{
-If 'optim' will optimise using the R base optim function. If 'LA' will optimise using the LaplaceApproximation function. If 'LD' will optimise using the LaplacesDemon function. For both 'LA' and 'LA' the 'LaplacesDemon' package will be used (see http://www.bayesian-inference.com/software).
+If 'optim' (default) hyper.fit will optimise using the R base optim function. If 'LA' will optimise using the LaplaceApproximation function. If 'LD' will optimise using the LaplacesDemon function. For both 'LA' and 'LA' the 'LaplacesDemon' package will be used (see http://www.bayesian-inference.com/software).
 }
   \item{algo.method}{
 Specifies 'method' when using 'optim'. Specifies 'Method' when using 'LaplaceApproximation'. Specifies 'Algorithm' when using 'LaplacesDemon'.
@@ -63,7 +63,7 @@ If FALSE then the provided covariance are treated as it. If TRUE then the likeli
 \details{
 Setting errorscale to TRUE allows for hyper stable solutions when errors are erroneously inflated, e.g. when even with intrinsic scatter equal to one the data is more clustered around the optimal likelihood plane then you should expect given the provided covariance matrix. See Examples below for a 2D scenario where this is helpful.
 
-algo.func='LD' also provides the chance that the true generative model has an intrinsic scatter of zero. The other available functions (optim and LA) can find exact solution equal to zero since they are strictly mode finding (i.e. maximum likelihood) routines. LD is MCMC based, so naturally returns a mean/expectation which *must* have a finite positive value for the intrinsic scatter (it's not allowed to travel below zero).
+algo.func='LD' also provides the chance that the true generative model has an intrinsic scatter of zero. The other available functions ('optim' and 'LA') can find exact solution equal to zero since they are strictly mode finding (i.e. maximum likelihood) routines. 'LD' is MCMC based, so naturally returns a mean/expectation which *must* have a finite positive value for the intrinsic scatter (it's not allowed to travel below zero).
 }
 \value{
 
@@ -82,7 +82,7 @@ The function returns a multi-component list containing:
   The covariance matrix for parm.vert.axis, specified strictly along the defined vert.axis (for both the intrinsic scatter and the offset). Only for algo.func='optim' and algo.func='LA'.
 }
 \item{fit}{
-  The direct output of the specified algo.func. So either the natural return from optim, LaplaceApproximation or LaplacesDemon.
+  The direct output of the specified algo.func. So either the natural return from optim (class type set to 'optim'), LaplaceApproximation (class type 'laplace') or LaplacesDemon (class type demonoid).
 }
 \item{zeroscatprob}{
   The fraction of samples for the intrinsic scatter which are at *exactly* zero, which provides a guideline probability for the intrinsic scatter being truly zero, rather than the expectation which will always be a finite amount above zero. Only for algo.func='LD'.

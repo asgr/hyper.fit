@@ -23,13 +23,13 @@ A dxdxN array containing the full covariance (d=dimensions, N=number of dxd matr
 The vector that defines the normal to the hyper-plane. This does not need to be normalised.
 }
   \item{beta.orth}{
-The orthogonal distance between the origina and the hyperplane.
+The orthogonal distance between the origin and the hyperplane.
 }
   \item{scat.orth}{
 The intrinsic scatter orthogonal to the hyperplane.
 }
  \item{errorscale}{
-Value to multiplicatively rescale the errors by (i.e. the covarince array become scaled by errorscale^2). This might be useful when trying to decide if the provided errors are too large.
+Value to multiplicatively re-scale the errors by (i.e. the covariance array become scaled by errorscale^2). This might be useful when trying to decide if the provided errors are too large.
 }
 \item{k.vec}{
 A vector defining the direction of an exponential sampling distribution in the data. The length is the magnitude of the exponent, and it points in the direction of *increasing* density (see example below). Must be the same length as coord.orth, or FALSE.
@@ -39,7 +39,7 @@ If 'sum' then the output is the sum of the log likelihood. If 'val' then the out
 }
 }
 \details{
-'coord.orth' is slightly different to the raw ouput of the fit or parm.coord input in that the reference axis must explitly have a value of -1 in the relevant position, i.e. y=2x becomes coord.orth=c(2,-1) and z=2x+3y becomes coord.orth=c(2,3,-1). If the reference axis is not the last then care must be taken, e.g. y=2x+3z becomes coord.orth=c(2,-1,3) since the reference axis y is the second element in the normal vector. Clearly dividing through by -3 and rearranging takes us back to the more familiar z=y/3-2x/3 and coord.orth=c(-2/3,1/3,-1), which we get to just by dividing through by -3.
+'coord.orth' is slightly different to the raw output of the fit or parm.coord input in that the reference axis must explicitly have a value of -1 in the relevant position, i.e. y=2x becomes coord.orth=c(2,-1) and z=2x+3y becomes coord.orth=c(2,3,-1). If the reference axis is not the last then care must be taken, e.g. y=2x+3z becomes coord.orth=c(2,-1,3) since the reference axis y is the second element in the normal vector. Clearly dividing through by -3 and rearranging takes us back to the more familiar z=y/3-2x/3 and coord.orth=c(-2/3,1/3,-1), which we get to just by dividing through by -3.
 }
 \value{
 If output='sum' then the output is the sum of the log likelihood. If output='val' then the output is the individual log likelihoods of the data provided. If output='sig' then the output represents the sigma tension of the data point with the current model, and can be thought of as -0.5chi^2 for each data point. 

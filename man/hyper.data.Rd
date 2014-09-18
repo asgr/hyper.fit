@@ -14,9 +14,15 @@ intrin:   Toy ASCII table that has intrinsic scatter. Contains x/y/sx/sy/corxy c
 
 trumpet:  Toy ASCII table that has trumpet-like covariance errors and no intrinsic scatter. Contains x/y/sx/sy/corxy columns. Provided by Johannes Buchner.
 }
+\usage{
+data(hogg)
+data(intrin)
+data(trumpet)
+}
 \references{
 Robotham, A.S.G., & Obreschkow, D., 2014
-Hogg, D., 2010 (http://arxiv.org/pdf/1008.4686v1.pdf)
+
+Hogg, D., Bovy, J., Lang, D., 2010 (http://arxiv.org/pdf/1008.4686v1.pdf)
 }
 \author{
 Aaron Robotham and Danail Obreschkow

@@ -18,7 +18,7 @@
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Functions to calculate various basic properties important for line fitting.
+Functions to calculate various basic properties important for line fitting
 }
 \description{
 rotdata2d: Function to generate a 2xN matrix with rotated columns x and y.
@@ -154,6 +154,8 @@ projcovmat: Projection of covariance matrix along vector (length 1).
 projcovarray: Projection of covariance array along vector (length N).
 
 arrayvecmult: Matrix multiplication of array stack slices by vector (size dxN).
+
+sigcor: A vector of length 3. The first element is the correction from the biased to unbiased estimate for sigma. The second element is the correction from the sample to population estimate for sigmae. The third is the combination of the previous two (i.e. the total correction the suer will typically want to apply to their data).
 
 }
 \references{

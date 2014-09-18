@@ -1,28 +1,36 @@
 hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,k.vec,itermax=1e4,coord.type='alpha',proj.type='orth',algo.func='optim',algo.method='default',Specs=list(alpha.star=0.44),doerrorscale=FALSE){
-  if(missing(X)){stop('You must provide X matrix!')}
+  call=match.call(expand.dots = FALSE)
+  if(missing(X)){stop('You must provide X matrix/ data-frame !')}
+  checkX=as.numeric(unlist(X))
+  if(any(is.null(checkX) | is.na(as.numeric(checkX)) | is.nan(as.numeric(checkX)) | is.infinite(as.numeric(checkX)))){stop('All elements of X must be real numbers, with no NULL, NA, NAN or infinite values.')}
+  X=as.matrix(X)
   N=dim(X)[1] #Number of data points
   dims=dim(X)[2] #Number of dimensions
-  if(dims<2){stop('The X matrix must have 2 or more columns (i.e. 2 or more dimensions for fitting)')}
+  if(dims<2){stop('The X matrix / data-frame must have 2 or more columns (i.e. 2 or more dimensions for fitting)')}
   if(missing(vert.axis)){vert.axis=dims}
   if(vert.axis>dims){stop(paste('The vertical dimension (',vert.axis,') cannot be higher than the number of dimensions provided (',dims,')',sep=''))}
   #Sort out provided starting paramters:
   
   if(missing(covarray)){
     if(!missing(vars)){
-      if(any(dim(vars) != dim(X))){stop('vars matrix must be the same size as X matrix!')}
+      if(any(dim(vars) != dim(X))){stop('vars matrix / data-frame must be the same size as X matrix / data-frame !')}
       covarray=array(0,dim = c(dims,dims,N))
-      for(i in 1:dims){covarray[i,i,]=vars[i,]}
+      for(i in 1:dims){covarray[i,i,]=vars[,i]}
     }else{
       covarray=array(0,dim = c(dims,dims,N))
     }
   }
+  checkcovarray=as.numeric(unlist(covarray))
+  if(any(is.null(checkcovarray) | is.na(as.numeric(checkcovarray)) | is.nan(as.numeric(checkcovarray)) | is.infinite(as.numeric(checkcovarray)))){stop('All elements of covarray must be real numbers, with no NULL, NA, NAN or infinite values.')}
   
   if(missing(parm.coord) & missing(parm.beta) & missing(parm.scat)){
+    
     makeformula=function(objname='X',dims,vert.axis,env=.GlobalEnv){
       usedims=(1:dims)[-vert.axis]
       text=paste(objname,'[,',vert.axis,']~',paste(paste(objname,'[,',usedims,']',sep=''),collapse ='+'),sep='')
       return=list(text=text,form=as.formula(text,env=env))
     }
+    
     startfit=lm(makeformula('X',dims=dims,vert.axis=vert.axis,env=environment())$form)
     start.beta.vert=startfit$coef[1]
     start.alphas=startfit$coef[2:dims]
@@ -31,6 +39,7 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,k.ve
     parm.scat=scat.convert(scat=start.scat.vert,coord=start.alphas,in.proj.type='vert.axis',out.proj.type=proj.type,in.coord.type='alpha')
     parm.coord=coord.convert(start.alphas,in.coord.type='alpha',out.coord.type=coord.type)
   }
+  
   if((!missing(parm.coord) & !missing(parm.beta) & !missing(parm.scat))==FALSE){stop('You must provide starting values for all parameters (parm.coord, parm.beta, parm.scat) or none at all.')}
   
   if(length(parm.coord) != dims-1){stop(paste('parm.coord is length',length(parm.coord),'but needs to be length',dims-1))}
@@ -67,7 +76,9 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,k.ve
   if(!missing(k.vec)){
     if(length(k.vec) != dims){stop(paste('The length of k.vec (',length(k.vec),') must be the same as the dimensions provided (',dims,')',sep=''))}
     Data$k.vec=k.vec
-  }else{Data$k.vec=FALSE}
+  }else{Data$k.vec=FALSE;k.vec=NULL}
+  
+  argoptions=list(vert.axis=vert.axis,k.vec=k.vec,itermax=itermax,coord.type=coord.type,proj.type=proj.type,algo.func=algo.func,algo.method=algo.method,Specs=Specs,doerrorscale=doerrorscale)
   
   linelikemodel=function(parm,Data){
     if(vert.axis==1){coord.orth=c(-1,parm[1:(vert.axis-1)])}
@@ -118,6 +129,11 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,k.ve
   alphas=coord.convert(parm[1:(dims-1)],in.coord.type=coord.type,out.coord.type='alpha')
   beta.vert=beta.convert(beta=parm[dims],coord=alphas,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
   scat.vert=scat.convert(scat=parm[dims+1],coord=alphas,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
+  remapaxis=vert.axis.convert(coord=alphas,beta=beta.vert,scat=scat.vert,in.vert.axis=vert.axis,out.vert.axis=dims,in.proj.type='vert.axis',in.coord.type='alpha')
+  alphas=remapaxis$coord
+  beta.vert=remapaxis$beta
+  scat.vert=remapaxis$scat
+  
   if(doerrorscale){
     parm.vert.axis=c(alphas,beta.vert,scat.vert,parm[dims+2])
     names(parm.vert.axis)=c(paste('alpha',dimvec,sep=''),'beta.vert','scat.vert','errorscale')
@@ -145,5 +161,13 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,k.ve
     out$parm['errorscale']=abs(out$parm['errorscale'])
     out$parm.vert.axis['errorscale']=abs(out$parm.vert.axis['errorscale'])
   }
+  out$N=N
+  out$dims=dims
+  out$X=X
+  out$covarray=covarray
+  out$call=call
+  out$args=argoptions
+  class(out)='hyper.fit'
+  if(algo.func=='optim'){class(out$fit)='optim'} 
   return=out
 }
