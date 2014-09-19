@@ -1,16 +1,16 @@
-\name{Sigma Corrections}
-\alias{sigcor}
+\name{Sigma Correct}
+\alias{hyper.sigcor}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
   Function to convert from biased sample sigma to unbiased population sigma
 }
 \description{
-  sigcor: Calculates the required corrections for transforming the biased estimate of sigma to an unbiased estimate, and for transforming the sample expectation to the population expectation.
+  Calculates the required corrections for transforming the biased estimate of sigma to an unbiased estimate, and for transforming the sample expectation to the population expectation.
   
 }
 \usage{
-  sigcor(N,parmDF)
+  hyper.sigcor(N,parmDF)
 }
 \arguments{
   \item{N}{
@@ -31,7 +31,7 @@
   Aaron Robotham and Danail Obreschkow
 }
 \seealso{
-  \code{\link{hyper.fit}}, \code{\link{hyper.plot2d}}, \code{\link{hyper.plot3d}}, \code{\link{makecovmat2d}}, \code{\link{makecovmat3d}}
+  \code{\link{hyper.basic}}, \code{\link{hyper.convert}}, \code{\link{hyper.data}}, \code{\link{hyper.fit}}, \code{\link{hyper.plot}}, \code{\link{hyper.sigcor}}, \code{\link{hyper.summary}}
 }
 \examples{
   #None yet

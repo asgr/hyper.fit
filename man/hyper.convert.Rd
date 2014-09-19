@@ -1,4 +1,5 @@
-\name{hyper.convert}
+\name{Convert}
+\alias{hyper.convert}
 \alias{coord.convert}
 \alias{beta.convert}
 \alias{scat.convert}
@@ -70,7 +71,7 @@ Robotham, A.S.G., & Obreschkow, D., 2014
 Aaron Robotham and Danail Obreschkow
 }
 \seealso{
-\code{\link{hyper.fit}}, \code{\link{hyper.plot2d}}, \code{\link{hyper.plot3d}}, \code{\link{makecovmat2d}}, \code{\link{makecovmat3d}}
+  \code{\link{hyper.basic}}, \code{\link{hyper.convert}}, \code{\link{hyper.data}}, \code{\link{hyper.fit}}, \code{\link{hyper.plot}}, \code{\link{hyper.sigcor}}, \code{\link{hyper.summary}}
 }
 \examples{
 

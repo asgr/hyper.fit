@@ -1,4 +1,4 @@
-\name{hyper.plot}
+\name{Plot}
 \alias{hyper.plot}
 \alias{hyper.plot2d}
 \alias{hyper.plot3d}
@@ -82,7 +82,7 @@ Robotham, A.S.G., & Obreschkow, D., 2014
 Aaron Robotham and Danail Obreschkow
 }
 \seealso{
-\code{\link{hyper.fit}}, \code{\link{hyper.plot2d}}, \code{\link{hyper.plot3d}}, \code{\link{makecovmat2d}}, \code{\link{makecovmat3d}}
+  \code{\link{hyper.basic}}, \code{\link{hyper.convert}}, \code{\link{hyper.data}}, \code{\link{hyper.fit}}, \code{\link{hyper.plot}}, \code{\link{hyper.sigcor}}, \code{\link{hyper.summary}}
 }
 \examples{
 ################### A 2D example with fitting a line ###################
@@ -127,7 +127,7 @@ covarray=makecovarray2d(mock$sx, mock$sy, mock$corxy)
 fitline=hyper.fit(X=X, covarray=covarray, coord.type='theta')
 hyper.plot2d(X=X, covarray=covarray, fitobj=fitline, trans=0.2, asp=1)
 #Or even easier:
-plot(fitline)
+plot(fitline, trans=0.2, asp=1)
 
 ################### A 3D example with fitting a plane ###################
 
@@ -206,7 +206,7 @@ hogg$corxy), coord.type='theta', proj.type='orth')
 hyper.plot2d(X=cbind(hogg$x, hogg$y), covarray=makecovarray2d(hogg$sx, hogg$sy,
 hogg$corxy), fitobj=fithogg, trans=0.2, xlim=c(0, 300), ylim=c(0, 700))
 #Or even easier:
-plot(fithogg)
+plot(fithogg, trans=0.2)
 
 #We now do exercise 17 of Hogg 2010 using trimmed data, where we remove the high tension
 #data point 3 (which we can see as the reddest point in the above plot:
@@ -218,7 +218,7 @@ hoggtrim$sy, hoggtrim$corxy), coord.type='theta', proj.type='orth', algo.func='L
 hyper.plot2d(X=cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$sx,
 hoggtrim$sy, hoggtrim$corxy), fitobj=fithoggtrim, trans=0.2, xlim=c(0, 300), ylim=c(0, 700))
 #Or even easier:
-plot(fithoggtrim)
+plot(fithoggtrim, trans=0.2)
 
 #We can compare this against the previous fit with:
 hyper.plot2d(cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$sx,
@@ -232,7 +232,7 @@ intrin$sy, intrin$corxy), coord.type='theta', proj.type='orth')
 hyper.plot2d(cbind(intrin$x, intrin$y), covarray=makecovarray2d(intrin$sx,
 intrin$sy, intrin$corxy), fitobj=fitintrin, trans=0.1, pch='.', asp=1)
 #Or even easier:
-plot(fitintrin)
+plot(fitintrin, trans=0.1, pch='.', asp=1)
 
 ################### Example using flaring trumpet data ###################
 
@@ -242,16 +242,17 @@ trumpet$sy,trumpet$corxy), coord.type='theta')
 hyper.plot2d(cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$sx,
 trumpet$sy, trumpet$corxy), fitobj=fittrumpet, trans=0.1, pch='.', asp=1)
 #Or even easier:
-plot(fittrumpet)
+plot(fittrumpet, trans=0.1, pch='.', asp=1)
 #If you look at the ?hyper.fit example we find that zero intrinsic scatter is actually
 #preferred, but we don't see this in the above plot.
 
 ################### Example using 6dFGS Fundamental Plane data ###################
 
 FP6dFGS=read.table(system.file('data/FP6dFGS.tab', package='hyper.fit'), header=TRUE)
-fitFP6dFGS=hyper.fit(FP6dFGS[,c('logRe_J','logIe_J','logsigma')],vars=FP6dFGS[,c('elogRe_J','elogIe_J','elogsigma')]^2,coord.type='theta')
+fitFP6dFGS=hyper.fit(FP6dFGS[,c('logRe_J', 'logIe_J', 'logsigma')],
+vars=FP6dFGS[,c('elogRe_J', 'elogIe_J', 'elogsigma')]^2, coord.type='theta')
 #We turn the ellipse plotting off to speed things up:
-plot(fitFP6dFGS,doellipse=FALSE)
+plot(fitFP6dFGS, doellipse=FALSE)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
