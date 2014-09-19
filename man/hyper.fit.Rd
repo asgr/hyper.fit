@@ -8,8 +8,8 @@ Top level function that attempts to fit a hyperplane to provided data.
 Top level line fitting function that uses downhill searches (optim/LaplaceApproximation) or MCMC (LaplacesDemon) to search out the best fitting parameters for a hyperplane (minimum a 1D line for 2D data), including the intrinsic scatter as part of the fit.
 }
 \usage{
-hyper.fit(X, covarray, vars, parm.coord, parm.beta, parm.scat, vert.axis, k.vec,
-itermax = 1e4, coord.type = 'alpha', proj.type = 'orth', algo.func = 'optim',
+hyper.fit(X, covarray, vars, parm.coord, parm.beta, parm.scat, vert.axis, weights, k.vec,
+itermax = 1e4, coord.type = 'theta', proj.type = 'orth', algo.func = 'optim',
 algo.method = 'default', Specs = list(alpha.star = 0.44), doerrorscale = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -35,6 +35,9 @@ Initial value of the intrinsic scatter. This is either specified as the scatter 
   \item{vert.axis}{
 Which axis should the plane equation be formulated for. This must be a number which specifies the column of position matrix 'X' to be defined by the plane.
 }
+  \item{weights}{
+Vector of multiplicative weights for each row of the X data matrix. i.e. if this is 2 then it is equivalent to having two itentical data points with weights equal to 1. Should be either of length 1 (in which case elements are repeated as required) or the same length as the number of rows in the data matrix X.
+}
 \item{k.vec}{
 A vector defining the direction of an exponential sampling distribution in the data. The length is the scaling 'a' of the generative exponent (i.e., exp(a*x)), and it points in the direction of *increasing* density (see example below). If provided, k.vec must be the same length as the dimensions of the data. k.vec has the most noticeable effect on the beta offset parameter. It is correcting for the phenomenom Astronomers often call Eddington bias.
 }
@@ -42,7 +45,7 @@ A vector defining the direction of an exponential sampling distribution in the d
 The maximum iterations to use for either the LaplaceApproximation function or LaplacesDemon function.
 }
   \item{coord.type}{
-This specifies whether the fit should be done in terms of the unit vector of the line (alpha) or by the values of the angles that form the unit vector (theta).
+This specifies whether the fit should be done in terms of the unit vector of the line (alpha) or by the values of the angles that form the unit vector (theta). 'theta' is the default since it will tend to produce a more numerically stable fit since changes in one angle will not impact the others as much as a change in the unit vector components.
 }
   \item{proj.type}{
 This specifies whether the fit offset beta and the intrinsic scatter should be defined orthogonal to the plane (orth) or along the vert.axis of interest (vert.axis).
@@ -86,6 +89,30 @@ The function returns a multi-component list containing:
 }
 \item{zeroscatprob}{
   The fraction of samples for the intrinsic scatter which are at *exactly* zero, which provides a guideline probability for the intrinsic scatter being truly zero, rather than the expectation which will always be a finite amount above zero. Only for algo.func='LD'.
+}
+\item{N}{
+  The number of rows of matrix X.
+}
+\item{dims}{
+  The number of columns of matrix X.
+}
+\item{X}{
+  The input matrix X.
+}
+\item{covarray}{
+  The covarray used for fitting.
+}
+\item{weights}{
+  The weights used for fitting.
+}
+\item{call}{
+  The actual call used to run hyper.fit.
+}
+\item{args}{
+  The arguments used to run hyper.fit.
+}
+\item{LL}{
+  A list containing elements sum (the total log-likelihodd), val (the individual log likelihoods) and sig (the effective sigma offsets). See hyper.like for more information on these outputs.
 }
 }
 \references{
@@ -264,7 +291,7 @@ X=cbind(mockplane$x, mockplane$y, mockplane$z)
 covarray=makecovarray3d(mockplane$sx, mockplane$sy, mockplane$sz, mockplane$corxy,
 mockplane$corxz, mockplane$coryz)
 fitplane=hyper.fit(X=X, covarray=covarray, coord.type='theta', proj='orth')
-print(fitplane)$parm
+print(fitplane$parm)
 
 ################### Example using the data from Hogg 2010 ###################
 
@@ -343,6 +370,18 @@ trumpet$sy, trumpet$corxy), coord.type='theta', algo.func='LD', itermax=1e5)
 print(fittrumpetMCMC$zeroscatprob)
 
 }
+
+################### Example using 6dFGS Fundamental Plane data ###################
+
+FP6dFGS=read.table(system.file('data/FP6dFGS.tab', package='hyper.fit'), header=TRUE)
+
+fitFP6dFGSva1=hyper.fit(FP6dFGS[,c('logRe_J','logIe_J','logsigma')],vars=FP6dFGS[,c('elogRe_J','elogIe_J','elogsigma')]^2,coord.type='theta',vert.axis=1)
+fitFP6dFGSva3=hyper.fit(FP6dFGS[,c('logRe_J','logIe_J','logsigma')],vars=FP6dFGS[,c('elogRe_J','elogIe_J','elogsigma')]^2,coord.type='theta',vert.axis=3)
+
+#The fits are consistent for either fitting via projection on the x and z axes:
+
+summary(fitFP6dFGSva1)
+summary(fitFP6dFGSva3)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

@@ -134,5 +134,11 @@ summary.hyper.fit=function(object,...){
   cat(paste('\nStandardised vertically projected parameters:\n\n'))
   print(object$parm.vert.axis)
   parmname=colnames(object$X)
+  alphas=object$parm.vert.axis[1:(object$dims-1)]
+  beta=object$parm.vert.axis[object$dims]
+  scat=object$parm.vert.axis[object$dims+1]
+  if(sign(beta)==1){signbeta='+'}else{signbeta='-'}
+  cat(paste('\nStandardised plane equation:\n\n'))
+  cat(paste(parmname[object$dims],'=',paste(paste(paste(format(alphas,digits=4),parmname[1:(object$dims-1)],sep='*'),collapse = ' + ')),signbeta,format(abs(beta),digits=4)))
   #Need to write final pretty equation here!
 }

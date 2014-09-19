@@ -55,20 +55,34 @@ arrayvecmult: Matrix multiply array elements by a vector. To behave sensibly the
 \usage{
 %Utility rotation functions:
 rotdata2d(x, y, theta)
+
 rotdata3d(x, y, z, theta, dim = 'z')
+
 makerotmat2d(theta)
+
 makerotmat3d(theta, dim = 'z')
+
 rotcovmat(covmat, theta, dim = 'x')
+
 ranrotcovmat2d(covmat)
+
 ranrotcovmat3d(covmat)
+
 %Utility covariance array/matrix functions:
 makecovarray2d(sx, sy, corxy)
+
 makecovarray3d(sx, sy, sz, corxy, corxz, coryz)
+
 makecovmat2d(sx, sy, corxy)
+
 makecovmat3d(sx, sy, sz, corxy, corxz, coryz)
+
 projX(X, projvec)
+
 projcovmat(covmat, projvec)
+
 projcovarray(covarray, projvec)
+
 arrayvecmult(array, vec)
 }
 \arguments{

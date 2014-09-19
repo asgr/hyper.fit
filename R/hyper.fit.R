@@ -1,4 +1,4 @@
-hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,k.vec,itermax=1e4,coord.type='alpha',proj.type='orth',algo.func='optim',algo.method='default',Specs=list(alpha.star=0.44),doerrorscale=FALSE){
+hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,weights,k.vec,itermax=1e4,coord.type='theta',proj.type='orth',algo.func='optim',algo.method='default',Specs=list(alpha.star=0.44),doerrorscale=FALSE){
   call=match.call(expand.dots = FALSE)
   if(missing(X)){stop('You must provide X matrix/ data-frame !')}
   checkX=as.numeric(unlist(X))
@@ -7,6 +7,8 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,k.ve
   N=dim(X)[1] #Number of data points
   dims=dim(X)[2] #Number of dimensions
   if(dims<2){stop('The X matrix / data-frame must have 2 or more columns (i.e. 2 or more dimensions for fitting)')}
+  if(is.null(colnames(X))){colnames(X)=paste('x',1:dims,sep='')}
+  
   if(missing(vert.axis)){vert.axis=dims}
   if(vert.axis>dims){stop(paste('The vertical dimension (',vert.axis,') cannot be higher than the number of dimensions provided (',dims,')',sep=''))}
   #Sort out provided starting paramters:
@@ -22,6 +24,10 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,k.ve
   }
   checkcovarray=as.numeric(unlist(covarray))
   if(any(is.null(checkcovarray) | is.na(as.numeric(checkcovarray)) | is.nan(as.numeric(checkcovarray)) | is.infinite(as.numeric(checkcovarray)))){stop('All elements of covarray must be real numbers, with no NULL, NA, NAN or infinite values.')}
+  
+  if(missing(weights)){weights=rep(1,N)}
+  if(length(weights)==1){weights=rep(weights,N)}
+  if(length(weights)!=N){stop(paste('weights vector must be the same length as rows in X (',N,')',sep=''))}
   
   if(missing(parm.coord) & missing(parm.beta) & missing(parm.scat)){
     
@@ -55,22 +61,22 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,k.ve
   if(coord.type=='alpha' & proj.type=='orth'){
     parm.names=c(paste('alpha',dimvec,sep=''),'beta.orth','scat.orth')
     if(doerrorscale){parm.names=c(parm.names,'errorscale')}
-    Data=list(data=list(X=X,covarray=covarray),mon.names='',parm.names=parm.names,N=N,doerrorscale=doerrorscale)
+    Data=list(data=list(X=X,covarray=covarray),mon.names='',parm.names=parm.names,N=N,weights=weights,doerrorscale=doerrorscale)
   }
   if(coord.type=='alpha' & proj.type=='vert.axis'){
     parm.names=c(paste('alpha',dimvec,sep=''),'beta.vert','scat.vert')
     if(doerrorscale){parm.names=c(parm.names,'errorscale')}
-    Data=list(data=list(X=X,covarray=covarray),mon.names='',parm.names=parm.names,N=N,doerrorscale=doerrorscale)
+    Data=list(data=list(X=X,covarray=covarray),mon.names='',parm.names=parm.names,N=N,weights=weights,doerrorscale=doerrorscale)
   }
   if(coord.type=='theta' & proj.type=='orth'){
     parm.names=c(paste('theta',dimvec,sep=''),'beta.orth','scat.orth')
     if(doerrorscale){parm.names=c(parm.names,'errorscale')}
-    Data=list(data=list(X=X,covarray=covarray),mon.names='',parm.names=parm.names,N=N,doerrorscale=doerrorscale)
+    Data=list(data=list(X=X,covarray=covarray),mon.names='',parm.names=parm.names,N=N,weights=weights,doerrorscale=doerrorscale)
   }
   if(coord.type=='theta' & proj.type=='vert.axis'){
     parm.names=c(paste('theta',dimvec,sep=''),'beta.vert','scat.vert')
     if(doerrorscale){parm.names=c(parm.names,'errorscale')}
-    Data=list(data=list(X=X,covarray=covarray),mon.names='',parm.names=parm.names,N=N,doerrorscale=doerrorscale)
+    Data=list(data=list(X=X,covarray=covarray),mon.names='',parm.names=parm.names,N=N,weights=weights,doerrorscale=doerrorscale)
   }
 
   if(!missing(k.vec)){
@@ -78,7 +84,7 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,k.ve
     Data$k.vec=k.vec
   }else{Data$k.vec=FALSE;k.vec=NULL}
   
-  argoptions=list(vert.axis=vert.axis,k.vec=k.vec,itermax=itermax,coord.type=coord.type,proj.type=proj.type,algo.func=algo.func,algo.method=algo.method,Specs=Specs,doerrorscale=doerrorscale)
+  argoptions=list(vert.axis=vert.axis,weights=weights,k.vec=k.vec,itermax=itermax,coord.type=coord.type,proj.type=proj.type,algo.func=algo.func,algo.method=algo.method,Specs=Specs,doerrorscale=doerrorscale)
   
   linelikemodel=function(parm,Data){
     if(vert.axis==1){coord.orth=c(-1,parm[1:(dims-1)])}
@@ -94,7 +100,7 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,k.ve
       errorscale=parm[dims+2]
     }else{errorscale=1}
     if(proj.type=='vert.axis'){scat.orth=scat/sqrt(sum(coord.orth^2))}else{scat.orth=scat}
-    LL=hyper.like(X=Data$data$X, covarray=Data$data$covarray, coord.orth=coord.orth, beta.orth=beta.orth, scat.orth=scat.orth, errorscale=errorscale, k.vec=Data$k.vec)
+    LL=hyper.like(X=Data$data$X, covarray=Data$data$covarray, coord.orth=coord.orth, beta.orth=beta.orth, scat.orth=scat.orth, weights=Data$weights, errorscale=errorscale, k.vec=Data$k.vec, output='sum')
     LP=LL
     if(algo.func=='optim'){out=LP}
     if(algo.func=='LA' | algo.func=='LD'){out=list(LP=LP,Dev=2*LL,Monitor=1,yhat=1,parm=parm)}
@@ -133,6 +139,20 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,k.ve
   alphas=remapaxis$coord
   beta.vert=remapaxis$beta
   scat.vert=remapaxis$scat
+  coord.orth=c(alphas,-1)
+  beta.orth=beta.convert(beta=beta.vert,coord=alphas,in.proj.type='vert.axis',out.proj.type='orth',in.coord.type='alpha')
+  scat.orth=scat.convert(scat=scat.vert,coord=alphas,in.proj.type='vert.axis',out.proj.type='orth',in.coord.type='alpha')
+  
+  if(doerrorscale){
+    LLsum= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,output='sum',errorscale=parm[dims+2])
+    LLval= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,output='val',errorscale=parm[dims+2])
+    LLsig= -2*hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,output='sig',errorscale=parm[dims+2])
+  }else{
+    LLsum= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,output='sum',errorscale=1)
+    LLval= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,output='val',errorscale=1)
+    LLsig= -2*hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,output='sig',errorscale=1)
+  }
+  
   
   if(doerrorscale){
     parm.vert.axis=c(alphas,beta.vert,scat.vert,parm[dims+2])
@@ -165,8 +185,11 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,k.ve
   out$dims=dims
   out$X=X
   out$covarray=covarray
+  out$weights=weights
   out$call=call
-  out$args=argoptions
+  out$args=argoptions  
+  out$LL=list(sum=LLsum,val=LLval,sig=LLsig)
+  
   class(out)='hyper.fit'
   if(algo.func=='optim'){class(out$fit)='optim'} 
   return=out

@@ -8,8 +8,8 @@ The likelihood of a given set of data and an specified hyperplane
 This is the mid-level likelihood solving function. Most users will not use this directly, but it is called by hyper.fit and hyper.plot2d/hyper.plot3d. Users can interact with the function directly, but it only takes arguments using the normal vector (coord.orth) orthogonal offset of the origin to the hyperplane (beta.orth) and orthogonal scatter to the hyperplane (scat.orth).
 }
 \usage{
-hyper.like(X, covarray, coord.orth, beta.orth = 0, scat.orth = 1, errorscale = 1,
-k.vec = FALSE, output = "sum")
+hyper.like(X, covarray, coord.orth, beta.orth = 0, scat.orth = 1, weights = 1,
+errorscale = 1, k.vec = FALSE, output = "sum")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,6 +27,9 @@ The orthogonal distance between the origin and the hyperplane.
 }
   \item{scat.orth}{
 The intrinsic scatter orthogonal to the hyperplane.
+}
+  \item{weights}{
+Vector of multiplicative weights for each row of the X data matrix. i.e. if this is 2 then it is equivalent to having two itentical data points with weights equal to 1. Should be either of length 1 (in which case elements are repeated as required) or the same length as the number of rows in the data matrix X.
 }
  \item{errorscale}{
 Value to multiplicatively re-scale the errors by (i.e. the covariance array become scaled by errorscale^2). This might be useful when trying to decide if the provided errors are too large.

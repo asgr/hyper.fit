@@ -11,10 +11,12 @@ These functions produce helpful 2d and 3d diagnostic plots for post hyper.fit an
 }
 \usage{
 \method{plot}{hyper.fit}(x, ...)
-hyper.plot2d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat,
+
+hyper.plot2d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat, weights,
 coord.type = 'alpha', proj.type = 'orth', errorscale = 1, doellipse = TRUE, clip = 0.05,
 trans = 1, ...)
-hyper.plot3d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat,
+
+hyper.plot3d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat, weights,
 coord.type = 'alpha', proj.type = 'orth', errorscale = 1, doellipse = TRUE, clip = 0.05,
 trans = 1, ...)
 %X,covarray,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,clip=0.05,trans=0.5,...
@@ -44,6 +46,9 @@ Beta paramter to use. This is either specified as the distance from the origin t
 }
   \item{parm.scat}{
 Intrinsic scatter parameter to use. This is either specified as the scatter orthogonal to the hyperplane or as the scatter along the vertical axis of interest.
+}
+  \item{weights}{
+Vector of multiplicative weights for each row of the X data matrix. i.e. if this is 2 then it is equivalent to having two itentical data points with weights equal to 1. Should be either of length 1 (in which case elements are repeated as required) or the same length as the number of rows in the data matrix X.
 }
   \item{coord.type}{
 This specifies whether the parm.coord parameter is defined in terms of the unit vector of the line (alpha) or for the values of the angles that form the unit vector (theta).
@@ -200,6 +205,8 @@ fithogg=hyper.fit(X=cbind(hogg$x, hogg$y), covarray=makecovarray2d(hogg$sx, hogg
 hogg$corxy), coord.type='theta', proj.type='orth')
 hyper.plot2d(X=cbind(hogg$x, hogg$y), covarray=makecovarray2d(hogg$sx, hogg$sy,
 hogg$corxy), fitobj=fithogg, trans=0.2, xlim=c(0, 300), ylim=c(0, 700))
+#Or even easier:
+plot(fithogg)
 
 #We now do exercise 17 of Hogg 2010 using trimmed data, where we remove the high tension
 #data point 3 (which we can see as the reddest point in the above plot:
@@ -210,6 +217,8 @@ fithoggtrim=hyper.fit(X=cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(h
 hoggtrim$sy, hoggtrim$corxy), coord.type='theta', proj.type='orth', algo.func='LA')
 hyper.plot2d(X=cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$sx,
 hoggtrim$sy, hoggtrim$corxy), fitobj=fithoggtrim, trans=0.2, xlim=c(0, 300), ylim=c(0, 700))
+#Or even easier:
+plot(fithoggtrim)
 
 #We can compare this against the previous fit with:
 hyper.plot2d(cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$sx,
@@ -222,6 +231,8 @@ fitintrin=hyper.fit(X=cbind(intrin$x, intrin$y), covarray=makecovarray2d(intrin$
 intrin$sy, intrin$corxy), coord.type='theta', proj.type='orth')
 hyper.plot2d(cbind(intrin$x, intrin$y), covarray=makecovarray2d(intrin$sx,
 intrin$sy, intrin$corxy), fitobj=fitintrin, trans=0.1, pch='.', asp=1)
+#Or even easier:
+plot(fitintrin)
 
 ################### Example using flaring trumpet data ###################
 
@@ -230,8 +241,17 @@ fittrumpet=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trum
 trumpet$sy,trumpet$corxy), coord.type='theta')
 hyper.plot2d(cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$sx,
 trumpet$sy, trumpet$corxy), fitobj=fittrumpet, trans=0.1, pch='.', asp=1)
+#Or even easier:
+plot(fittrumpet)
 #If you look at the ?hyper.fit example we find that zero intrinsic scatter is actually
 #preferred, but we don't see this in the above plot.
+
+################### Example using 6dFGS Fundamental Plane data ###################
+
+FP6dFGS=read.table(system.file('data/FP6dFGS.tab', package='hyper.fit'), header=TRUE)
+fitFP6dFGS=hyper.fit(FP6dFGS[,c('logRe_J','logIe_J','logsigma')],vars=FP6dFGS[,c('elogRe_J','elogIe_J','elogsigma')]^2,coord.type='theta')
+#We turn the ellipse plotting off to speed things up:
+plot(fitFP6dFGS,doellipse=FALSE)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

@@ -12,10 +12,13 @@ These functions allow the user to generically convert their current plane defini
 }
 \usage{
 coord.convert(coord, in.coord.type = "alpha", out.coord.type = "alpha")
+
 beta.convert(beta, coord, in.proj.type='vert.axis', out.proj.type='vert.axis',
 in.coord.type='alpha')
+
 scat.convert(scat,coord, in.proj.type='vert.axis', out.proj.type='vert.axis',
 in.coord.type='alpha')
+
 vert.axis.convert(coord, beta=0, scat=0, in.vert.axis, out.vert.axis,
 in.proj.type='vert.axis', in.coord.type='alpha')
 }

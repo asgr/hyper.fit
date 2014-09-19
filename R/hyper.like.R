@@ -1,4 +1,4 @@
-hyper.like=function(X,covarray,coord.orth,beta.orth=0,scat.orth=1,errorscale=1,k.vec=FALSE,output='sum'){
+hyper.like=function(X,covarray,coord.orth,beta.orth=0,scat.orth=1,weights=1,errorscale=1,k.vec=FALSE,output='sum'){
   N=dim(X)[1] #Number of data points
   dims=dim(X)[2]  #Number of dimensions
   eTce=projcovarray(covarray,coord.orth)  #The component of covariance along our vector coord.orth
@@ -25,7 +25,7 @@ hyper.like=function(X,covarray,coord.orth,beta.orth=0,scat.orth=1,errorscale=1,k
           (originoffset^2)/orthvariance   #The Chi-Sq type term
       )
   }
-  if(output=='sum'){out=sum(loglike)}
+  if(output=='sum'){out=sum(weights*loglike)}
   if(output=='val'){out=as.numeric(loglike)}
   if(output=='sig'){out=as.numeric(loglike)}
   return=out

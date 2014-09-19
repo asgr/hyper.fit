@@ -5,14 +5,15 @@ plot.hyper.fit=function(x,...){
   coord=x$parm.vert.axis[1]
   beta=x$parm.vert.axis[2]
   scat=x$parm.vert.axis[3]
+  weights=x$weights
   coord.type='alpha'
   proj.type='vert.axis'
   if(x$dims>3){stop('Default plots only exist for 2d/3d data!')}
-  if(x$dims==2){hyper.plot2d(X=X, covarray=covarray, fitobj=x,...)}
-  if(x$dims==3){hyper.plot3d(X=X, covarray=covarray, fitobj=x,...)}
+  if(x$dims==2){hyper.plot2d(X=X, covarray=covarray, fitobj=x, weights=weights, ...)}
+  if(x$dims==3){hyper.plot3d(X=X, covarray=covarray, fitobj=x, weights=weights, ...)}
 }
 
-hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,doellipse=TRUE,clip=0.05,trans=1,...){
+hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,weights,coord.type='alpha',proj.type='orth',errorscale=1,doellipse=TRUE,clip=0.05,trans=1,...){
   if(missing(X)){stop('You must provide X matrix/ data-frame !')}
   checkX=as.numeric(unlist(X))
   if(any(is.null(checkX) | is.na(as.numeric(checkX)) | is.nan(as.numeric(checkX)) | is.infinite(as.numeric(checkX)))){stop('All elements of X must be real numbers, with no NULL, NA, NAN or infinite values.')}
@@ -45,29 +46,33 @@ hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coor
   checkcovarray=as.numeric(unlist(covarray))
   if(any(is.null(checkcovarray) | is.na(as.numeric(checkcovarray)) | is.nan(as.numeric(checkcovarray)) | is.infinite(as.numeric(checkcovarray)))){stop('All elements of covarray must be real numbers, with no NULL, NA, NAN or infinite values.')}
   
-  alpha=coord.convert(coord,in.coord.type=coord.type,out.coord.type='alpha')
-  coord.orth=c(alpha,-1)
-  beta.orth=beta.convert(beta=beta,coord=alpha,in.proj.type=proj.type,out.proj.type='orth',in.coord.type='alpha')
-  scat.orth=scat.convert(scat=scat,coord=alpha,in.proj.type=proj.type,out.proj.type='orth',in.coord.type='alpha')
-  beta.vert=beta.convert(beta=beta,coord=alpha,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
-  scat.vert=scat.convert(scat=scat,coord=alpha,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
+  if(missing(weights)){weights=rep(1,N)}
+  if(length(weights)==1){weights=rep(weights,N)}
+  if(length(weights)!=N){stop(paste('weights vector must be the same length as rows in X (',N,')',sep=''))}
+  
+  alphas=coord.convert(coord,in.coord.type=coord.type,out.coord.type='alpha')
+  coord.orth=c(alphas,-1)
+  beta.orth=beta.convert(beta=beta,coord=alphas,in.proj.type=proj.type,out.proj.type='orth',in.coord.type='alpha')
+  scat.orth=scat.convert(scat=scat,coord=alphas,in.proj.type=proj.type,out.proj.type='orth',in.coord.type='alpha')
+  beta.vert=beta.convert(beta=beta,coord=alphas,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
+  scat.vert=scat.convert(scat=scat,coord=alphas,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
   
   sx=sqrt(covarray[1,1,])
   sy=sqrt(covarray[2,2,])
   corxy=covarray[1,2,]/(sx*sy)
   
-  LL=hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,output='sig',errorscale=errorscale)
+  LL=hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,weights=weights,output='sig',errorscale=errorscale)
   colscale=hsv(magmap(LL,lo=clip)$map,alpha=trans)
   magplot(X,col=colscale,...)
   if(doellipse){magerr(x=X[,1],y=X[,2],xlo=sx,ylo=sy,corxy=corxy,col=colscale,fill=TRUE)}
-  abline(beta.vert,alpha)
-  abline(beta.vert+scat.vert,alpha,lty=2)
-  abline(beta.vert-scat.vert,alpha,lty=2)
+  abline(beta.vert,alphas)
+  abline(beta.vert+scat.vert,alphas,lty=2)
+  abline(beta.vert-scat.vert,alphas,lty=2)
   
   return=LL
 }
 
-hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,doellipse=TRUE,clip=0.05,trans=1,...){
+hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,weights,coord.type='alpha',proj.type='orth',errorscale=1,doellipse=TRUE,clip=0.05,trans=1,...){
   if(missing(X)){stop('You must provide X matrix/ data-frame !')}
   checkX=as.numeric(unlist(X))
   if(any(is.null(checkX) | is.na(as.numeric(checkX)) | is.nan(as.numeric(checkX)) | is.infinite(as.numeric(checkX)))){stop('All elements of X must be real numbers, with no NULL, NA, NAN or infinite values.')}
@@ -100,14 +105,18 @@ hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coor
   checkcovarray=as.numeric(unlist(covarray))
   if(any(is.null(checkcovarray) | is.na(as.numeric(checkcovarray)) | is.nan(as.numeric(checkcovarray)) | is.infinite(as.numeric(checkcovarray)))){stop('All elements of covarray must be real numbers, with no NULL, NA, NAN or infinite values.')}
   
-  alpha=coord.convert(coord,in.coord.type=coord.type,out.coord.type='alpha')
-  coord.orth=c(alpha,-1)
-  beta.orth=beta.convert(beta=beta,coord=alpha,in.proj.type=proj.type,out.proj.type='orth',in.coord.type='alpha')
-  scat.orth=scat.convert(scat=scat,coord=alpha,in.proj.type=proj.type,out.proj.type='orth',in.coord.type='alpha')
-  beta.vert=beta.convert(beta=beta,coord=alpha,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
-  scat.vert=scat.convert(scat=scat,coord=alpha,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
+  if(missing(weights)){weights=rep(1,N)}
+  if(length(weights)==1){weights=rep(weights,N)}
+  if(length(weights)!=N){stop(paste('weights vector must be the same length as rows in X (',N,')',sep=''))}
   
-  LL=hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,output='sig',errorscale=errorscale)
+  alphas=coord.convert(coord,in.coord.type=coord.type,out.coord.type='alpha')
+  coord.orth=c(alphas,-1)
+  beta.orth=beta.convert(beta=beta,coord=alphas,in.proj.type=proj.type,out.proj.type='orth',in.coord.type='alpha')
+  scat.orth=scat.convert(scat=scat,coord=alphas,in.proj.type=proj.type,out.proj.type='orth',in.coord.type='alpha')
+  beta.vert=beta.convert(beta=beta,coord=alphas,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
+  scat.vert=scat.convert(scat=scat,coord=alphas,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
+  
+  LL=hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,weights=weights,output='sig',errorscale=errorscale)
   colscale=hsv(magmap(LL,lo=clip)$map,alpha=trans)
   
   plot3d(X,col=colscale,...)
@@ -116,7 +125,7 @@ hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,coor
   limz=c(min(X[,3]),max(abs(X[,3])))
   maxrange=max(c(range(limx),range(limy),range(limz)))
   decorate3d(xlim=c(limx,limx+maxrange),ylim=c(limy,limy+maxrange),zlim=c(limz,limz+maxrange),aspect=1)
-  planes3d(alpha[1], alpha[2],-1, beta.vert,alpha=0.2)
+  planes3d(alphas[1], alphas[2],-1, beta.vert,alpha=0.2)
   if(doellipse){
     par3d(skipRedraw=T)
     for(i in 1:length(X[,1])){
