@@ -81,7 +81,7 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,k.ve
   argoptions=list(vert.axis=vert.axis,k.vec=k.vec,itermax=itermax,coord.type=coord.type,proj.type=proj.type,algo.func=algo.func,algo.method=algo.method,Specs=Specs,doerrorscale=doerrorscale)
   
   linelikemodel=function(parm,Data){
-    if(vert.axis==1){coord.orth=c(-1,parm[1:(vert.axis-1)])}
+    if(vert.axis==1){coord.orth=c(-1,parm[1:(dims-1)])}
     if(vert.axis>1 & vert.axis<dims){coord.orth=c(parm[1:(vert.axis-1)],-1,parm[vert.axis:(dims-1)])}
     if(vert.axis==dims){coord.orth=c(parm[1:(vert.axis-1)],-1)}
     if(coord.type=='theta'){coord.orth=tan(coord.orth*pi/180);coord.orth[vert.axis]=-1}
@@ -136,10 +136,10 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,k.ve
   
   if(doerrorscale){
     parm.vert.axis=c(alphas,beta.vert,scat.vert,parm[dims+2])
-    names(parm.vert.axis)=c(paste('alpha',dimvec,sep=''),'beta.vert','scat.vert','errorscale')
+    names(parm.vert.axis)=c(paste('alpha',1:(dims-1),sep=''),'beta.vert','scat.vert','errorscale')
   }else{
     parm.vert.axis=c(alphas,beta.vert,scat.vert)
-    names(parm.vert.axis)=c(paste('alpha',dimvec,sep=''),'beta.vert','scat.vert')
+    names(parm.vert.axis)=c(paste('alpha',1:(dims-1),sep=''),'beta.vert','scat.vert')
   }
   
     
