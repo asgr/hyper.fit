@@ -131,14 +131,13 @@ summary.hyper.fit=function(object,...){
   cat(paste('\nData supplied was ',object$dims,'d\n\n',sep=''))
   cat(paste('Requested parameters:\n\n'))
   print(object$parm)
-  cat(paste('\nStandardised vertically projected parameters:\n\n'))
+  cat(paste('\nStandardised vertically projected parameters along dimension ',object$dims,'/',colnames(object$X)[object$dims],':\n\n',sep=''))
   print(object$parm.vert.axis)
   parmname=colnames(object$X)
   alphas=object$parm.vert.axis[1:(object$dims-1)]
   beta=object$parm.vert.axis[object$dims]
   scat=object$parm.vert.axis[object$dims+1]
-  if(sign(beta)==1){signbeta='+'}else{signbeta='-'}
-  cat(paste('\nStandardised plane equation:\n\n'))
-  cat(paste(parmname[object$dims],'=',paste(paste(paste(format(alphas,digits=4),parmname[1:(object$dims-1)],sep='*'),collapse = ' + ')),signbeta,format(abs(beta),digits=4)))
-  #Need to write final pretty equation here!
+  if(sign(beta)==1){signbeta=' + '}else{signbeta=' - '}
+  cat(paste('\nStandardised generative hyperplane equation:\n\n'))
+  cat(paste(parmname[object$dims],' ~ N(mu= ',paste(paste(paste(format(alphas,digits=4),parmname[1:(object$dims-1)],sep='*'),collapse=' + ',sep=''),sep=''),signbeta,format(abs(beta),digits=4),' , sigma= ',format(scat,digits=4),')',sep=''))
 }

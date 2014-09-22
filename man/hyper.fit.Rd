@@ -375,13 +375,9 @@ print(fittrumpetMCMC$zeroscatprob)
 
 FP6dFGS=read.table(system.file('data/FP6dFGS.tab', package='hyper.fit'), header=TRUE)
 
-fitFP6dFGSva1=hyper.fit(FP6dFGS[,c('logRe_J','logIe_J','logsigma')],vars=FP6dFGS[,c('elogRe_J','elogIe_J','elogsigma')]^2,coord.type='theta',vert.axis=1)
-fitFP6dFGSva3=hyper.fit(FP6dFGS[,c('logRe_J','logIe_J','logsigma')],vars=FP6dFGS[,c('elogRe_J','elogIe_J','elogsigma')]^2,coord.type='theta',vert.axis=3)
-
-#The fits are consistent for either fitting via projection on the x and z axes:
-
-summary(fitFP6dFGSva1)
-summary(fitFP6dFGSva3)
+fitFP6dFGS=hyper.fit(FP6dFGS[,c('logIe_J','logsigma','logRe_J')], 
+vars=FP6dFGS[,c('elogIe_J','elogsigma','elogRe_J')]^2, coord.type='theta')
+summary(fitFP6dFGS)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
