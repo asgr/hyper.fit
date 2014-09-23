@@ -73,19 +73,19 @@ algo.func='LD' also provides the chance that the true generative model has an in
 The function returns a multi-component list containing:
 
 \item{parm}{
-  The main paramter fit outputs specified as set by the coord.type and proj.type options.
+  Vector of the main paramter fit outputs specified as set by the coord.type and proj.type options.
 }
 \item{parm.vert.axis}{
-  The main paramter fit outputs specified strictly along the defined vert.axis (for both the intrinsic scatter and the offset).
+  Vector of the main parameter fit outputs specified strictly along the last column dimension of X (for both the intrinsic scatter and the offset). The order of the columns in X therefore affects the contents of this vector.
 }
-\item{covar}{
+\item{parm.covar}{
   The covariance matrix for parm. Only for algo.func='optim' and algo.func='LA'.
 }
-\item{covar.vert.axis}{
-  The covariance matrix for parm.vert.axis, specified strictly along the defined vert.axis (for both the intrinsic scatter and the offset). Only for algo.func='optim' and algo.func='LA'.
-}
 \item{fit}{
-  The direct output of the specified algo.func. So either the natural return from optim (class type set to 'optim'), LaplaceApproximation (class type 'laplace') or LaplacesDemon (class type demonoid).
+  The direct output of the specified algo.func. So either the natural return from optim (class type set to 'optim'), LaplaceApproximation (class type 'laplace') or LaplacesDemon (class type 'demonoid').
+}
+\item{sigcor}{
+  If algo.func='optim' or algo.func='LA' then this list element contains the unbiased population estimator for the intrinsic scatter. It uses the full correction from the hyper.sigcor function (i.e. element 3 of the correction vector generated). See \code{\link{hyper.sigcor}} for details on the different outputs.
 }
 \item{zeroscatprob}{
   The fraction of samples for the intrinsic scatter which are at *exactly* zero, which provides a guideline probability for the intrinsic scatter being truly zero, rather than the expectation which will always be a finite amount above zero. Only for algo.func='LD'.
@@ -375,9 +375,23 @@ print(fittrumpetMCMC$zeroscatprob)
 
 FP6dFGS=read.table(system.file('data/FP6dFGS.tab', package='hyper.fit'), header=TRUE)
 
-fitFP6dFGS=hyper.fit(FP6dFGS[,c('logIe_J','logsigma','logRe_J')], 
-vars=FP6dFGS[,c('elogIe_J','elogsigma','elogRe_J')]^2, coord.type='theta')
+#First we try the fit without using any weights:
+
+fitFP6dFGS=hyper.fit(FP6dFGS[,c('logIe_J', 'logsigma', 'logRe_J')], 
+vars=FP6dFGS[,c('elogIe_J', 'elogsigma', 'elogRe_J')]^2, coord.type='alpha', proj.type='vert.axis')
 summary(fitFP6dFGS)
+
+#Next we add the censoring weights provided by C. Magoulas:
+
+fitFP6dFGSw=hyper.fit(FP6dFGS[,c('logIe_J', 'logsigma', 'logRe_J')],
+vars=FP6dFGS[,c('elogIe_J', 'elogsigma', 'elogRe_J')]^2, weights=FP6dFGS[,'weights'],
+coord.type='alpha', proj.type='vert.axis')
+summary(fitFP6dFGSw)
+
+#It is interesting to not the scatter orthogonal to the plane for the fundmental plane:
+
+print(scat.convert(fitFP6dFGSw$parm[4], coord=fitFP6dFGSw$parm[1:2],
+in.proj.type='vert.axis', out.proj.type='orth', in.coord.type='alpha'))
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

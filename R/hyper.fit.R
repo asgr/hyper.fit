@@ -165,14 +165,13 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,weig
     
   if(algo.func=='optim' | algo.func=='LA'){
     if(class(fit$Covar) != 'try-error'){
-      covar=fit$Covar
-      colnames(covar)=names(parm)
-      rownames(covar)=names(parm)
-      covar.vert.axis=(cbind(parm.vert.axis/parm) %*% rbind(parm.vert.axis/parm))*covar
-      colnames(covar.vert.axis)=names(parm.vert.axis)
-      rownames(covar.vert.axis)=names(parm.vert.axis)
-    }else{covar='singular';covar.vert.axis='singular'}
-    out=list(parm=parm,parm.vert.axis=parm.vert.axis,covar=covar,covar.vert.axis=covar.vert.axis,fit=fit)
+      parm.covar=fit$Covar
+      colnames(parm.covar)=names(parm)
+      rownames(parm.covar)=names(parm)
+    }else{parm.covar='singular'}
+    sigcor=hyper.sigcor(N,length(parm)-1)[3]*as.numeric(parm[dims+1])
+    names(sigcor)=names(parm[dims+1])
+    out=list(parm=parm,parm.vert.axis=parm.vert.axis,parm.covar=parm.covar,fit=fit,sigcor=sigcor)
   }
   if(algo.func=='LD'){
     out=list(parm=parm,parm.vert.axis=parm.vert.axis,fit=fit,zeroscatprob=zeroscatprob)

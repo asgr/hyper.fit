@@ -21,7 +21,7 @@
   }
 }
 \value{
-  A vector of length 3. The first element is the correction from the biased to unbiased estimate for sigma. The second element is the correction from the sample to population estimate for sigmae. The third is the combination of the previous two (i.e. the total correction the suer will typically want to apply to their data).
+  A vector of length 3. The first element is the correction from the biased to unbiased estimate for sigma. The second element is the correction from the sample to population estimate for sigma. The third is the combination of the previous two (i.e. the total correction the user will typically want to apply to their data).
   
 }
 \references{

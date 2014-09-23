@@ -19,14 +19,11 @@ hyper.like=function(X,covarray,coord.orth,beta.orth=0,scat.orth=1,weights=1,erro
       )
   }
   if(output=='sig'){
-    #Here we fully compute the loglikelihood for all N elements   
-    loglike=
-      -0.5*(                              #0.5 scaling for all subsequent terms
-          (originoffset^2)/orthvariance   #The Chi-Sq type term
-      )
+    #Here we fully compute the sigma offset for all N elements   
+    sigma=sqrt((originoffset^2)/orthvariance)   #The Chi-Sq type term
   }
   if(output=='sum'){out=sum(weights*loglike)}
   if(output=='val'){out=as.numeric(loglike)}
-  if(output=='sig'){out=as.numeric(loglike)}
+  if(output=='sig'){out=as.numeric(sigma)}
   return=out
 }

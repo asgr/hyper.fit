@@ -37,47 +37,13 @@ Prints out basic summary information for hyper.fit objects output by the hyper.f
 }
 
 \examples{
-################### A 2D example with fitting a line ###################
+################### Example using 6dFGS Fundamental Plane data ###################
 
-#Setup the initial data:
-
-set.seed(650)
-sampN=200
-initscat=3
-randatax=runif(sampN, -100, 100)
-randatay=rnorm(sampN, sd=initscat)
-sx=runif(sampN, 0, 10); sy=runif(sampN, 0, 10)
-
-mockvararray=makecovarray2d(sx, sy, corxy=0)
-
-errxy={}
-for(i in 1:sampN){
-  rancovmat=ranrotcovmat2d(mockvararray[,,i])
-  errxy=rbind(errxy, mvrnorm(1, mu=c(0, 0), Sigma=rancovmat))
-  mockvararray[,,i]=rancovmat
-  }
-randatax=randatax+errxy[,1]
-randatay=randatay+errxy[,2]
-
-#Rotate the data to an arbitrary angle theta:
-
-ang=30
-mock=rotdata2d(randatax, randatay, theta=ang)
-xerrang={}; yerrang={}; corxyang={}
-for(i in 1:sampN){
-  covmatrot=rotcovmat(mockvararray[,,i], theta=ang)
-  xerrang=c(xerrang, sqrt(covmatrot[1,1])); yerrang=c(yerrang, sqrt(covmatrot[2,2]))
-  corxyang=c(corxyang, covmatrot[1,2]/(xerrang[i]*yerrang[i]))
-}
-corxyang[xerrang==0 & yerrang==0]=0
-mock=data.frame(x=mock[,1], y=mock[,2], sx=xerrang, sy=yerrang, corxy=corxyang)
-
-#Do the fit:
-
-X=cbind(mock$x, mock$y)
-covarray=makecovarray2d(mock$sx, mock$sy, mock$corxy)
-fitline=hyper.fit(X=X, covarray=covarray, coord.type='theta')
-summary(fitline)
+FP6dFGS=read.table(system.file('data/FP6dFGS.tab', package='hyper.fit'), header=TRUE)
+fitFP6dFGSw=hyper.fit(FP6dFGS[,c('logIe_J', 'logsigma', 'logRe_J')],
+vars=FP6dFGS[,c('elogIe_J', 'elogsigma', 'elogRe_J')]^2, weights=FP6dFGS[,'weights'],
+coord.type='alpha', proj.type='vert.axis')
+summary(fitFP6dFGSw)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

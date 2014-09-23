@@ -249,10 +249,11 @@ plot(fittrumpet, trans=0.1, pch='.', asp=1)
 ################### Example using 6dFGS Fundamental Plane data ###################
 
 FP6dFGS=read.table(system.file('data/FP6dFGS.tab', package='hyper.fit'), header=TRUE)
-fitFP6dFGS=hyper.fit(FP6dFGS[,c('logRe_J', 'logIe_J', 'logsigma')],
-vars=FP6dFGS[,c('elogRe_J', 'elogIe_J', 'elogsigma')]^2, coord.type='theta')
+fitFP6dFGSw=hyper.fit(FP6dFGS[,c('logIe_J', 'logsigma', 'logRe_J')],
+vars=FP6dFGS[,c('elogIe_J', 'elogsigma', 'elogRe_J')]^2, weights=FP6dFGS[,'weights'],
+coord.type='alpha', proj.type='vert.axis')
 #We turn the ellipse plotting off to speed things up:
-plot(fitFP6dFGS, doellipse=FALSE)
+plot(fitFP6dFGSw, doellipse=FALSE, alpha=0.5)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
