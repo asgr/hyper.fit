@@ -49,6 +49,7 @@ vert.axis.convert=function(coord,beta=0,scat=0,in.vert.axis,out.vert.axis,in.pro
   if(in.vert.axis>1 & in.vert.axis<dims){fullcoord=c(alphas[1:(in.vert.axis-1)],-1,alphas[in.vert.axis:(dims-1)])}
   if(in.vert.axis==dims){fullcoord=c(alphas[1:(in.vert.axis-1)],-1)}
   fullcoord= -fullcoord/fullcoord[out.vert.axis]
+  vec.orth=fullcoord
   coord.final= fullcoord[-out.vert.axis]
   coord.final=coord.convert(coord.final,in.coord.type='alpha',out.coord.type=in.coord.type)
   scat.final=scat.convert(scat=scat.orth,coord=coord.final,in.proj.type='orth',out.proj.type=in.proj.type,in.coord.type=in.coord.type)
@@ -59,6 +60,6 @@ vert.axis.convert=function(coord,beta=0,scat=0,in.vert.axis,out.vert.axis,in.pro
   if(in.coord.type=='alpha'){names(coord.final)=paste('alpha',dimvec,sep='')}
   if(in.coord.type=='theta'){names(coord.final)=paste('theta',dimvec,sep='')}
   
-  out=list(coord=coord.final,beta=beta.final,scat=scat.final)
+  out=list(coord=coord.final,beta=beta.final,scat=scat.final,vec.orth=vec.orth)
   return=out
 }

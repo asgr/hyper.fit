@@ -33,7 +33,7 @@ Initial value of beta. This is either specified as the distance from the origin 
 Initial value of the intrinsic scatter. This is either specified as the scatter orthogonal to the hyperplane or as the scatter along the vertical axis of interest.
 }
   \item{vert.axis}{
-Which axis should the plane equation be formulated for. This must be a number which specifies the column of position matrix 'X' to be defined by the plane.
+Which axis should the plane equation be formulated for. This must be a number which specifies the column of position matrix 'X' to be defined by the hyperplane. If missing, then the projection dimension is assumed to be the last column of the 'X' matrix.
 }
   \item{weights}{
 Vector of multiplicative weights for each row of the X data matrix. i.e. if this is 2 then it is equivalent to having two itentical data points with weights equal to 1. Should be either of length 1 (in which case elements are repeated as required) or the same length as the number of rows in the data matrix X.
@@ -165,7 +165,7 @@ mock=data.frame(x=mock[,1], y=mock[,2], sx=xerrang, sy=yerrang, corxy=corxyang)
 X=cbind(mock$x, mock$y)
 covarray=makecovarray2d(mock$sx, mock$sy, mock$corxy)
 fitline=hyper.fit(X=X, covarray=covarray, coord.type='theta')
-print(fitline$parm)
+summary(fitline)
 
 ################### A 2D example with exponential sampling & fitting a line ###################
 
@@ -221,13 +221,13 @@ X=cbind(mock$x, mock$y)
 covarray=makecovarray2d(mock$sx, mock$sy, mock$corxy)
 fitlineexp=hyper.fit(X=X, covarray=covarray, coord.type='theta', k.vec=c(0,sampexp),
 proj.type='vert.axis')
-print(fitlineexp$parm)
+summary(fitlineexp)
 
 #Compare this to not including the known exponential slope:
 
 fitlinenoexp=hyper.fit(X=X, covarray=covarray, coord.type='theta', k.vec=c(0,0),
 proj.type='vert.axis')
-print(fitlinenoexp$parm)
+summary(fitlinenoexp)
 
 #The theta and intrinsic scatter are similar, but the offset is shifted significantly
 #away from zero.
@@ -291,7 +291,7 @@ X=cbind(mockplane$x, mockplane$y, mockplane$z)
 covarray=makecovarray3d(mockplane$sx, mockplane$sy, mockplane$sz, mockplane$corxy,
 mockplane$corxz, mockplane$coryz)
 fitplane=hyper.fit(X=X, covarray=covarray, coord.type='theta', proj='orth')
-print(fitplane$parm)
+summary(fitplane)
 
 ################### Example using the data from Hogg 2010 ###################
 
@@ -309,7 +309,7 @@ hogg=read.table(system.file('data/hogg.tab', package='hyper.fit'),header=TRUE)
 hoggtrim=hogg[-3,]
 fithoggtrim=hyper.fit(X=cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$sx,
 hoggtrim$sy, hoggtrim$corxy), coord.type='theta', proj.type='orth', algo.func='LA')
-print(fithoggtrim$parm)
+summary(fithoggtrim)
 
 #We can get more info from looking at the Summary1 output of the LaplaceApproximation:
 
@@ -322,9 +322,9 @@ print(fithoggtrim$fit$Summary1)
 fithoggtrimMCMC=hyper.fit(X=cbind(hoggtrim$x, hoggtrim$y), covarray=
 makecovarray2d(hoggtrim$sx, hoggtrim$sy, hoggtrim$corxy), coord.type='theta',
 proj.type='orth', algo.func='LD')
-print(fithoggtrimMCMC$parm)
+summary(fithoggtrimMCMC)
 
-#We can get more info from looking at the Summary1 output of the LaplacesDemon:
+#We can get additional info from looking at the Summary1 output of the LaplacesDemon:
 
 print(fithoggtrimMCMC$fit$Summary2)
 
@@ -338,17 +338,20 @@ abline(v=quantile(fithoggtrimMCMC$fit$Posterior2[,3], c(0.95,0.99)), lty=2)
 
 intrin=read.table(system.file('data/intrin.tab', package='hyper.fit'), header=TRUE)
 
-fitintrin=hyper.fit(X=cbind(intrin$x, intrin$y), covarray=makecovarray2d(intrin$sx,
-intrin$sy, intrin$corxy), coord.type='theta', proj.type='orth')
-print(fitintrin$parm)
-print(fitintrin$parm.vert.axis)
+fitintrin=hyper.fit(X=cbind(intrin$x, intrin$y), vars=cbind(intrin$sx,
+intrin$sy)^2, coord.type='theta', proj.type='orth', algo.func='LA')
+summary(fitintrin)
+
+fitintrincor=hyper.fit(X=cbind(intrin$x, intrin$y), covarray=makecovarray2d(intrin$sx,
+intrin$sy, intrin$corxy), coord.type='theta', proj.type='orth', algo.func='LA')
+summary(fitintrincor)
 
 ################### Example using flaring trumpet data ###################
 
 trumpet=read.table(system.file('data/trumpet.tab', package='hyper.fit'), header=TRUE)
 fittrumpet=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$sx,
 trumpet$sy, trumpet$corxy), coord.type='theta')
-print(fittrumpet$parm)
+summary(fittrumpet)
 
 #It's clear if you look at the raw output of the optim function that we've crossed the 0
 #intrinsic scatter boundary because scat.orth is negative:
@@ -392,6 +395,34 @@ summary(fitFP6dFGSw)
 
 print(scat.convert(fitFP6dFGSw$parm[4], coord=fitFP6dFGSw$parm[1:2],
 in.proj.type='vert.axis', out.proj.type='orth', in.coord.type='alpha'))
+
+################### Example using GAMA mass-size relation data ###################
+
+GAMAsmVsize=read.table(system.file('data/GAMAsmVsize.tab', package='hyper.fit'), header=TRUE)
+fitGAMAsmVsize=hyper.fit(GAMAsmVsize[,c('logmstar', 'rekpc')],
+vars=GAMAsmVsize[,c('elogmstar', 'erekpc')]^2, weights=GAMAsmVsize[,'weights'],
+coord.type='alpha', proj.type='vert.axis')
+#We turn the ellipse plotting off to speed things up:
+summary(fitGAMAsmVsize)
+
+#This is obviously a poor fit since the y data has a non-linear dependence on x. Let's try
+#logging the y-axis and converting the errors appropriately:
+
+GAMAsmVsize[,'logrekpc']=log10(GAMAsmVsize[,'rekpc'])
+GAMAsmVsize[,'elogrekpc']=log10(1+GAMAsmVsize[,'erekpc']/GAMAsmVsize[,'rekpc'])
+
+fitGAMAsmVsizelogre=hyper.fit(GAMAsmVsize[,c('logmstar', 'logrekpc')],
+vars=GAMAsmVsize[,c('elogmstar', 'elogrekpc')]^2, weights=GAMAsmVsize[,'weights'],
+coord.type='alpha', proj.type='vert.axis')
+#We turn the ellipse plotting off to speed things up:
+summary(fitGAMAsmVsizelogre)
+
+#We can compare to a fit with no errors used:
+
+fitGAMAsmVsizelogrenoerr=hyper.fit(GAMAsmVsize[,c('logmstar', 'logrekpc')],
+weights=GAMAsmVsize[,'weights'], coord.type='alpha', proj.type='vert.axis')
+#We turn the ellipse plotting off to speed things up:
+summary(fitGAMAsmVsizelogrenoerr)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

@@ -4,6 +4,7 @@
 \alias{intrin}
 \alias{trumpet}
 \alias{FP6dFGS}
+\alias{GAMAsmVsize}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
@@ -17,11 +18,15 @@ intrin:   Toy ASCII table that has intrinsic scatter. Contains x/y/sx/sy/corxy c
 trumpet:  Toy ASCII table that has trumpet-like covariance errors and no intrinsic scatter. Contains x/y/sx/sy/corxy columns. Provided by Johannes Buchner.
 
 FP6dFGS: 6dFGS fundamental plane data taken from table 8 of Campbell et al 2014. We use columns 6/7, 12/13, 18/19 for the FP parameters and their errors, and column 26 = 111111 to create a clean selection. Provided By Christina Magoulas.
+
+GAMAsmVsize: Galaxy mass vs size data taken from Lange et al 2014.
 }
 \usage{
 data(hogg)
 data(intrin)
 data(trumpet)
+data(FP6dFGS)
+data(GAMAsmVsize)
 }
 \references{
 Robotham, A.S.G., & Obreschkow, D., 2014
@@ -29,6 +34,8 @@ Robotham, A.S.G., & Obreschkow, D., 2014
 Hogg, D., Bovy, J., Lang, D., 2010 (http://arxiv.org/pdf/1008.4686v1.pdf)
 
 Campbell, L., et al., 2014, MNRAS, 443, 1231 (http://mnras.oxfordjournals.org/content/443/2/1231)
+
+Lange, R., et al., MNRAS, submitted
 }
 \author{
 Aaron Robotham and Danail Obreschkow
@@ -48,6 +55,10 @@ print(trumpet[1:10,])
 
 FP6dFGS=read.table(system.file('data/FP6dFGS.tab', package='hyper.fit'), header=TRUE)
 print(FP6dFGS[1:10,])
+
+GAMAsmVsize=read.table(system.file('data/GAMAsmVsize.tab', package='hyper.fit'), header=TRUE)
+print(GAMAsmVsize[1:10,])
+
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

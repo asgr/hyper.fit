@@ -12,13 +12,13 @@ These functions produce helpful 2d and 3d diagnostic plots for post hyper.fit an
 \usage{
 \method{plot}{hyper.fit}(x, ...)
 
-hyper.plot2d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat, weights,
-coord.type = 'alpha', proj.type = 'orth', errorscale = 1, doellipse = TRUE, clip = 0.05,
-trans = 1, ...)
+hyper.plot2d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat, vert.axis,
+weights, coord.type = 'alpha', proj.type = 'orth', errorscale = 1, doellipse = TRUE,
+sigscale=c(0,4),trans=1,dobar=FALSE,position='topright',...)
 
-hyper.plot3d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat, weights,
-coord.type = 'alpha', proj.type = 'orth', errorscale = 1, doellipse = TRUE, clip = 0.05,
-trans = 1, ...)
+hyper.plot3d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat, vert.axis,
+weights, coord.type = 'alpha', proj.type = 'orth', errorscale = 1, doellipse = TRUE,
+sigscale=c(0,4),trans=1,...)
 %X,covarray,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,clip=0.05,trans=0.5,...
 }
 %- maybe also 'usage' for other objects documented here.
@@ -47,6 +47,9 @@ Beta paramter to use. This is either specified as the distance from the origin t
   \item{parm.scat}{
 Intrinsic scatter parameter to use. This is either specified as the scatter orthogonal to the hyperplane or as the scatter along the vertical axis of interest.
 }
+  \item{vert.axis}{
+Which axis should the plane equation be formulated for. This must be a number which specifies the column of position matrix 'X' to be defined by the hyperplane. If missing, then the projection dimension is assumed to be the last column of the 'X' matrix.
+}
   \item{weights}{
 Vector of multiplicative weights for each row of the X data matrix. i.e. if this is 2 then it is equivalent to having two itentical data points with weights equal to 1. Should be either of length 1 (in which case elements are repeated as required) or the same length as the number of rows in the data matrix X.
 }
@@ -62,18 +65,24 @@ Value to multiplicatively rescale the errors by (i.e. the covarince array become
   \item{doellipse}{
 Should 2d/3d error ellipses be drawn on the plot? This should only be TRUE if data errors are actually provided, else it should be FALSE.  
 }
-  \item{clip}{
-Quantile to colour clip the least likely data point. All data points below this value will be coloured red, and from there scaing progresses linearly via green to the most likely data point which will be blue.
+  \item{sigscale}{
+Vector of length 2 specifying the lower and upper limits for the linear blue->green->red mapping used to colour the data. The default will map to 0->2->4 sigma offset tension. 
 }
   \item{trans}{
 Transparency of the ellipses (hyper.plot2d) or ellipsoids (hyper.plot3d).
+}
+  \item{dobar}{
+Logical specifying whether a magbar colour scale is added to the 2D plot. Only available for hyper.plot2d.
+}
+  \item{position}{
+If dobar=TRUE, then position specifies where the magbar colour scale is placed within the plot. Specify one of 'bottom', 'bottomleft', 'left', 'topleft', 'top', 'topright', 'right', 'bottomright' and 'centre'.
 }
   \item{\dots}{
 Arguments to pass to magplot (hyper.plot2d) or plot3d (hyper.plot3d). When executing the hyper.fit class function plot.hyper.fit then ellipses are first passed to hyper.plot2d / hyper.plot3d and then onto magplot / plot3d for any unmatched arguments.
 }
 }
 \value{
-The plotting functions also return the log-likelhood of the data points given the inputs.
+The plotting functions also return the sigma tension of the data points given the inputs. i.e. the output of hyper.like with output='sig'.
 }
 \references{
 Robotham, A.S.G., & Obreschkow, D., 2014
@@ -227,8 +236,8 @@ hoggtrim$sy, hoggtrim$corxy), fitobj=fithogg, trans=0.2, xlim=c(0, 300), ylim=c(
 ################### Example using 'real' data with intrinsic scatter ###################
 
 intrin=read.table(system.file('data/intrin.tab', package='hyper.fit'), header=TRUE)
-fitintrin=hyper.fit(X=cbind(intrin$x, intrin$y), covarray=makecovarray2d(intrin$sx,
-intrin$sy, intrin$corxy), coord.type='theta', proj.type='orth')
+fitintrin=hyper.fit(X=cbind(intrin$x, intrin$y), vars=cbind(intrin$sx,
+intrin$sy)^2, coord.type='theta', proj.type='orth', algo.func='LA')
 hyper.plot2d(cbind(intrin$x, intrin$y), covarray=makecovarray2d(intrin$sx,
 intrin$sy, intrin$corxy), fitobj=fitintrin, trans=0.1, pch='.', asp=1)
 #Or even easier:
@@ -255,6 +264,33 @@ coord.type='alpha', proj.type='vert.axis')
 #We turn the ellipse plotting off to speed things up:
 plot(fitFP6dFGSw, doellipse=FALSE, alpha=0.5)
 
+################### Example using GAMA mass-size relation data ###################
+
+GAMAsmVsize=read.table(system.file('data/GAMAsmVsize.tab', package='hyper.fit'), header=TRUE)
+fitGAMAsmVsize=hyper.fit(GAMAsmVsize[,c('logmstar', 'rekpc')],
+vars=GAMAsmVsize[,c('elogmstar', 'erekpc')]^2, weights=GAMAsmVsize[,'weights'],
+coord.type='alpha', proj.type='vert.axis')
+#We turn the ellipse plotting off to speed things up:
+plot(fitGAMAsmVsize,trans=0.1,unlog='x')
+
+#This is obviously a poor fit since the y data has a non-linear dependence on x. Let's try
+#logging the y-axis and converting the errors appropriately:
+
+GAMAsmVsize[,'logrekpc']=log10(GAMAsmVsize[,'rekpc'])
+GAMAsmVsize[,'elogrekpc']=log10(1+GAMAsmVsize[,'erekpc']/GAMAsmVsize[,'rekpc'])
+
+fitGAMAsmVsizelogre=hyper.fit(GAMAsmVsize[,c('logmstar', 'logrekpc')],
+vars=GAMAsmVsize[,c('elogmstar', 'elogrekpc')]^2, weights=GAMAsmVsize[,'weights'],
+coord.type='alpha', proj.type='vert.axis')
+#We turn the ellipse plotting off to speed things up:
+plot(fitGAMAsmVsizelogre,trans=0.1,unlog='xy')
+
+#We can compare to a fit with no errors used:
+
+fitGAMAsmVsizelogrenoerr=hyper.fit(GAMAsmVsize[,c('logmstar', 'logrekpc')],
+weights=GAMAsmVsize[,'weights'], coord.type='alpha', proj.type='vert.axis')
+#We turn the ellipse plotting off to speed things up:
+plot(fitGAMAsmVsizelogrenoerr,trans=0.1,unlog='xy')
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

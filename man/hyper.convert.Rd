@@ -61,7 +61,7 @@ beta.convert: The new beta, of length 1.
 
 scat.convert: The new scat, of length 1.
 
-vert.axis.convert: A list with 3 elements. The first is the coord, which will be the same length as the input coord. The second is the new beta, or length 1. The third is the new scat, of length 1.
+vert.axis.convert: A list with 4 elements. The first [[1]] is the coord, which will be the same length as the input coord. The second [[2]] is the new beta, or length 1. The third [[3]] is the new scat, of length 1. The fourth [[4]] is the vector normal to the line where by hyper.fit convention the specified out.vert.axis element is always -1.
 
 }
 \references{

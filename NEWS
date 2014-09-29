@@ -5,3 +5,17 @@ First internal release version of hyper.fit to accompany the Robotham & Obreschk
 v0.2
 
 Second internal release version of hyper.fit to accompany the Robotham & Obreschkow 2014 paper.
+
+v0.2.1
+
+Various minor fixes, improvements and document changes.
+
+v1.0
+
+Version posted to CRAN.
+
+TO DO:
+
+Need to check how to fix the sigma adjustment when including errors- current implementation in hyper.sigcor only appears to converge correctly when there is no error in the data. Dan and I are looking into this.
+
+Perhaps add Nd generative Gaussian fitting option on top of the current (N-1)d plane + intrinsic scatter.

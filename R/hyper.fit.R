@@ -144,13 +144,13 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,weig
   scat.orth=scat.convert(scat=scat.vert,coord=alphas,in.proj.type='vert.axis',out.proj.type='orth',in.coord.type='alpha')
   
   if(doerrorscale){
-    LLsum= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,output='sum',errorscale=parm[dims+2])
-    LLval= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,output='val',errorscale=parm[dims+2])
-    LLsig= -2*hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,output='sig',errorscale=parm[dims+2])
+    LLsum= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,weights=weights,output='sum',errorscale=parm[dims+2])
+    LLval= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,weights=weights,output='val',errorscale=parm[dims+2])
+    LLsig= -2*hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,weights=weights,output='sig',errorscale=parm[dims+2])
   }else{
-    LLsum= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,output='sum',errorscale=1)
-    LLval= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,output='val',errorscale=1)
-    LLsig= -2*hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,output='sig',errorscale=1)
+    LLsum= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,weights=weights,output='sum',errorscale=1)
+    LLval= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,weights=weights,output='val',errorscale=1)
+    LLsig= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,weights=weights,output='sig',errorscale=1)
   }
   
   

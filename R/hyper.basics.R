@@ -132,7 +132,11 @@ summary.hyper.fit=function(object,...){
   cat(paste('Requested parameters:\n\n'))
   print(object$parm)
   if(class(object$fit)=='optim' | class(object$fit)=='laplace'){
-    printerrors=sqrt(diag(object$parm.covar))
+    if(object$parm.covar[1] != 'singular'){
+      printerrors=sqrt(diag(object$parm.covar))
+    }else{
+      printerrors=rep('singular',length(object$parm))
+    }
   }
   if(class(object$fit)=='demonoid'){
     if(object$args$doerrorscale){
