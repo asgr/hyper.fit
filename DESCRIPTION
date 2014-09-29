@@ -1,7 +1,7 @@
 Package: hyper.fit
 Type: Package
 Title: Generic N-dimensional hyperplane fitting with heteroscedastic covariant errors and intrinsic scatter
-Version: 1.0.0
+Version: 1.0.1
 Date: 2014-09-29
 Author: Aaron Robotham and Danail Obreschkow
 Maintainer: Aaron Robotham <aaron.robotham@uwa.edu.au>
