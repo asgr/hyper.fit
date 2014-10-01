@@ -130,6 +130,7 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,weig
     if(doerrorscale){getelements=dims+2}else{getelements=dims+1}
     parm=fit$Summary1[1:getelements,'Mean']
     zeroscatprob=length(which(fit$Posterior1[,dims+1]<=0))/length(fit$Posterior1[,1])
+    names(zeroscatprob)='zeroscatprob'
   }
   #Prepare output data
   alphas=coord.convert(parm[1:(dims-1)],in.coord.type=coord.type,out.coord.type='alpha')

@@ -152,13 +152,18 @@ summary.hyper.fit=function(object,...){
     cat(paste('\nUnbiased population estimator for the intrinsic scatter:\n\n'))
     print(object$sigcor)
   }
-  cat(paste('\nStandardised parameters vertically projected along dimension ',object$dims,'/',colnames(object$X)[object$dims],':\n\n',sep=''))
+  if(class(object$fit)=='demonoid'){
+    cat(paste('\nProbability of exactly zero intrinsic scatter:\n\n'))
+    print(object$zeroscatprob)
+  }
+  
+  cat(paste('\nStandardised parameters vertically projected along dimension ',object$dims,' (',colnames(object$X)[object$dims],'):\n\n',sep=''))
   print(object$parm.vert.axis)
   parmname=colnames(object$X)
   alphas=object$parm.vert.axis[1:(object$dims-1)]
   beta=object$parm.vert.axis[object$dims]
   scat=object$parm.vert.axis[object$dims+1]
   if(sign(beta)==1){signbeta=' + '}else{signbeta=' - '}
-  cat(paste('\nStandardised generative hyperplane equation vertically projected along dimension ',object$dims,'/',colnames(object$X)[object$dims],':\n\n',sep=''))
+  cat(paste('\nStandardised generative hyperplane equation vertically projected along dimension ',object$dims,' (',colnames(object$X)[object$dims],'):\n\n',sep=''))
   cat(paste(parmname[object$dims],' ~ N(mu= ',paste(paste(paste(format(alphas,digits=4),parmname[1:(object$dims-1)],sep='*'),collapse=' + ',sep=''),sep=''),signbeta,format(abs(beta),digits=4),' , sigma= ',format(scat,digits=4),')',sep=''))
 }

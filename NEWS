@@ -16,6 +16,10 @@ Version posted to CRAN.
 
 v1.0.1 (in progress, not on CRAN)
 
+Fixed the passing of hyper.plot2d and hyper.plot3d outputs to the plot output for hyper.fit class objects.
+
+Minor fixes and changes to the summary output.
+
 TO DO:
 
 Need to check how to fix the sigma adjustment when including errors- current implementation in hyper.sigcor only appears to converge correctly when there is no error in the data. Dan and I are looking into this.

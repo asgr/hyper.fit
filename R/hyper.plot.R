@@ -9,8 +9,9 @@ plot.hyper.fit=function(x,...){
   coord.type='alpha'
   proj.type='vert.axis'
   if(x$dims>3){stop('Default plots only exist for 2d/3d data!')}
-  if(x$dims==2){hyper.plot2d(X=X, covarray=covarray, fitobj=x, weights=weights, ...)}
-  if(x$dims==3){hyper.plot3d(X=X, covarray=covarray, fitobj=x, weights=weights, ...)}
+  if(x$dims==2){out=hyper.plot2d(X=X, covarray=covarray, fitobj=x, weights=weights, ...)}
+  if(x$dims==3){out=hyper.plot3d(X=X, covarray=covarray, fitobj=x, weights=weights, ...)}
+  return=out
 }
 
 hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,vert.axis,weights,coord.type='alpha',proj.type='orth',errorscale=1,doellipse=TRUE,sigscale=c(0,4),trans=1,dobar=FALSE,position='topright',...){
