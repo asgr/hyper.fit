@@ -1,4 +1,4 @@
-\name{Basics}
+\name{hyper.basic}
 \alias{hyper.basic}
 \alias{makecovarray2d}
 \alias{makecovarray3d}
@@ -44,17 +44,16 @@ makecovmat2d: Function to generate a 2x2xN covariance array.
 
 makecovmat3d:  Function to generate a 3x3xN covariance array.
 
-projX:  Projection of position (or possibly velocity) elements along a vector.
+projX:  Projection of position (or possibly velocity) elements along a vector (any number of dimensions, but matrices must conform).
 
-projcovmat: Projection of a covariance matrix along a vector.
+projcovmat: Projection of a covariance matrix along a vector (any number of dimensions, but matrices must conform).
 
-projcovarray: Projection of a covariance array (dim x dim x N) along a vector.
+projcovarray: Projection of a covariance array (dim x dim x N) along a vector (any number of dimensions, but matrices must conform).
 
 arrayvecmult: Matrix multiply array elements by a vector. To behave sensibly the second dimension of the AxBxC (i.e. B) array should be the same length as the multiplication vector.
 
 }
 \usage{
-%Utility rotation functions:
 rotdata2d(x, y, theta)
 
 rotdata3d(x, y, z, theta, dim = 'z')
@@ -69,7 +68,6 @@ ranrotcovmat2d(covmat)
 
 ranrotcovmat3d(covmat)
 
-%Utility covariance array/matrix functions:
 makecovarray2d(sx, sy, corxy)
 
 makecovarray3d(sx, sy, sz, corxy, corxz, coryz)
@@ -88,40 +86,40 @@ arrayvecmult(array, vec)
 }
 \arguments{
   \item{x}{
-Vector of x data. Should be the same length as 'y'.
+Vector of x data. Should be the same length as y.
 }
   \item{y}{
-Vector of y data. Should be the same length as 'x'.
+Vector of y data. Should be the same length as x.
 }
   \item{z}{
-Vector of z data. Should be the same length as 'x'/'y'.
+Vector of z data. Should be the same length as x/y.
 }
   \item{X}{
 A position matrix with the N (number of data points) rows by d (number of dimensions) columns.
 }
   \item{sx}{
-Vector of x errors. Should be the same length as 'sy'.
+Vector of x errors. Should be the same length as sy.
 }
   \item{sy}{
-Vector of y errors. Should be the same length as 'sx'.
+Vector of y errors. Should be the same length as sx.
 }
   \item{sz}{
-Vector of z errors. Should be the same length as 'sx'/'sy'.
+Vector of z errors. Should be the same length as sx/sy.
 }
   \item{corxy}{
-Vector of correlation values between 'sx' and 'sy' values. Should be the same length as 'sx'.
+Vector of correlation values between sx and sy values. Should be the same length as sx.
 }
   \item{corxz}{
-Vector of correlation values between 'sx' and 'sz' values. Should be the same length as 'sx'/'sy'/'sz'/'corxy'/'coryz'.
+Vector of correlation values between sx and sz values. Should be the same length as sx/sy/sz/corxy/coryz.
 }
   \item{coryz}{
-Vector of correlation values between 'sy' and 'sz' values. Should be the same length as 'sx'/'sy'/'sz'/'corxy'/'corxz'.
+Vector of correlation values between sy and sz values. Should be the same length as sx/sy/sz/corxy/corxz.
 }
   \item{covmat}{
-A dxd (d=dimensions, i.e. 2x2 for 2d or 3x3 for 3d). The 'makecovmat2d' and 'makecovmat3d' are convenience functions that make populating 2x2 and 3x3 matrices easier for a novice user.  
+A dxd (d=dimensions, i.e. 2x2 for 2d or 3x3 for 3d). The makecovmat2d and makecovmat3d are convenience functions that make populating 2x2 and 3x3 matrices easier for a novice user.  
 }
   \item{covarray}{
-A dxdxN array containing the full covariance (d=dimensions, N=number of dxd matrices in the array stack). The 'makecovarray2d' and 'makecovarray3d' are convenience functions that make populating 2x2xN and 3x3xN arrays easier for a novice user.
+A dxdxN array containing the full covariance (d=dimensions, N=number of dxd matrices in the array stack). The makecovarray2d and makecovarray3d are convenience functions that make populating 2x2xN and 3x3xN arrays easier for a novice user.
 }
   \item{theta}{
 Angle in degrees for rotation. x -> y = +ve rotation, x -> z = +ve rotation, y -> z = +ve rotation.
@@ -136,7 +134,7 @@ The vector defining the desired projection. This does not need to be of length 1
 A AxBxC array.
 }
   \item{vec}{
-A vector of length B (same length as the second array dimension of 'array').  
+A vector of length B (same length as the second array dimension of array argument).  
 }
 }
 \value{
@@ -169,9 +167,6 @@ projcovmat: Projection of covariance matrix along vector (length 1).
 projcovarray: Projection of covariance array along vector (length N).
 
 arrayvecmult: Matrix multiplication of array stack slices by vector (size dxN).
-
-sigcor: A vector of length 3. The first element is the correction from the biased to unbiased estimate for sigma. The second element is the correction from the sample to population estimate for sigmae. The third is the combination of the previous two (i.e. the total correction the suer will typically want to apply to their data).
-
 }
 \references{
 Robotham, A.S.G., & Obreschkow, D., 2014
@@ -195,12 +190,12 @@ print(rotdata3d(exvecx, exvecy, exvecz, extheta, exdim))
 print(makerotmat2d(extheta))
 print(makerotmat3d(extheta, dim=exdim))
 
-exsx=1        #Experiment with changin this
-exsy=2        #Experiment with changin this
-exsz=3        #Experiment with changin this
-excorxy=0.8   #Experiment with changin this between -1 and 1
-excorxz=-0.3  #Experiment with changin this between -1 and 1
-excoryz=0.5   #Experiment with changin this between -1 and 1
+exsx=1        #Experiment with changing this
+exsy=2        #Experiment with changing this
+exsz=3        #Experiment with changing this
+excorxy=0.8   #Experiment with changing this between -1 and 1
+excorxz=-0.3  #Experiment with changing this between -1 and 1
+excoryz=0.5   #Experiment with changing this between -1 and 1
 
 print(makecovmat2d(exsx, exsy, excorxy))
 print(makecovmat3d(exsx, exsy, exsz, excorxy, excorxz, excoryz))

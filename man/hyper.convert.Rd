@@ -1,68 +1,83 @@
-\name{Convert}
+\name{hyper.convert}
 \alias{hyper.convert}
-\alias{coord.convert}
-\alias{beta.convert}
-\alias{scat.convert}
-\alias{vert.axis.convert}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Parameterisation conversion functions.
 }
 \description{
-These functions allow the user to generically convert their current plane definition systems to an alternative. The obvious use case might be when the user has an equation defined as projection formula along a preferred axis (e.g. z=ax+by+c) and they want to find the orthogonal offset of the hyperplane to the origin, and the intrinsic scatter orthogonal to the hyperplane.
+This function allows the user to generically convert their current plane definition system to an alternative. The obvious use case might be when the user has an equation defined as a projection formula along a preferred axis (e.g. z=ax+by+c) and they want to find the orthogonal offset of the hyperplane to the origin, and the intrinsic scatter orthogonal to the hyperplane.
 }
 \usage{
-coord.convert(coord, in.coord.type = "alpha", out.coord.type = "alpha")
-
-beta.convert(beta, coord, in.proj.type='vert.axis', out.proj.type='vert.axis',
-in.coord.type='alpha')
-
-scat.convert(scat,coord, in.proj.type='vert.axis', out.proj.type='vert.axis',
-in.coord.type='alpha')
-
-vert.axis.convert(coord, beta=0, scat=0, in.vert.axis, out.vert.axis,
-in.proj.type='vert.axis', in.coord.type='alpha')
+hyper.convert(parm, coord, beta = 0, scat = 0, in.coord.type = "alpha", out.coord.type,
+in.proj.type = "vert.axis", out.proj.type, in.vert.axis, out.vert.axis)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{parm}{
+Vector of all parameters. This should be a concatenation of c(coord,beta,scat). Either 'parm' or 'coord' must be specified. 
+}
   \item{coord}{
-The current coordinate parameters using the in.coord.type coordinate system. This should be a vector of length dimensions-1 (i.e. 1 for 2D xy data and 2 for 3D xyz data).
+The current coordinate parameters using the in.coord.type coordinate system. This should be a vector of length dimensions-1 (i.e. 1 for 2D xy data and 2 for 3D xyz data). The coord argument must be explictly specified by the user.
 }
   \item{beta}{
-The current offset of the hyper plane defined using the in.proj.type projection system.
+The current offset of the hyperplane defined using the in.proj.type projection system. The default is 0.
 }
   \item{scat}{
-The current intrinsic scatter of the hyper plane defined using the in.proj.type projection system.
+The current intrinsic scatter of the hyperplane defined using the in.proj.type projection system. The default is 0.
 }
   \item{in.coord.type}{
-This specifies whether the input coord parameter is defined in terms of the unit vector of the line (alpha) or by the values of the angles that form the unit vector (theta).
+This specifies whether the input coord vector is defined in terms of the normal vector to the hyperplane (normvec) gradients defined to produce values along the vert.axis dimension (alpha, default) or by the values of the angles that form the gradients (theta).
 }
   \item{out.coord.type}{
-This specifies whether the output coord parameter should be defined in terms of the unit vector of the line (alpha) or by the values of the angles that form the unit vector (theta).
+This specifies whether the output coord vector is defined in terms of the normal vector to the hyperplane (normvec) gradients defined to produce values along the vert.axis dimension (alpha) or by the values of the angles that form the gradients (theta). If missing it takes the value of in.coord.type.
 }
   \item{in.proj.type}{
 This specifies whether the input beta/scat are defined as orthogonal to the plane (orth) or along the vert.axis of interest (vert.axis).
 }
   \item{out.proj.type}{
-This specifies whether the output beta/scat should be defined as orthogonal to the plane (orth) or along the vert.axis of interest (vert.axis).
+This specifies whether the output beta/scat should be defined as orthogonal to the plane (orth) or along the vert.axis of interest (vert.axis). If missing it takes the value of in.proj.type.
 }
   \item{in.vert.axis}{
-This specifies the input vertical projection axis.  
+This specifies the input vertical projection axis. If missing it uses the maximum dimension value (i.e. y-axis for a 2d dataset).
 }
   \item{out.vert.axis}{
-This specifies the output/requested vertical projection axis.  
+This specifies the output/requested vertical projection axis. If missing it takes the value of in.vert.axis.
 }
-  
 }
+
 \value{
-coord.convert: The new coordinates, which will be the same length as the input coord.
 
-beta.convert: The new beta, of length 1.
-
-scat.convert: The new scat, of length 1.
-
-vert.axis.convert: A list with 4 elements. The first [[1]] is the coord, which will be the same length as the input coord. The second [[2]] is the new beta, or length 1. The third [[3]] is the new scat, of length 1. The fourth [[4]] is the vector normal to the line where by hyper.fit convention the specified out.vert.axis element is always -1.
-
+The function returns a multi-component list containing:
+  \item{parm}{
+  parm is a concatination of the main parameters, e.g. parm=c(coord, beta, scat). It can be used as a direct input to other hyper.fit functions that can accept a parm type input.
+}
+  \item{coord}{
+  The output coordinate parameters using the out.coord.type coordinate system.
+}
+  \item{beta}{
+  The output offset of the hyperplane defined using the out.proj.type projection system. Potentially standardised by the abs.beta.orth argument.
+}
+  \item{scat}{
+  The output intrinsic scatter of the hyperplane defined using the out.proj.type projection system.
+}
+  \item{unitvec}{
+  The unit vector orthogonal to the hyperplane. This is always the vector pointing from the origin *to* the hyperplane. 
+}
+  \item{beta.orth}{
+  The absolute distance of the hyperplane to the origin. By definition this will always be positive.
+}
+  \item{scat.orth}{
+  The intrinsic scatter orthogonal to the hyperplane. By definition this will always be positive.
+}
+  \item{coord.type}{
+  The requested out.coord.type.
+}
+  \item{proj.type}{
+  The requested out.proj.type.
+}
+  \item{vert.axis}{
+  The requested out.vert.axis (if out.vert.axis is not specified, this will be the maximum dimension value, see in.vert.axis in arguments section above).  
+}
 }
 \references{
 Robotham, A.S.G., & Obreschkow, D., 2014
@@ -82,32 +97,11 @@ excoord.alpha=c(2,3)
 exbeta.vert.axis=1
 exscat.vert.axis=4
 
-#We want to find the angle theta between the x-axis/y-axis and the z-axis:
+print(hyper.convert(coord=excoord.alpha, beta=exbeta.vert.axis, scat=exscat.vert.axis,
+out.coord.type='theta', out.proj.type='orth'))
 
-print(coord.convert(excoord.alpha, in.coord.type = "alpha", out.coord.type = "theta"))
-excoord.theta=coord.convert(excoord.alpha, in.coord.type = "alpha",
-out.coord.type = "theta")
-
-#The examples below will give the same answer whether we define our coordinate system in
-#alpha or theta, as long as we use the correct 'in.coord.type' option:
-
-print(beta.convert(exbeta.vert.axis, excoord.alpha, in.proj.type='vert.axis',
-out.proj.type='orth', in.coord.type='alpha'))
-print(beta.convert(exbeta.vert.axis, excoord.theta, in.proj.type='vert.axis',
-out.proj.type='orth', in.coord.type='theta'))
-
-#In the above example the distance to the line is negative because the normal vector to
-#the plane is pointing away from the origin, so we must move backwards to get there. The
-#absolute value of this is the minimum distance between our plane and the origin.
-
-print(scat.convert(exscat.vert.axis, excoord.alpha, in.proj.type='vert.axis',
-out.proj.type='orth', in.coord.type='alpha'))
-print(scat.convert(exscat.vert.axis, excoord.theta, in.proj.type='vert.axis',
-out.proj.type='orth', in.coord.type='theta'))
-
-#In the above example the scatter is less orthogonal to the plane than along the z-axis.
-#The scatter orthogonal to the plane will *always* be smaller than the scatter along any
-#given axis, so this is what we should expect.
+print(hyper.convert(coord=excoord.alpha, beta=exbeta.vert.axis, scat=exscat.vert.axis,
+out.vert.axis=2))
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

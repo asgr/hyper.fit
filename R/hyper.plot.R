@@ -14,7 +14,7 @@ plot.hyper.fit=function(x,...){
   return=out
 }
 
-hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,vert.axis,weights,coord.type='alpha',proj.type='orth',errorscale=1,doellipse=TRUE,sigscale=c(0,4),trans=1,dobar=FALSE,position='topright',...){
+hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm.errorscale=1,vert.axis,weights,k.vec,coord.type='alpha',proj.type='orth',doellipse=TRUE,sigscale=c(0,4),trans=1,dobar=FALSE,position='topright',...){
   if(missing(X)){stop('You must provide X matrix/ data-frame !')}
   checkX=as.numeric(unlist(X))
   if(any(is.null(checkX) | is.na(as.numeric(checkX)) | is.nan(as.numeric(checkX)) | is.infinite(as.numeric(checkX)))){stop('All elements of X must be real numbers, with no NULL, NA, NAN or infinite values.')}
@@ -55,29 +55,24 @@ hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,vert
   if(length(weights)==1){weights=rep(weights,N)}
   if(length(weights)!=N){stop(paste('weights vector must be the same length as rows in X (',N,')',sep=''))}
   
-  #alphas=coord.convert(coord,in.coord.type=coord.type,out.coord.type='alpha')
-  #coord.orth=c(alphas,-1)
-  #beta.orth=beta.convert(beta=beta,coord=alphas,in.proj.type=proj.type,out.proj.type='orth',in.coord.type='alpha')
-  #scat.orth=scat.convert(scat=scat,coord=alphas,in.proj.type=proj.type,out.proj.type='orth',in.coord.type='alpha')
-  #beta.vert=beta.convert(beta=beta,coord=alphas,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
-  #scat.vert=scat.convert(scat=scat,coord=alphas,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
+  if(!missing(k.vec)){
+    if(length(k.vec) != dims){stop(paste('The length of k.vec (',length(k.vec),') must be the same as the dimensions provided (',dims,')',sep=''))}
+  }else{k.vec=FALSE}
   
-  alphas=coord.convert(coord,in.coord.type=coord.type,out.coord.type='alpha')
-  beta.vert=beta.convert(beta=beta,coord=alphas,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
-  scat.vert=scat.convert(scat=scat,coord=alphas,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
-  remapaxis=vert.axis.convert(coord=alphas,beta=beta.vert,scat=scat.vert,in.vert.axis=vert.axis,out.vert.axis=dims,in.proj.type='vert.axis',in.coord.type='alpha')
-  alphas=remapaxis$coord
-  beta.vert=remapaxis$beta
-  scat.vert=remapaxis$scat
-  coord.orth=remapaxis$vec.orth
-  beta.orth=beta.convert(beta=beta.vert,coord=alphas,in.proj.type='vert.axis',out.proj.type='orth',in.coord.type='alpha')
-  scat.orth=scat.convert(scat=scat.vert,coord=alphas,in.proj.type='vert.axis',out.proj.type='orth',in.coord.type='alpha')
-  
+  final.fit.vert=hyper.convert(coord=coord,beta=beta,scat=scat,in.coord.type=coord.type,out.coord.type='alpha',in.proj.type=proj.type,out.proj.type='vert.axis',in.vert.axis=vert.axis,out.vert.axis=dims)
+  alphas=final.fit.vert$coord
+  beta.vert=final.fit.vert$beta
+  scat.vert=final.fit.vert$scat
+  final.fit.normvec.orth=hyper.convert(coord=coord,beta=beta,scat=scat,in.coord.type=coord.type,out.coord.type='normvec',in.proj.type=proj.type,out.proj.type='orth',in.vert.axis=vert.axis,out.vert.axis=vert.axis)
+  coord.orth=final.fit.normvec.orth$coord
+  beta.orth=final.fit.normvec.orth$beta
+  scat.orth=final.fit.normvec.orth$scat
+
   sx=sqrt(covarray[1,1,])
   sy=sqrt(covarray[2,2,])
   corxy=covarray[1,2,]/(sx*sy)
   
-  sigmas=hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,weights=weights,output='sig',errorscale=errorscale)
+  sigmas=hyper.like(parm=final.fit.normvec.orth$parm,X=X,covarray=covarray,weights=weights,k.vec=k.vec,output='sig',errorscale=parm.errorscale)
   colscale=hsv(magmap(sigmas,lo=sigscale[1],hi=sigscale[2],flip=TRUE,type='num')$map,alpha=trans)
   magplot(X,col=colscale,xlab=colnames(X)[1],ylab=colnames(X)[2],...)
   if(doellipse){magerr(x=X[,1],y=X[,2],xlo=sx,ylo=sy,corxy=corxy,col=colscale,fill=TRUE)}
@@ -91,7 +86,7 @@ hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,vert
   return=sigmas
 }
 
-hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,vert.axis,weights,coord.type='alpha',proj.type='orth',errorscale=1,doellipse=TRUE,sigscale=c(0,4),trans=1,...){
+hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm.errorscale=1,vert.axis,weights,k.vec,coord.type='alpha',proj.type='orth',doellipse=TRUE,sigscale=c(0,4),trans=1,...){
   if(missing(X)){stop('You must provide X matrix/ data-frame !')}
   checkX=as.numeric(unlist(X))
   if(any(is.null(checkX) | is.na(as.numeric(checkX)) | is.nan(as.numeric(checkX)) | is.infinite(as.numeric(checkX)))){stop('All elements of X must be real numbers, with no NULL, NA, NAN or infinite values.')}
@@ -132,25 +127,20 @@ hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,vert
   if(length(weights)==1){weights=rep(weights,N)}
   if(length(weights)!=N){stop(paste('weights vector must be the same length as rows in X (',N,')',sep=''))}
   
-  #alphas=coord.convert(coord,in.coord.type=coord.type,out.coord.type='alpha')
-  #coord.orth=c(alphas,-1)
-  #beta.orth=beta.convert(beta=beta,coord=alphas,in.proj.type=proj.type,out.proj.type='orth',in.coord.type='alpha')
-  #scat.orth=scat.convert(scat=scat,coord=alphas,in.proj.type=proj.type,out.proj.type='orth',in.coord.type='alpha')
-  #beta.vert=beta.convert(beta=beta,coord=alphas,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
-  #scat.vert=scat.convert(scat=scat,coord=alphas,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
+  if(!missing(k.vec)){
+    if(length(k.vec) != dims){stop(paste('The length of k.vec (',length(k.vec),') must be the same as the dimensions provided (',dims,')',sep=''))}
+  }else{k.vec=FALSE}
   
-  alphas=coord.convert(coord,in.coord.type=coord.type,out.coord.type='alpha')
-  beta.vert=beta.convert(beta=beta,coord=alphas,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
-  scat.vert=scat.convert(scat=scat,coord=alphas,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
-  remapaxis=vert.axis.convert(coord=alphas,beta=beta.vert,scat=scat.vert,in.vert.axis=vert.axis,out.vert.axis=dims,in.proj.type='vert.axis',in.coord.type='alpha')
-  alphas=remapaxis$coord
-  beta.vert=remapaxis$beta
-  scat.vert=remapaxis$scat
-  coord.orth=remapaxis$vec.orth
-  beta.orth=beta.convert(beta=beta.vert,coord=alphas,in.proj.type='vert.axis',out.proj.type='orth',in.coord.type='alpha')
-  scat.orth=scat.convert(scat=scat.vert,coord=alphas,in.proj.type='vert.axis',out.proj.type='orth',in.coord.type='alpha')
+  final.fit.vert=hyper.convert(coord=coord,beta=beta,scat=scat,in.coord.type=coord.type,out.coord.type='alpha',in.proj.type=proj.type,out.proj.type='vert.axis',in.vert.axis=vert.axis,out.vert.axis=dims)
+  alphas=final.fit.vert$coord
+  beta.vert=final.fit.vert$beta
+  scat.vert=final.fit.vert$scat
+  final.fit.normvec.orth=hyper.convert(coord=coord,beta=beta,scat=scat,in.coord.type=coord.type,out.coord.type='normvec',in.proj.type=proj.type,out.proj.type='orth',in.vert.axis=vert.axis,out.vert.axis=vert.axis)
+  coord.orth=final.fit.normvec.orth$coord
+  beta.orth=final.fit.normvec.orth$beta
+  scat.orth=final.fit.normvec.orth$scat
   
-  sigmas=hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,weights=weights,output='sig',errorscale=errorscale)
+  sigmas=hyper.like(parm=final.fit.normvec.orth$parm,X=X,covarray=covarray,weights=weights,k.vec=k.vec,output='sig',errorscale=parm.errorscale)
   colscale=hsv(magmap(sigmas,lo=sigscale[1],hi=sigscale[2],flip=TRUE,type='num')$map,alpha=trans)
   
   plot3d(X,col=colscale,...)

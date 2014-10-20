@@ -1,21 +1,21 @@
-\name{hyper.fit-package}
+\name{hyper.fit package}
 \alias{hyper.fit-package}
 \docType{package}
 \title{
-Hyperplane fitting with intrinsic scatter
+Hyperplane fitting package
 }
 \description{
-This package includes two main high level codes for hyperplane fitting (hyper.fit) and visualising (hyper.plot2d / hyper.plot3d). In simple terms this allows the user to produce robust 1D linear fits for 2D x vs y type data, and robust 2D plane fits to 3D x vs y vs z type data. This hyperplane fitting works generically for any N-1 hyperplane model being fit to an N dimension data-set. All fits include intrinsic scatter in the generative model orthogonal to the hyperplane.
+This package includes one main high level code for hyperplane fitting (hyper.fit). It also includes high level plotting and summary functions. In simple terms this allows the user to produce robust 1D linear fits for 2D x vs y type data, and robust 2D plane fits to 3D x vs y vs z type data. This hyperplane fitting works generically for any N-1 hyperplane model being fit to an N dimension data-set. All fits include intrinsic scatter in the generative hyperplane model.
 }
 \details{
 \tabular{ll}{
 Package: \tab hyper.fit\cr
 Type: \tab Package\cr
-Version: \tab 1.0.1\cr
-Date: \tab 2014-09-29\cr
+Version: \tab 1.0.0\cr
+Date: \tab 2014-10-15\cr
 License: \tab GPL-2\cr
 }
-Most users will interact with this package through the high level hyper.fit and hyper.plot functions. The utility functions to construct covariance matrices and arrays will also be useful, see makecovmat2d and makecovarray2d.
+Most users will interact with this package through the high level hyper.fit and hyper.plot functions. The utility functions to construct covariance matrices and arrays will also be useful (see makecovmat2d and makecovarray2d).
 }
 \author{
 Aaron Robotham and Danail Obreschkow

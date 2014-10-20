@@ -1,4 +1,4 @@
-\name{Summary}
+\name{hyper.summary}
 \alias{hyper.summary}
 \alias{summary.hyper.fit}
 %- Also NEED an '\alias' for EACH other topic documented here.

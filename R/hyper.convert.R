@@ -1,65 +1,115 @@
-coord.convert=function(coord,in.coord.type='alpha',out.coord.type='alpha'){
-  if(in.coord.type==out.coord.type){out=coord}
-  if(in.coord.type=='alpha' & out.coord.type=='theta'){
-    out=atan(coord)*180/pi
-    names(out)=sub('alpha','theta',names(coord))
-  }
-  if(in.coord.type=='theta' & out.coord.type=='alpha'){
-    out=tan(coord*pi/180)
-    names(out)=sub('theta','alpha',names(coord))
-  }
-  return=out
-}
-
-beta.convert=function(beta,coord,in.proj.type='vert.axis',out.proj.type='vert.axis',in.coord.type='alpha'){
-  alphas=coord.convert(coord,in.coord.type=in.coord.type,out.coord.type='alpha')
-  if(in.proj.type==out.proj.type){out=beta}
-  betasignmult=-prod(sign(coord))
-  if(in.proj.type=='orth' & out.proj.type=='vert.axis'){
-    out=-beta*sqrt(sum(alphas^2)+1)
-    names(out)='beta.vert'
-  }
-  if(in.proj.type=='vert.axis' & out.proj.type=='orth'){
-    out=-beta/sqrt(sum(alphas^2)+1)
-    names(out)='beta.orth'
-  }
-  return=out
-}
-
-scat.convert=function(scat,coord,in.proj.type='vert.axis',out.proj.type='vert.axis',in.coord.type='alpha'){
-  alphas=coord.convert(coord,in.coord.type=in.coord.type,out.coord.type='alpha')
-  if(in.proj.type==out.proj.type){out=scat}
-  if(in.proj.type=='orth' & out.proj.type=='vert.axis'){
-    out=scat*sqrt(sum(alphas^2)+1)
-    names(out)='scat.vert'
-  }
-  if(in.proj.type=='vert.axis' & out.proj.type=='orth'){
-    out=scat/sqrt(sum(alphas^2)+1)
-    names(out)='scat.orth'
-  }
-  return=out
-}
-
-vert.axis.convert=function(coord,beta=0,scat=0,in.vert.axis,out.vert.axis,in.proj.type='vert.axis',in.coord.type='alpha'){
-  dims=length(coord)+1
-  alphas=coord.convert(coord,in.coord.type=in.coord.type,out.coord.type='alpha')
-  scat.orth=scat.convert(scat=scat,coord=alphas,in.proj.type=in.proj.type,out.proj.type='orth',in.coord.type='alpha')
-  beta.orth=beta.convert(beta=beta,coord=alphas,in.proj.type=in.proj.type,out.proj.type='orth',in.coord.type='alpha')
-  if(in.vert.axis==1){fullcoord=c(-1,alphas[1:(dims-1)])}
-  if(in.vert.axis>1 & in.vert.axis<dims){fullcoord=c(alphas[1:(in.vert.axis-1)],-1,alphas[in.vert.axis:(dims-1)])}
-  if(in.vert.axis==dims){fullcoord=c(alphas[1:(in.vert.axis-1)],-1)}
-  fullcoord= -fullcoord/fullcoord[out.vert.axis]
-  vec.orth=fullcoord
-  coord.final= fullcoord[-out.vert.axis]
-  coord.final=coord.convert(coord.final,in.coord.type='alpha',out.coord.type=in.coord.type)
-  scat.final=scat.convert(scat=scat.orth,coord=coord.final,in.proj.type='orth',out.proj.type=in.proj.type,in.coord.type=in.coord.type)
-  beta.orth=beta.orth*sign(fullcoord[in.vert.axis]*fullcoord[out.vert.axis])
-  beta.final=beta.convert(beta=beta.orth,coord=coord.final,in.proj.type='orth',out.proj.type=in.proj.type,in.coord.type=in.coord.type)
+hyper.convert=function(parm,coord,beta=0,scat=0,in.coord.type='alpha',out.coord.type,in.proj.type='vert.axis',out.proj.type,in.vert.axis,out.vert.axis){
   
-  dimvec=(1:dims)[-out.vert.axis]
-  if(in.coord.type=='alpha'){names(coord.final)=paste('alpha',dimvec,sep='')}
-  if(in.coord.type=='theta'){names(coord.final)=paste('theta',dimvec,sep='')}
+  #Preamble
   
-  out=list(coord=coord.final,beta=beta.final,scat=scat.final,vec.orth=vec.orth)
-  return=out
+  if(!missing(parm)){
+    dims=length(parm)-1
+    if(in.coord.type=='normvec'){
+      parmoffset=dims
+      coord=parm[1:parmoffset]
+      scat=parm[parmoffset+1]
+    }else{
+      parmoffset=dims-1
+      coord=parm[1:parmoffset]
+      beta=parm[parmoffset+1]
+      scat=parm[parmoffset+2]  
+    }
+  }else{
+    if(missing(coord)){stop('Must provide either parm or coord input!')}
+    if(in.coord.type=='normvec'){dims=length(coord);parmoffset=dims}
+    if(in.coord.type=='alpha'){dims=length(coord)+1;parmoffset=dims-1}
+    if(in.coord.type=='theta'){dims=length(coord)+1;parmoffset=dims-1}
+  }
+  
+  
+  if(missing(out.coord.type)){out.coord.type=in.coord.type}
+  if(missing(out.proj.type)){out.proj.type=in.proj.type}
+  if(missing(in.vert.axis)){in.vert.axis=dims}
+  if(missing(out.vert.axis)){out.vert.axis=in.vert.axis}
+  
+  #In stuff
+  
+  if(in.coord.type=='normvec'){
+    beta.orth=sqrt(sum(coord^2))
+    normvec.orth=coord
+    unitvec.orth=normvec.orth/beta.orth
+  }
+  if(in.coord.type=='alpha'){
+    normvec.orth=rep(0,dims)
+    in.dims=(1:dims)[-in.vert.axis]
+    normvec.orth[in.dims]=coord
+    normvec.orth[in.vert.axis]=-1
+    unitvec.orth=normvec.orth/sqrt(sum(normvec.orth^2))
+  }
+  if(in.coord.type=='theta'){
+    normvec.orth=rep(0,dims)
+    in.dims=(1:dims)[-in.vert.axis]
+    normvec.orth[in.dims]=tan(coord*pi/180)
+    normvec.orth[in.vert.axis]=-1
+    unitvec.orth=normvec.orth/sqrt(sum(normvec.orth^2))
+  }
+  if(in.proj.type=='orth'){
+    if(in.coord.type!='normvec'){beta.orth=beta}
+    scat.orth=abs(scat)
+  }
+  if(in.proj.type=='vert.axis'){
+    if(in.coord.type!='normvec'){
+      beta.orth=beta*unitvec.orth[in.vert.axis]
+    }
+    scat.orth=abs(scat*unitvec.orth[in.vert.axis])
+  }
+  
+  #unitvec.orth=unitvec.orth*sign(beta.orth)
+  #normvec.orth=normvec.orth*sign(beta.orth)
+  #beta.orth=beta.orth*sign(beta.orth)
+  #print(unitvec.orth)
+  #print(beta.orth)
+  
+  #Out stuff
+  
+  if(out.coord.type=='normvec'){
+    out.dims=1:dims
+    out.coord=unitvec.orth*beta.orth
+    names(out.coord)=paste('normvec',out.dims,sep='')
+  }
+  if(out.coord.type=='alpha'){
+    out.dims=(1:dims)[-out.vert.axis]
+    out.coord=-unitvec.orth/unitvec.orth[out.vert.axis]
+    out.coord=out.coord[out.dims]
+    names(out.coord)=paste('alpha',out.dims,sep='')
+  }
+  if(out.coord.type=='theta'){
+    out.dims=(1:dims)[-out.vert.axis]
+    out.coord=-unitvec.orth/unitvec.orth[out.vert.axis]
+    out.coord=atan(out.coord[out.dims])*180/pi
+    names(out.coord)=paste('theta',out.dims,sep='')
+  }
+  if(out.proj.type=='orth'){
+    if(out.coord.type=='normvec'){
+      out.beta=abs(beta.orth)
+    }else{
+      out.beta=beta.orth*-sign(unitvec.orth[out.vert.axis])
+    }
+    out.scat=scat.orth
+    names(out.beta)='beta.orth'
+    names(out.scat)='scat.orth'
+  }
+  if(out.proj.type=='vert.axis'){
+    out.beta=beta.orth/unitvec.orth[out.vert.axis]
+    out.scat=scat.orth/abs(unitvec.orth[out.vert.axis])
+    names(out.beta)='beta.vert'
+    names(out.scat)='scat.vert'
+  }
+  
+  if(out.coord.type=='normvec'){
+    parm=c(out.coord,out.scat)
+  }else{
+    parm=c(out.coord,out.beta,out.scat)
+  }
+  
+  if(out.coord.type=='normvec' & out.proj.type=='orth'){out.vert.axis=NA}
+  
+  names(unitvec.orth)=paste('unitvec',1:dims,sep='')
+  
+  return=list(parm=parm,coord=out.coord,beta=out.beta,scat=out.scat,unitvec=unitvec.orth,beta.orth=beta.orth,scat.orth=scat.orth,coord.type=out.coord.type,proj.type=out.proj.type,vert.axis=out.vert.axis)
 }

@@ -1,6 +1,9 @@
-hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,weights,k.vec,itermax=1e4,coord.type='theta',proj.type='orth',algo.func='optim',algo.method='default',Specs=list(alpha.star=0.44),doerrorscale=FALSE){
+hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.errorscale=1,vert.axis,weights,k.vec,itermax=1e4,coord.type='theta',proj.type='orth',algo.func='optim',algo.method='default',Specs=list(alpha.star=0.44),doerrorscale=FALSE){
+  
+  #MEGA TEDIOUS CODE PREAMBLE (CATCHING ERRORS AND INITIALISING STUFF)
+  
   call=match.call(expand.dots = FALSE)
-  if(missing(X)){stop('You must provide X matrix/ data-frame !')}
+  if(missing(X)){stop('You must provide X matrix / data-frame !')}
   checkX=as.numeric(unlist(X))
   if(any(is.null(checkX) | is.na(as.numeric(checkX)) | is.nan(as.numeric(checkX)) | is.infinite(as.numeric(checkX)))){stop('All elements of X must be real numbers, with no NULL, NA, NAN or infinite values.')}
   X=as.matrix(X)
@@ -8,6 +11,10 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,weig
   dims=dim(X)[2] #Number of dimensions
   if(dims<2){stop('The X matrix / data-frame must have 2 or more columns (i.e. 2 or more dimensions for fitting)')}
   if(is.null(colnames(X))){colnames(X)=paste('x',1:dims,sep='')}
+  
+  if(coord.type=='normvec'){parmoffset=dims-1}
+  if(coord.type=='alpha'){parmoffset=dims-1}
+  if(coord.type=='theta'){parmoffset=dims-1}
   
   if(missing(vert.axis)){vert.axis=dims}
   if(vert.axis>dims){stop(paste('The vertical dimension (',vert.axis,') cannot be higher than the number of dimensions provided (',dims,')',sep=''))}
@@ -29,55 +36,61 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,weig
   if(length(weights)==1){weights=rep(weights,N)}
   if(length(weights)!=N){stop(paste('weights vector must be the same length as rows in X (',N,')',sep=''))}
   
-  if(missing(parm.coord) & missing(parm.beta) & missing(parm.scat)){
+  if(!sum(missing(parm.coord),missing(parm.beta),missing(parm.scat)) %in% c(0,3)){stop('You must provide starting values for all parameters via parm.coord / parm.beta / parm.scat or none at all.')}
+  if(!missing(parm) & any(!missing(parm.coord) & !missing(parm.beta) & !missing(parm.scat))){stop('You must not supply parm.coord / parm.beta / parm.scat if using parm')}
+  if(doerrorscale){parmextra=3}else{parmextra=2}
+  if(!missing(parm)){
+    if(length(parm)!=parmoffset+parmextra){stop(paste('If supplying parm it must be of length dimensions+',parmextra-1,' (',parmoffset+parmextra,'). Currently it is of length ',length(parm),'.',sep=''))}
+    parm.coord=parm[1:parmoffset]
+    parm.beta=parm[parmoffset+1]
+    parm.scat=parm[parmoffset+2]
+    if(doerrorscale){parm.scat=parm[parmoffset+3]}
+  }
+  
+  if(missing(parm) & missing(parm.coord) & missing(parm.beta) & missing(parm.scat)){
     
     makeformula=function(objname='X',dims,vert.axis,env=.GlobalEnv){
       usedims=(1:dims)[-vert.axis]
       text=paste(objname,'[,',vert.axis,']~',paste(paste(objname,'[,',usedims,']',sep=''),collapse ='+'),sep='')
       return=list(text=text,form=as.formula(text,env=env))
     }
-    
-    startfit=lm(makeformula('X',dims=dims,vert.axis=vert.axis,env=environment())$form)
-    start.beta.vert=startfit$coef[1]
+    if(any(checkcovarray>0)){
+      startweights=1/sqrt(covarray[vert.axis,vert.axis,])
+      startweights[is.infinite(startweights)]=max(startweights[is.finite(startweights)])
+    }else{
+      startweights=rep(1,N)
+    }
+    startfit=lm(makeformula('X',dims=dims,vert.axis=vert.axis,env=environment())$form,weights=startweights*weights)
     start.alphas=startfit$coef[2:dims]
+    start.beta.vert=startfit$coef[1]
     start.scat.vert=sd(startfit$residuals)
-    parm.beta=beta.convert(beta=start.beta.vert,coord=start.alphas,in.proj.type='vert.axis',out.proj.type=proj.type,in.coord.type='alpha')
-    parm.scat=scat.convert(scat=start.scat.vert,coord=start.alphas,in.proj.type='vert.axis',out.proj.type=proj.type,in.coord.type='alpha')
-    parm.coord=coord.convert(start.alphas,in.coord.type='alpha',out.coord.type=coord.type)
-  }
-  
-  if((!missing(parm.coord) & !missing(parm.beta) & !missing(parm.scat))==FALSE){stop('You must provide starting values for all parameters (parm.coord, parm.beta, parm.scat) or none at all.')}
-  
-  if(length(parm.coord) != dims-1){stop(paste('parm.coord is length',length(parm.coord),'but needs to be length',dims-1))}
-  if(length(parm.beta) != 1){stop(paste('parm.beta is length',length(parm.beta),'but needs to be length',1))}
-  if(length(parm.scat) != 1){stop(paste('parm.scat is length',length(parm.scat),'but needs to be length',1))}
-  if(doerrorscale){
-    parm=c(parm.coord,parm.beta,parm.scat,1)
+    start.fit=hyper.convert(coord=start.alphas,beta=start.beta.vert,scat=start.scat.vert,in.coord.type='alpha',out.coord.type=coord.type,in.proj.type='vert.axis',out.proj.type=proj.type,in.vert.axis=dims,out.vert.axis=vert.axis)
+    parm=start.fit$parm
   }else{
-    parm=c(parm.coord,parm.beta,parm.scat)
+    if(coord.type=='normvec'){
+      parm=c(parm.coord,parm.scat)
+    }else{
+      parm=c(parm.coord,parm.beta,parm.scat)
+    }
   }
+
+#  if(length(parm.coord) != parmoffset){stop(paste('parm.coord is length',length(parm.coord),'but needs to be length',dims-1))}
+#  if(length(parm.beta) != 1){stop(paste('parm.beta is length',length(parm.beta),'but needs to be length',1))}
+#  if(length(parm.scat) != 1){stop(paste('parm.scat is length',length(parm.scat),'but needs to be length',1))}
+  if(doerrorscale){parm=c(parm,parm.errorscale)}
   
-  dimvec=(1:dims)[-vert.axis]
-  if(coord.type=='alpha' & proj.type=='orth'){
-    parm.names=c(paste('alpha',dimvec,sep=''),'beta.orth','scat.orth')
-    if(doerrorscale){parm.names=c(parm.names,'errorscale')}
-    Data=list(data=list(X=X,covarray=covarray),mon.names='',parm.names=parm.names,N=N,weights=weights,doerrorscale=doerrorscale)
+  if(coord.type=='normvec'){parm.names=paste('normvec',1:dims,sep='')}
+  if(coord.type=='alpha'){dimvec=(1:dims)[-vert.axis];parm.names=paste('alpha',dimvec,sep='')}
+  if(coord.type=='theta'){dimvec=(1:dims)[-vert.axis];parm.names=paste('theta',dimvec,sep='')}
+  if(coord.type=='normvec'){
+    if(proj.type=='orth'){parm.names=c(parm.names,'scat.orth')}
+    if(proj.type=='vert.axis'){parm.names=c(parm.names,'scat.vert')}
+  }else{
+    if(proj.type=='orth'){parm.names=c(parm.names,'beta.orth','scat.orth')}
+    if(proj.type=='vert.axis'){parm.names=c(parm.names,'beta.vert','scat.vert')}
   }
-  if(coord.type=='alpha' & proj.type=='vert.axis'){
-    parm.names=c(paste('alpha',dimvec,sep=''),'beta.vert','scat.vert')
-    if(doerrorscale){parm.names=c(parm.names,'errorscale')}
-    Data=list(data=list(X=X,covarray=covarray),mon.names='',parm.names=parm.names,N=N,weights=weights,doerrorscale=doerrorscale)
-  }
-  if(coord.type=='theta' & proj.type=='orth'){
-    parm.names=c(paste('theta',dimvec,sep=''),'beta.orth','scat.orth')
-    if(doerrorscale){parm.names=c(parm.names,'errorscale')}
-    Data=list(data=list(X=X,covarray=covarray),mon.names='',parm.names=parm.names,N=N,weights=weights,doerrorscale=doerrorscale)
-  }
-  if(coord.type=='theta' & proj.type=='vert.axis'){
-    parm.names=c(paste('theta',dimvec,sep=''),'beta.vert','scat.vert')
-    if(doerrorscale){parm.names=c(parm.names,'errorscale')}
-    Data=list(data=list(X=X,covarray=covarray),mon.names='',parm.names=parm.names,N=N,weights=weights,doerrorscale=doerrorscale)
-  }
+  if(doerrorscale){parm.names=c(parm.names,'errorscale')}
+  Data=list(data=list(X=X,covarray=covarray),mon.names='',parm.names=parm.names,N=N,weights=weights,doerrorscale=doerrorscale,algo.func=algo.func)
 
   if(!missing(k.vec)){
     if(length(k.vec) != dims){stop(paste('The length of k.vec (',length(k.vec),') must be the same as the dimensions provided (',dims,')',sep=''))}
@@ -86,93 +99,137 @@ hyper.fit=function(X,covarray,vars,parm.coord,parm.beta,parm.scat,vert.axis,weig
   
   argoptions=list(vert.axis=vert.axis,weights=weights,k.vec=k.vec,itermax=itermax,coord.type=coord.type,proj.type=proj.type,algo.func=algo.func,algo.method=algo.method,Specs=Specs,doerrorscale=doerrorscale)
   
+  # END OF MEGA TEDIOUS CODE PREAMBLE (CATCHING ERRORS AND INITIALISING STUFF)
+
   linelikemodel=function(parm,Data){
-    if(vert.axis==1){coord.orth=c(-1,parm[1:(dims-1)])}
-    if(vert.axis>1 & vert.axis<dims){coord.orth=c(parm[1:(vert.axis-1)],-1,parm[vert.axis:(dims-1)])}
-    if(vert.axis==dims){coord.orth=c(parm[1:(vert.axis-1)],-1)}
-    if(coord.type=='theta'){coord.orth=tan(coord.orth*pi/180);coord.orth[vert.axis]=-1}
-    beta=parm[dims]
-    if(proj.type=='vert.axis'){beta.orth= -beta/sqrt(sum(coord.orth^2))}else{beta.orth=beta}
-    scat=parm[dims+1]
-    if(scat<0){scat=0;parm[dims+1]=0}
+    if(Data$algo.func=='LD'){fixparm=TRUE}else{fixparm=FALSE}
+    if(fixparm){
+      if(parm[parmoffset+2]<0){parm[parmoffset+2]=0}
+    }
     if(Data$doerrorscale){
-      parm[dims+2]=abs(parm[dims+2])
-      errorscale=parm[dims+2]
+      errorscale=abs(parm[parmoffset+3])
+      if(fixparm){parm[parmoffset+3]=errorscale}
     }else{errorscale=1}
-    if(proj.type=='vert.axis'){scat.orth=scat/sqrt(sum(coord.orth^2))}else{scat.orth=scat}
-    LL=hyper.like(X=Data$data$X, covarray=Data$data$covarray, coord.orth=coord.orth, beta.orth=beta.orth, scat.orth=scat.orth, weights=Data$weights, errorscale=errorscale, k.vec=Data$k.vec, output='sum')
+    convert.out=hyper.convert(parm=parm[1:(parmoffset+2)],in.coord.type=coord.type,out.coord.type='normvec',in.proj.type=proj.type,out.proj.type='orth',in.vert.axis=vert.axis,out.vert.axis=vert.axis)$parm
+    LL=hyper.like(parm=convert.out, X=Data$data$X, covarray=Data$data$covarray, weights=Data$weights, errorscale=errorscale, k.vec=Data$k.vec, output='sum')
     LP=LL
     if(algo.func=='optim'){out=LP}
     if(algo.func=='LA' | algo.func=='LD'){out=list(LP=LP,Dev=2*LL,Monitor=1,yhat=1,parm=parm)}
     return=out
   }
+  
   #Run the optimisers
   if(algo.func=='optim'){
     if(algo.method=='default'){algo.method='Nelder-Mead'}
     fit=optim(par=parm,fn=linelikemodel,Data=Data,hessian=TRUE,control=list(fnscale=-1),method=algo.method)
-    hessdims=dim(fit$hessian)[1]
-    fit$hessian[rbind((1:hessdims)[-(dims+1)],(1:hessdims)[-(dims+1)])]=fit$hessian[rbind((1:hessdims)[-(dims+1)],(1:hessdims)[-(dims+1)])]*sign(parm[dims+1])
-    fit$Covar=try(solve(fit$hessian))
-    if(class(fit$Covar) != 'try-error'){fit$Covar=fit$Covar*sign(fit$Covar[1,1])}
     parm=fit$par
     names(parm)=parm.names
-    parm[dims+1]=abs(parm[dims+1])
+    fit$Covar=suppressWarnings(try(solve(fit$hessian)))
+    if(class(fit$Covar) != 'try-error'){
+      fit$Covar=fit$Covar*sign(fit$Covar[1,1])
+    #  if(proj.type=='orth' & parm[parmoffset+1]<0){
+    #    covdims=dim(fit$Covar)[1]
+    #    fit$Covar[parmoffset+1,(1:covdims)[-(parmoffset+1)]]=-fit$Covar[parmoffset+1,(1:covdims)[-(parmoffset+1)]]
+    #    fit$Covar[(1:covdims)[-(parmoffset+1)],parmoffset+1]=-fit$Covar[(1:covdims)[-(parmoffset+1)],parmoffset+1]
+    #  }
+    }
+    #if(proj.type=='orth' & parm[parmoffset+1]<0){
+    #  parm[parmoffset+1]=abs(parm[parmoffset+1])
+    #  fit$par[parmoffset+1]=abs(fit$par[parmoffset+1])
+    #}
+    if(parm[parmoffset+2]<0){
+      parm[parmoffset+2]=abs(parm[parmoffset+2])
+      fit$par[parmoffset+2]=abs(fit$par[parmoffset+2])
+    }
   }
+
   if(algo.func=='LA'){
     if(algo.method=='default'){algo.method='NM'}
     fit=LaplaceApproximation(linelikemodel,Data=Data,Iterations=itermax,Method=algo.method,parm=parm,CovEst="Hessian")
-    if(doerrorscale){getelements=dims+2}else{getelements=dims+1}
+    if(doerrorscale){getelements=parmoffset+3}else{getelements=parmoffset+2}
     parm=fit$Summary1[1:getelements,'Mode']
+    #if(proj.type=='orth' & parm[parmoffset+1]<0){
+    #  parm[parmoffset+1]=abs(parm[parmoffset+1])
+    #  fit$Summary1[parmoffset+1,]=suppressWarnings(try(abs(fit$Summary1[parmoffset+1,])))
+    #  fit$Summary2[parmoffset+1,]=suppressWarnings(try(abs(fit$Summary2[parmoffset+1,])))
+    #  covdims=dim(fit$Covar)[1]
+    #  fit$Covar[parmoffset+1,(1:covdims)[-(parmoffset+1)]]=-fit$Covar[parmoffset+1,(1:covdims)[-(parmoffset+1)]]
+    #  fit$Covar[(1:covdims)[-(parmoffset+1)],parmoffset+1]=-fit$Covar[(1:covdims)[-(parmoffset+1)],parmoffset+1]
+    #}
+    if(parm[parmoffset+2]<0){
+      parm[parmoffset+2]=abs(parm[parmoffset+2])
+      fit$Summary1[parmoffset+2,]=suppressWarnings(try(abs(fit$Summary1[parmoffset+2,])))
+      fit$Summary2[parmoffset+2,]=suppressWarnings(try(abs(fit$Summary2[parmoffset+2,])))
+      covdims=dim(fit$Covar)[1]
+      fit$Covar[parmoffset+2,(1:covdims)[-(parmoffset+2)]]=-fit$Covar[parmoffset+2,(1:covdims)[-(parmoffset+2)]]
+      fit$Covar[(1:covdims)[-(parmoffset+2)],parmoffset+2]=-fit$Covar[(1:covdims)[-(parmoffset+2)],parmoffset+2]
+    }
   }
+
   if(algo.func=='LD'){
     if(algo.method=='default'){algo.method='CHARM'}
     fit=LaplacesDemon(linelikemodel,Data=Data,Iterations=itermax,Algorithm=algo.method,Initial.Values=parm,Specs=Specs,Status=itermax/10)
-    if(doerrorscale){getelements=dims+2}else{getelements=dims+1}
+    if(doerrorscale){getelements=parmoffset+3}else{getelements=parmoffset+2}
     parm=fit$Summary1[1:getelements,'Mean']
-    zeroscatprob=length(which(fit$Posterior1[,dims+1]<=0))/length(fit$Posterior1[,1])
+    #if(proj.type=='orth' & parm[parmoffset+1]<0){
+    #  parm[parmoffset+1]=abs(parm[parmoffset+1])
+    #  fit$Posterior1[,parmoffset+1]=suppressWarnings(try(abs(fit$Posterior1[,parmoffset+1])))
+    #  fit$Posterior2[,parmoffset+1]=suppressWarnings(try(abs(fit$Posterior2[,parmoffset+1])))
+    #  fit$Summary1[parmoffset+1,]=suppressWarnings(try(abs(fit$Summary1[parmoffset+1,])))
+    #  fit$Summary2[parmoffset+1,]=suppressWarnings(try(abs(fit$Summary2[parmoffset+1,])))
+    #}
+    if(parm[parmoffset+2]<0){
+      parm[parmoffset+2]=abs(parm[parmoffset+2])
+      fit$Posterior1[,parmoffset+2]=suppressWarnings(try(abs(fit$Posterior1[,parmoffset+2])))
+      fit$Posterior2[,parmoffset+2]=suppressWarnings(try(abs(fit$Posterior2[,parmoffset+2])))
+      fit$Summary1[parmoffset+2,]=suppressWarnings(try(abs(fit$Summary1[parmoffset+2,])))
+      fit$Summary2[parmoffset+2,]=suppressWarnings(try(abs(fit$Summary2[parmoffset+2,])))
+    }
+    zeroscatprob=length(which(fit$Posterior1[,parmoffset+2]<=0))/length(fit$Posterior1[,1])
     names(zeroscatprob)='zeroscatprob'
   }
+
   #Prepare output data
-  alphas=coord.convert(parm[1:(dims-1)],in.coord.type=coord.type,out.coord.type='alpha')
-  beta.vert=beta.convert(beta=parm[dims],coord=alphas,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
-  scat.vert=scat.convert(scat=parm[dims+1],coord=alphas,in.proj.type=proj.type,out.proj.type='vert.axis',in.coord.type='alpha')
-  remapaxis=vert.axis.convert(coord=alphas,beta=beta.vert,scat=scat.vert,in.vert.axis=vert.axis,out.vert.axis=dims,in.proj.type='vert.axis',in.coord.type='alpha')
-  alphas=remapaxis$coord
-  beta.vert=remapaxis$beta
-  scat.vert=remapaxis$scat
-  coord.orth=c(alphas,-1)
-  beta.orth=beta.convert(beta=beta.vert,coord=alphas,in.proj.type='vert.axis',out.proj.type='orth',in.coord.type='alpha')
-  scat.orth=scat.convert(scat=scat.vert,coord=alphas,in.proj.type='vert.axis',out.proj.type='orth',in.coord.type='alpha')
+  final.coord=parm[1:parmoffset]
+  final.beta=parm[parmoffset+1]
+  final.scat=parm[parmoffset+2]
+  final.fit.vert=hyper.convert(parm=parm[1:(parmoffset+2)],in.coord.type=coord.type,out.coord.type='alpha',in.proj.type=proj.type,out.proj.type='vert.axis',in.vert.axis=vert.axis,out.vert.axis=dims)
+  alphas=final.fit.vert$coord
+  beta.vert=final.fit.vert$beta
+  scat.vert=final.fit.vert$scat
+  final.fit.uvec.orth=hyper.convert(parm=parm[1:(parmoffset+2)],in.coord.type=coord.type,out.coord.type='normvec',in.proj.type=proj.type,out.proj.type='orth',in.vert.axis=vert.axis,out.vert.axis=vert.axis)
+  coord.orth=final.fit.uvec.orth$coord
+  beta.orth=final.fit.uvec.orth$beta
+  scat.orth=final.fit.uvec.orth$scat
   
   if(doerrorscale){
-    LLsum= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,weights=weights,output='sum',errorscale=parm[dims+2])
-    LLval= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,weights=weights,output='val',errorscale=parm[dims+2])
-    LLsig= -2*hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,weights=weights,output='sig',errorscale=parm[dims+2])
+    LLsum= hyper.like(parm=final.fit.uvec.orth$parm,X=X,covarray=covarray,weights=weights,output='sum',errorscale=parm[parmoffset+3])
+    LLval= hyper.like(parm=final.fit.uvec.orth$parm,X=X,covarray=covarray,weights=weights,output='val',errorscale=parm[parmoffset+3])
+    LLsig= -2*hyper.like(parm=final.fit.uvec.orth$parm,X=X,covarray=covarray,weights=weights,output='sig',errorscale=parm[parmoffset+3])
   }else{
-    LLsum= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,weights=weights,output='sum',errorscale=1)
-    LLval= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,weights=weights,output='val',errorscale=1)
-    LLsig= hyper.like(X=X,covarray=covarray,coord.orth=coord.orth,beta.orth=beta.orth,scat.orth=scat.orth,weights=weights,output='sig',errorscale=1)
+    LLsum= hyper.like(parm=final.fit.uvec.orth$parm,X=X,covarray=covarray,weights=weights,output='sum',errorscale=1)
+    LLval= hyper.like(parm=final.fit.uvec.orth$parm,X=X,covarray=covarray,weights=weights,output='val',errorscale=1)
+    LLsig= hyper.like(parm=final.fit.uvec.orth$parm,X=X,covarray=covarray,weights=weights,output='sig',errorscale=1)
   }
   
   
   if(doerrorscale){
-    parm.vert.axis=c(alphas,beta.vert,scat.vert,parm[dims+2])
+    parm.vert.axis=c(alphas,beta.vert,scat.vert,parm[parmoffset+3])
     names(parm.vert.axis)=c(paste('alpha',1:(dims-1),sep=''),'beta.vert','scat.vert','errorscale')
   }else{
     parm.vert.axis=c(alphas,beta.vert,scat.vert)
     names(parm.vert.axis)=c(paste('alpha',1:(dims-1),sep=''),'beta.vert','scat.vert')
   }
   
-    
   if(algo.func=='optim' | algo.func=='LA'){
     if(class(fit$Covar) != 'try-error'){
       parm.covar=fit$Covar
       colnames(parm.covar)=names(parm)
       rownames(parm.covar)=names(parm)
     }else{parm.covar='singular'}
-    sigcor=hyper.sigcor(N,length(parm)-1)[3]*as.numeric(parm[dims+1])
-    names(sigcor)=names(parm[dims+1])
-    out=list(parm=parm,parm.vert.axis=parm.vert.axis,parm.covar=parm.covar,fit=fit,sigcor=sigcor)
+    sigcor=hyper.sigcor(N,length(parm)-1)[3]*as.numeric(parm[parmoffset+2])
+    names(sigcor)=names(parm[parmoffset+2])
+    out=list(parm=parm,parm.vert.axis=parm.vert.axis,fit=fit,sigcor=sigcor,parm.covar=parm.covar)
   }
   if(algo.func=='LD'){
     out=list(parm=parm,parm.vert.axis=parm.vert.axis,fit=fit,zeroscatprob=zeroscatprob)

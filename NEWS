@@ -1,3 +1,5 @@
+INTERNAL:
+
 v0.1
 
 First internal release version of hyper.fit to accompany the Robotham & Obreschkow 2014 paper. Given to testers.
@@ -10,15 +12,29 @@ v0.2.1
 
 Various minor fixes, improvements and document changes.
 
-v1.0 (current CRAN version)
+v1.0 (tried to release to CRAN, not accepted due to LaplacesDemon dependency)
 
-Version posted to CRAN.
+Version posted to CRAN. Rejected!
 
-v1.0.1 (in progress, not on CRAN)
+v1.0.1
 
 Fixed the passing of hyper.plot2d and hyper.plot3d outputs to the plot output for hyper.fit class objects.
 
 Minor fixes and changes to the summary output.
+
+v1.0.2
+
+Added a direct unit vector search option to hyper.fit.
+
+v1.0.3
+
+Various fixes to version 1.0.2. Mostly to documentation.
+
+RELEASE:
+
+v1.0.0
+
+Moved back to v1.0.0 since I want this one to be included with the paper.
 
 TO DO:
 

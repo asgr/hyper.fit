@@ -1,15 +1,20 @@
-hyper.like=function(X,covarray,coord.orth,beta.orth=0,scat.orth=1,weights=1,errorscale=1,k.vec=FALSE,output='sum'){
+hyper.like=function(parm,X,covarray,weights=1,errorscale=1,k.vec=FALSE,output='sum'){
   N=dim(X)[1] #Number of data points
   dims=dim(X)[2]  #Number of dimensions
+  coord.orth=parm[1:dims]
+  scat.orth=parm[dims+1]
   eTce=projcovarray(covarray,coord.orth)  #The component of covariance along our vector coord.orth
   eTe=sum(coord.orth^2) #Sum of squares of normal vec to renormalise properly
+  #orthvariance=scat.orth^2+(eTce/eTe)*(errorscale^2)
   orthvariance=scat.orth^2+(eTce/eTe)*(errorscale^2)
   #if(length(k.vec)> 1){X=X+arrayvecmult(covarray,k.vec)}
   if(length(k.vec)> 1){
+    #scat.vec=scat.orth/coord.orth
     scat.vec=scat.orth/(coord.orth/sqrt(eTe))
     X=t(t(X)-k.vec*scat.vec^2)-arrayvecmult(covarray,k.vec)
   }
-  originoffset=(X %*% coord.orth)/sqrt(eTe)-beta.orth
+  originoffset=(X %*% coord.orth)/sqrt(eTe)-sqrt(eTe)
+  #old originoffset=(X %*% coord.orth)/sqrt(eTe)-beta.orth
   if(output=='sum' | output=='val'){
     #Here we fully compute the loglikelihood for all N elements   
     loglike=

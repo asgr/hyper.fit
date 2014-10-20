@@ -1,4 +1,4 @@
-\name{Plot}
+\name{hyper.plot}
 \alias{hyper.plot}
 \alias{hyper.plot2d}
 \alias{hyper.plot3d}
@@ -12,14 +12,13 @@ These functions produce helpful 2d and 3d diagnostic plots for post hyper.fit an
 \usage{
 \method{plot}{hyper.fit}(x, ...)
 
-hyper.plot2d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat, vert.axis,
-weights, coord.type = 'alpha', proj.type = 'orth', errorscale = 1, doellipse = TRUE,
-sigscale=c(0,4),trans=1,dobar=FALSE,position='topright',...)
+hyper.plot2d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat,
+parm.errorscale = 1, vert.axis, weights, k.vec, coord.type = 'alpha', proj.type = 'orth',
+doellipse = TRUE, sigscale=c(0,4), trans=1, dobar=FALSE, position='topright', ...)
 
-hyper.plot3d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat, vert.axis,
-weights, coord.type = 'alpha', proj.type = 'orth', errorscale = 1, doellipse = TRUE,
-sigscale=c(0,4),trans=1,...)
-%X,covarray,fitobj,parm.coord,parm.beta,parm.scat,coord.type='alpha',proj.type='orth',errorscale=1,clip=0.05,trans=0.5,...
+hyper.plot3d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat,
+parm.errorscale = 1, vert.axis, weights, k.vec, coord.type = 'alpha', proj.type = 'orth',
+doellipse = TRUE, sigscale=c(0,4),trans=1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,16 +35,19 @@ A dxdxN array containing the full covariance (d=dimensions, N=number of dxd matr
 A variance matrix with the N (numver of data points) rows by Dim (number of dimensions) columns. In effect this is the diagonal elements of the 'covarray' array where all other terms are zero. If 'covarray' is also provided that is used instead.
 }
   \item{fitobj}{
-For simplicity the user can provide the direct output of hyper.fit to this argument. If this is not provided then parm.coord / parm.beta / parm.scat must all be specified.
+For simplicity the user can provide the direct output of hyper.fit to this argument, which sets the hyperplane parameter values to those found during the fitting process. If this is not provided then parm.coord / parm.beta / parm.scat must all be specified.
 }
   \item{parm.coord}{
-Coord parameter/s to use. These are either angles that produce the vectors that form the N-dimensional slope or they are the vector elements directly.
+Vector of initial coord paramters. These are either angles that produce the vectors that predict the vert.axis dimension (coord.type='theta'), the gradients of these (coord.type='alpha') or they are the unit vector normal to the hyperplane (coord.type='unitvec').
 }
   \item{parm.beta}{
-Beta paramter to use. This is either specified as the distance from the origin to the hyperplane or as the intersection of the hyperplane on the fixed vertical axis of interest.
+Initial value of beta. This is either specified as the absolute distance from the origin to the hyperplane or as the intersection of the hyperplane on the vert.axis dimension being predicted.
 }
   \item{parm.scat}{
-Intrinsic scatter parameter to use. This is either specified as the scatter orthogonal to the hyperplane or as the scatter along the vertical axis of interest.
+Initial value of the intrinsic scatter. This is either specified as the scatter orthogonal to the hyperplane or as the scatter along the vert.axis dimension being predicted.
+}
+  \item{parm.errorscale}{
+Value to multiplicatively rescale the errors by (i.e. the covarince array becomes scaled by errorscale^2). This might be useful when trying to decide if the provided errors are too large. Default is 1, and therefore it does not need to be specified explicitly.
 }
   \item{vert.axis}{
 Which axis should the plane equation be formulated for. This must be a number which specifies the column of position matrix 'X' to be defined by the hyperplane. If missing, then the projection dimension is assumed to be the last column of the 'X' matrix.
@@ -53,14 +55,14 @@ Which axis should the plane equation be formulated for. This must be a number wh
   \item{weights}{
 Vector of multiplicative weights for each row of the X data matrix. i.e. if this is 2 then it is equivalent to having two itentical data points with weights equal to 1. Should be either of length 1 (in which case elements are repeated as required) or the same length as the number of rows in the data matrix X.
 }
+  \item{k.vec}{
+A vector defining the direction of an exponential sampling distribution in the data. The length is the scaling 'a' of the generative exponent (i.e., exp(a*x)), and it points in the direction of *increasing* density (see example below). If provided, k.vec must be the same length as the dimensions of the data. k.vec has the most noticeable effect on the beta offset parameter. It is correcting for the phenomenom Astronomers often call Eddington bias.
+}
   \item{coord.type}{
 This specifies whether the parm.coord parameter is defined in terms of the unit vector of the line (alpha) or for the values of the angles that form the unit vector (theta).
 }
   \item{proj.type}{
 This specifies whether the parm.beta and the parm.scat are defined as orthogonal to the plane (orth) or along the vert.axis of interest (vert.axis).
-}
-  \item{errorscale}{
-Value to multiplicatively rescale the errors by (i.e. the covarince array become scaled by errorscale^2). This might be useful when trying to decide if the provided errors are too large.
 }
   \item{doellipse}{
 Should 2d/3d error ellipses be drawn on the plot? This should only be TRUE if data errors are actually provided, else it should be FALSE.  
@@ -94,6 +96,30 @@ Aaron Robotham and Danail Obreschkow
   \code{\link{hyper.basic}}, \code{\link{hyper.convert}}, \code{\link{hyper.data}}, \code{\link{hyper.fit}}, \code{\link{hyper.plot}}, \code{\link{hyper.sigcor}}, \code{\link{hyper.summary}}
 }
 \examples{
+################### A very simple 2D example ###################
+
+#Make the simple data:
+
+simpledata=cbind(x=1:10,y=c(12.2, 14.2, 15.9, 18.0, 20.1, 22.1, 23.9, 26.0, 27.9, 30.1))
+simpfit=hyper.fit(simpledata)
+summary(simpfit)
+plot(simpfit)
+
+#Increase the scatter:
+
+simpledata2=cbind(x=1:10,y=c(11.6, 13.7, 15.5, 18.2, 21.2, 21.5, 23.6, 25.6, 27.9, 30.1))
+simpfit2=hyper.fit(simpledata2)
+summary(simpfit2)
+plot(simpfit2)
+
+#Assuming the error in each y data point is the same sy=0.5, we no longer need any
+#component of intrinsic scatter to explain the data:
+
+simpledata2err=cbind(sx=0, sy=rep(0.5, length(simpledata2[, 1])))
+simpfit2werr=hyper.fit(simpledata2, vars=simpledata2err)
+summary(simpfit2werr)
+plot(simpfit2werr)
+
 ################### A 2D example with fitting a line ###################
 
 #Setup the initial data:
@@ -247,7 +273,7 @@ plot(fitintrin, trans=0.1, pch='.', asp=1)
 
 trumpet=read.table(system.file('data/trumpet.tab', package='hyper.fit'), header=TRUE)
 fittrumpet=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$sx,
-trumpet$sy,trumpet$corxy), coord.type='theta')
+trumpet$sy,trumpet$corxy), coord.type='theta', algo.func='LA')
 hyper.plot2d(cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$sx,
 trumpet$sy, trumpet$corxy), fitobj=fittrumpet, trans=0.1, pch='.', asp=1)
 #Or even easier:
@@ -266,12 +292,12 @@ plot(fitFP6dFGSw, doellipse=FALSE, alpha=0.5)
 
 ################### Example using GAMA mass-size relation data ###################
 
-GAMAsmVsize=read.table(system.file('data/GAMAsmVsize.tab', package='hyper.fit'), header=TRUE)
+data(GAMAsmVsize)
 fitGAMAsmVsize=hyper.fit(GAMAsmVsize[,c('logmstar', 'rekpc')],
 vars=GAMAsmVsize[,c('elogmstar', 'erekpc')]^2, weights=GAMAsmVsize[,'weights'],
 coord.type='alpha', proj.type='vert.axis')
 #We turn the ellipse plotting off to speed things up:
-plot(fitGAMAsmVsize,trans=0.1,unlog='x')
+plot(fitGAMAsmVsize, doellipse=FALSE, unlog='x')
 
 #This is obviously a poor fit since the y data has a non-linear dependence on x. Let's try
 #logging the y-axis and converting the errors appropriately:
@@ -283,14 +309,14 @@ fitGAMAsmVsizelogre=hyper.fit(GAMAsmVsize[,c('logmstar', 'logrekpc')],
 vars=GAMAsmVsize[,c('elogmstar', 'elogrekpc')]^2, weights=GAMAsmVsize[,'weights'],
 coord.type='alpha', proj.type='vert.axis')
 #We turn the ellipse plotting off to speed things up:
-plot(fitGAMAsmVsizelogre,trans=0.1,unlog='xy')
+plot(fitGAMAsmVsizelogre, doellipse=FALSE, unlog='xy')
 
 #We can compare to a fit with no errors used:
 
 fitGAMAsmVsizelogrenoerr=hyper.fit(GAMAsmVsize[,c('logmstar', 'logrekpc')],
 weights=GAMAsmVsize[,'weights'], coord.type='alpha', proj.type='vert.axis')
 #We turn the ellipse plotting off to speed things up:
-plot(fitGAMAsmVsizelogrenoerr,trans=0.1,unlog='xy')
+plot(fitGAMAsmVsizelogrenoerr, doellipse=FALSE, unlog='xy')
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

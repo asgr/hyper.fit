@@ -128,14 +128,14 @@ summary.hyper.fit=function(object,...){
   if(class(object)!='hyper.fit'){stop('Object must be of type hyper.fit')}
   cat(paste('Call used was:\n\n'))
   print(object$call)
-  cat(paste('\nData supplied was ',object$dims,'d\n\n',sep=''))
+  cat(paste('\nData supplied was ',object$dims,'d.\n\n',sep=''))
   cat(paste('Requested parameters:\n\n'))
   print(object$parm)
   if(class(object$fit)=='optim' | class(object$fit)=='laplace'){
-    if(object$parm.covar[1] != 'singular'){
+    if(object$parm.covar[1] != 'singular' & object$parm.covar[1] !='unstable'){
       printerrors=sqrt(diag(object$parm.covar))
     }else{
-      printerrors=rep('singular',length(object$parm))
+      printerrors=rep(object$parm.covar[1],length(object$parm))
     }
   }
   if(class(object$fit)=='demonoid'){
@@ -145,9 +145,21 @@ summary.hyper.fit=function(object,...){
       printerrors=object$fit$Summary1[1:(object$dims+1),'SD']
     }
   }
+  
   names(printerrors)=paste('err_',names(object$parm),sep='')
   cat(paste('\nErrors for parameters:\n\n'))
   print(printerrors)
+  
+  if(class(object$fit)=='optim' | class(object$fit)=='laplace'){
+  cat(paste('\nThe full paramter covariance matrix:\n\n'))
+  print(object$parm.covar)
+  }
+  
+  printLL=object$LL$sum
+  names(printLL)='LL'
+  cat(paste('\nThe sum of the log-likelihood for the best fit parameters:\n\n'))
+  print(printLL)
+  
   if(class(object$fit)=='optim' | class(object$fit)=='laplace'){
     cat(paste('\nUnbiased population estimator for the intrinsic scatter:\n\n'))
     print(object$sigcor)
@@ -165,5 +177,5 @@ summary.hyper.fit=function(object,...){
   scat=object$parm.vert.axis[object$dims+1]
   if(sign(beta)==1){signbeta=' + '}else{signbeta=' - '}
   cat(paste('\nStandardised generative hyperplane equation vertically projected along dimension ',object$dims,' (',colnames(object$X)[object$dims],'):\n\n',sep=''))
-  cat(paste(parmname[object$dims],' ~ N(mu= ',paste(paste(paste(format(alphas,digits=4),parmname[1:(object$dims-1)],sep='*'),collapse=' + ',sep=''),sep=''),signbeta,format(abs(beta),digits=4),' , sigma= ',format(scat,digits=4),')',sep=''))
+  cat(paste(parmname[object$dims],' ~ N(mu= ',paste(paste(paste(format(alphas,digits=4),parmname[1:(object$dims-1)],sep='*'),collapse=' + ',sep=''),sep=''),signbeta,format(abs(beta),digits=4),' , sigma= ',format(scat,digits=4),')\n',sep=''))
 }
