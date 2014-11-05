@@ -13,7 +13,7 @@ hyper.like(parm, X, covarray, weights = 1, errorscale = 1, k.vec = FALSE, output
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{parm}{
-A vector specifying the current paramters to compute the likelihood for. This should be a concatentation of 'normvec' coordinates and 'scat.orth' intrinsic scatter. e.g. for 3d data this would look like c(normvec1,normvec2,normvec3,scat.orth).
+A vector specifying the current paramters to compute the likelihood for. This should be a concatentation of 'normvec' coordinates and 'scat.orth' intrinsic scatter. e.g. for 3d data this would look like c(normvec1, normvec2, normvec3, scat.orth).
 }
   \item{X}{
 A position matrix with the N (number of data points) rows by d (number of dimensions) columns.

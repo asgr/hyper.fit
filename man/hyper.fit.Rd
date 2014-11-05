@@ -9,7 +9,7 @@ Top level line fitting function that uses downhill searches (optim/LaplaceApprox
 }
 \usage{
 hyper.fit(X, covarray, vars, parm, parm.coord, parm.beta, parm.scat, parm.errorscale=1,
-vert.axis, weights, k.vec, itermax = 1e4, coord.type = 'theta', proj.type = 'orth',
+vert.axis, weights, k.vec, itermax = 1e4, coord.type = 'alpha', scat.type = 'vert.axis',
 algo.func = 'optim', algo.method = 'default', Specs = list(alpha.star = 0.44),
 doerrorscale = FALSE)
 }
@@ -25,10 +25,10 @@ A dxdxN array containing the full covariance (d=dimensions, N=number of dxd matr
 A variance matrix with the N (numver of data points) rows by d (number of dimensions) columns. In effect this is the diagonal elements of covarray where all other terms are zero. If covarray is also provided that input argument is used instead.
 }
   \item{parm}{
-Vector of all initial parameters. This should be a concatenation of c(parm.coord,parm.beta,parm.scat). If doerrorscale=TRUE then there should be an extrat element to give c(parm.coord, parm.beta, parm.scat, parm.errorscale). See the parm.coord, parm.beta, parm.scat and parm.errorscale arguments below for more information on what these different quantities describe.
+Vector of all initial parameters. This should be a concatenation of c(parm.coord, parm.beta, parm.scat). If doerrorscale=TRUE then there should be an extrat element to give c(parm.coord, parm.beta, parm.scat, parm.errorscale). See the parm.coord, parm.beta, parm.scat and parm.errorscale arguments below for more information on what these different quantities describe.
 }
   \item{parm.coord}{
-Vector of initial coord parameters. These are either angles that produce the vectors that predict the vert.axis dimension (coord.type="theta"), the gradients of these (coord.type="alpha") or they are the vector elements normal to the hyperplane (coord.type="normvec").
+Vector of initial coord parameters. These are either angles that produce the vectors that predict the vert.axis dimension (coord.type="theta"), the gradients of these (coord.type="alpha") or they are the vector elements normal to the hyperplane (coord.type="normvec"). Depending on the argument used, either beta along the vertical axis is generated (coord.type="alpha"/theta") or no beta is required (coord.type="normvec").
 }
   \item{parm.beta}{
 Initial value of beta. This is either specified as the absolute distance from the origin to the hyperplane or as the intersection of the hyperplane on the vert.axis dimension being predicted.
@@ -54,8 +54,8 @@ The maximum iterations to use for either the LaplaceApproximation function or La
   \item{coord.type}{
 This specifies whether the fit should be done in terms of the normal vector to the hyperplane (coord.type="normvec") gradients defined to produce values along the vert.axis dimension (coord.type="alpha") or by the values of the angles that form the gradients (coord.type="theta"). "theta" is the default since it will tend to produce a more numerically stable fit since changes in one angle will not impact the others as much as a change in the unit vector components.
 }
-  \item{proj.type}{
-This specifies whether the fit offset beta and the intrinsic scatter should be defined orthogonal to the plane (orth) or along the vert.axis of interest (vert.axis).
+  \item{scat.type}{
+This specifies whether the intrinsic scatter should be defined orthogonal to the plane (orth) or along the vert.axis of interest (vert.axis).
 }
   \item{algo.func}{
 If algo.func="optim" (default) hyper.fit will optimise using the R base optim function. If algo.func="LA" will optimise using the LaplaceApproximation function. If algo.func="LD" will optimise using the LaplacesDemon function. For both algo.func="LA" and algo.func="LD" the LaplacesDemon package will be used (see http://www.bayesian-inference.com/software).
@@ -80,13 +80,10 @@ algo.func="LD" also returns the probability that the generative model has exactl
 The function returns a multi-component list containing:
 
 \item{parm}{
-  Vector of the main paramter fit outputs specified as set by the coord.type and proj.type options.
+  Vector of the main paramter fit outputs specified as set by the coord.type and scat.type options.
 }
 \item{parm.vert.axis}{
-  Vector of the main parameter fit outputs specified strictly along the last column dimension of X (for both the intrinsic scatter and the beta offset). The order of the columns in X therefore affects the contents of this vector. This output assume a coord.type="alpha" and proj.type="vert.axis".
-}
-\item{parm.covar}{
-  The covariance matrix for parm. Only for algo.func="optim" and algo.func="LA".
+  Vector of the main parameter fit outputs specified strictly along the last column dimension of X (for both the intrinsic scatter and the beta offset). The order of the columns in X therefore affects the contents of this vector. This output assume a coord.type="alpha" and scat.type="vert.axis".
 }
 \item{fit}{
   The direct output of the specified algo.func. So either the natural return from optim (class type "optim"), LaplaceApproximation (class type "laplace") or LaplacesDemon (class type "demonoid").
@@ -94,8 +91,14 @@ The function returns a multi-component list containing:
 \item{sigcor}{
   If algo.func="optim" or algo.func="LA" then this list element contains the unbiased population estimator for the intrinsic scatter. It uses the full correction from the hyper.sigcor function (i.e. element 3 of the correction vector generated). See \code{\link{hyper.sigcor}} for details on the different outputs.
 }
+\item{parm.covar}{
+  The covariance matrix for parm. Only for algo.func="optim" and algo.func="LA".
+}
 \item{zeroscatprob}{
   The fraction of samples for the intrinsic scatter which are at *exactly* zero, which provides a guideline probability for the intrinsic scatter being truly zero, rather than the expectation which will always be a finite amount above zero. Only for algo.func="LD".
+}
+\item{hyper.plane}{
+  Object class of type hyper.plane.param, as output by hyper.covert. This standardises the final fit in the users requested coord.type and scat.type, and allows easy conversion to other systems by using the class dependent convert function on it.
 }
 \item{N}{
   The number of rows of matrix X.
@@ -132,7 +135,7 @@ Aaron Robotham and Danail Obreschkow
   \code{\link{hyper.basic}}, \code{\link{hyper.convert}}, \code{\link{hyper.data}}, \code{\link{hyper.fit}}, \code{\link{hyper.plot}}, \code{\link{hyper.sigcor}}, \code{\link{hyper.summary}}
 }
 \examples{
-################### A very simple 2D example ###################
+#### A very simple 2D example ####
 
 #Make the simple data:
 
@@ -158,21 +161,21 @@ plot(simpfit2werr)
 
 #We can fit for 6 different combinations of coordinate system:
 
-print(hyper.fit(simpledata, coord.type='theta', proj.type='orth')$parm)
-print(hyper.fit(simpledata, coord.type='alpha', proj.type='orth')$parm)
-print(hyper.fit(simpledata, coord.type='normvec', proj.type='orth')$parm)
-print(hyper.fit(simpledata, coord.type='theta', proj.type='vert.axis')$parm)
-print(hyper.fit(simpledata, coord.type='alpha', proj.type='vert.axis')$parm)
-print(hyper.fit(simpledata, coord.type='normvec', proj.type='vert.axis')$parm)
+print(hyper.fit(simpledata, coord.type='theta', scat.type='orth')$parm)
+print(hyper.fit(simpledata, coord.type='alpha', scat.type='orth')$parm)
+print(hyper.fit(simpledata, coord.type='normvec', scat.type='orth')$parm)
+print(hyper.fit(simpledata, coord.type='theta', scat.type='vert.axis')$parm)
+print(hyper.fit(simpledata, coord.type='alpha', scat.type='vert.axis')$parm)
+print(hyper.fit(simpledata, coord.type='normvec', scat.type='vert.axis')$parm)
 
 #These all describe the same hyperplane (or line in this case). We can convert between
 #systems by using the hyper.convert utility function:
 
-fit4normvert=hyper.fit(simpledata, coord.type='normvec', proj.type='vert.axis')$parm
+fit4normvert=hyper.fit(simpledata, coord.type='normvec', scat.type='vert.axis')$parm
 hyper.convert(fit4normvert, in.coord.type='normvec', out.coord.type='theta',
-in.proj.type='vert.axis', out.proj.type='orth')$parm
+in.scat.type='vert.axis', out.scat.type='orth')$parm
 
-################### A 2D example with fitting a line ###################
+#### A 2D example with fitting a line ####
 
 #Setup the initial data:
 
@@ -224,7 +227,7 @@ plot(fitline, parm.errorscale=fitlineerrscale$parm['errorscale'], trans=0.2, asp
 #Within errors the errorscale parameter is 1, i.e. the errors are realistic, which we know
 #they should be a priori since we made them ourselves.
 
-################### A 2D example with exponential sampling & fitting a line ###################
+#### A 2D example with exponential sampling & fitting a line ####
 
 #Setup the initial data:
 
@@ -234,8 +237,8 @@ set.seed(650)
 #0.5 times the factor 'a' in exp(a*x), i.e.:
 
 normfac=dnorm(0,sd=1.1)/(dnorm(10*1.1^2,sd=1.1)*exp(10*10*1.1^2))
-magplot(seq(5,15,by=0.01), normfac*dnorm(seq(5,15, by=0.01), sd=1.1)*exp(10*seq(5,15, by=0.01)),
-type='l')
+magplot(seq(5,15,by=0.01), normfac*dnorm(seq(5,15, by=0.01), sd=1.1)*exp(10*seq(5,15,
+by=0.01)), type='l')
 abline(v=10*1.1^2,lty=2)
 
 #The above will not be correctly normalised to form a true PDF, but the shift in the mean
@@ -277,7 +280,7 @@ mock=data.frame(x=randatax, y=randatay, sx=sx, sy=sy, corxy=corxy)
 X=cbind(mock$x, mock$y)
 covarray=makecovarray2d(mock$sx, mock$sy, mock$corxy)
 fitlineexp=hyper.fit(X=X, covarray=covarray, coord.type='theta', k.vec=c(0,sampexp),
-proj.type='vert.axis')
+scat.type='vert.axis')
 summary(fitlineexp)
 plot(fitlineexp, k.vec=c(0,sampexp))
 
@@ -289,14 +292,14 @@ plot(fitlineexp, trans=0.2, asp=1)
 #Compare this to not including the known exponential slope:
 
 fitlinenoexp=hyper.fit(X=X, covarray=covarray, coord.type='theta', k.vec=c(0,0),
-proj.type='vert.axis')
+scat.type='vert.axis')
 summary(fitlinenoexp)
 plot(fitlinenoexp, trans=0.2, asp=1)
 
 #The theta and intrinsic scatter are similar, but the offset is shifted significantly
 #away from zero.
 
-################### A 3D example with fitting a plane ###################
+#### A 3D example with fitting a plane ####
 
 #Setup the initial data:
 
@@ -354,11 +357,11 @@ sz=zerrang, corxy=corxyang, corxz=corxzang, coryz=coryzang)
 X=cbind(mockplane$x, mockplane$y, mockplane$z)
 covarray=makecovarray3d(mockplane$sx, mockplane$sy, mockplane$sz, mockplane$corxy,
 mockplane$corxz, mockplane$coryz)
-fitplane=hyper.fit(X=X, covarray=covarray, coord.type='theta', proj='orth')
+fitplane=hyper.fit(X=X, covarray=covarray, coord.type='theta', scat.type='orth')
 summary(fitplane)
 plot(fitplane)
 
-################### Example using the data from Hogg 2010 ###################
+#### Example using the data from Hogg 2010 ####
 
 #Example using the data from Hogg 2010: http://arxiv.org/pdf/1008.4686v1.pdf
 
@@ -369,7 +372,7 @@ data(hogg)
 #Fit:
 
 fithogg=hyper.fit(X=cbind(hogg$x, hogg$y), covarray=makecovarray2d(hogg$sx, hogg$sy,
-hogg$corxy), coord.type='theta', proj.type='orth')
+hogg$corxy), coord.type='theta', scat.type='orth')
 summary(fithogg)
 plot(fithogg, trans=0.2)
 
@@ -377,7 +380,7 @@ plot(fithogg, trans=0.2)
 
 hoggtrim=hogg[-3,]
 fithoggtrim=hyper.fit(X=cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$sx,
-hoggtrim$sy, hoggtrim$corxy), coord.type='theta', proj.type='orth', algo.func='LA')
+hoggtrim$sy, hoggtrim$corxy), coord.type='theta', scat.type='orth', algo.func='LA')
 summary(fithoggtrim)
 plot(fithoggtrim, trans=0.2)
 
@@ -391,7 +394,7 @@ print(fithoggtrim$fit$Summary1)
 
 fithoggtrimMCMC=hyper.fit(X=cbind(hoggtrim$x, hoggtrim$y), covarray=
 makecovarray2d(hoggtrim$sx, hoggtrim$sy, hoggtrim$corxy), coord.type='theta',
-proj.type='orth', algo.func='LD')
+scat.type='orth', algo.func='LD')
 summary(fithoggtrimMCMC)
 
 #We can get additional info from looking at the Summary1 output of the LaplacesDemon:
@@ -404,21 +407,21 @@ abline(v=quantile(fithoggtrimMCMC$fit$Posterior2[,3], c(0.95,0.99)), lty=2)
 
 }
 
-################### Example using 'real' data with intrinsic scatter ###################
+#### Example using 'real' data with intrinsic scatter ####
 
 data(intrin)
 
 fitintrin=hyper.fit(X=cbind(intrin$x, intrin$y), vars=cbind(intrin$sx,
-intrin$sy)^2, coord.type='theta', proj.type='orth', algo.func='LA')
+intrin$sy)^2, coord.type='theta', scat.type='orth', algo.func='LA')
 summary(fitintrin)
 plot(fitintrin, trans=0.1, pch='.', asp=1)
 
 fitintrincor=hyper.fit(X=cbind(intrin$x, intrin$y), covarray=makecovarray2d(intrin$sx,
-intrin$sy, intrin$corxy), coord.type='theta', proj.type='orth', algo.func='LA')
+intrin$sy, intrin$corxy), coord.type='theta', scat.type='orth', algo.func='LA')
 summary(fitintrincor)
 plot(fitintrincor, trans=0.1, pch='.', asp=1)
 
-################### Example using flaring trumpet data ###################
+#### Example using flaring trumpet data ####
 
 data(trumpet)
 fittrumpet=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$sx,
@@ -447,8 +450,9 @@ print(fittrumpetMCMC$zeroscatprob)
 #given the expected errors:
 
 set.seed(650)
-fittrumpetMCMCerrscale=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$sx,
-trumpet$sy, trumpet$corxy), coord.type='normvec', algo.func='LD', itermax=1e5, doerrorscale=TRUE)
+fittrumpetMCMCerrscale=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(
+trumpet$sx, trumpet$sy, trumpet$corxy), coord.type='normvec', algo.func='LD', itermax=1e5,
+doerrorscale=TRUE)
 
 #Assuming the user has specified the same initial seed we should find that the data
 #has exactly zero intrinsic scatter with ~69\% likelihood:
@@ -457,14 +461,14 @@ print(fittrumpetMCMCerrscale$zeroscatprob)
 
 }
 
-################### Example using 6dFGS Fundamental Plane data ###################
+#### Example using 6dFGS Fundamental Plane data ####
 
 data(FP6dFGS)
 
 #First we try the fit without using any weights:
 
 fitFP6dFGS=hyper.fit(FP6dFGS[,c('logIe_J', 'logsigma', 'logRe_J')], 
-vars=FP6dFGS[,c('elogIe_J', 'elogsigma', 'elogRe_J')]^2, coord.type='alpha', proj.type='vert.axis')
+vars=FP6dFGS[,c('elogIe_J', 'elogsigma', 'elogRe_J')]^2, coord.type='alpha', scat.type='vert.axis')
 summary(fitFP6dFGS)
 plot(fitFP6dFGS, doellipse=FALSE, alpha=0.5)
 
@@ -472,35 +476,32 @@ plot(fitFP6dFGS, doellipse=FALSE, alpha=0.5)
 
 fitFP6dFGSw=hyper.fit(FP6dFGS[,c('logIe_J', 'logsigma', 'logRe_J')],
 vars=FP6dFGS[,c('elogIe_J', 'elogsigma', 'elogRe_J')]^2, weights=FP6dFGS[,'weights'],
-coord.type='alpha', proj.type='vert.axis')
+coord.type='alpha', scat.type='vert.axis')
 summary(fitFP6dFGSw)
 plot(fitFP6dFGSw, doellipse=FALSE, alpha=0.5)
 
 #It is interesting to note the scatter orthogonal to the plane for the fundmental plane:
 
 print(hyper.convert(coord=fitFP6dFGSw$parm[1:2], beta=fitFP6dFGSw$parm[3],
-scat=fitFP6dFGSw$parm[4], in.proj.type='vert.axis', out.proj.type='orth',
+scat=fitFP6dFGSw$parm[4], in.scat.type='vert.axis', out.scat.type='orth',
 in.coord.type='alpha'))
 
-################### Example using GAMA mass-size relation data ###################
+#### Example using GAMA mass-size relation data ####
 
 data(GAMAsmVsize)
 fitGAMAsmVsize=hyper.fit(GAMAsmVsize[,c('logmstar', 'rekpc')],
 vars=GAMAsmVsize[,c('elogmstar', 'erekpc')]^2, weights=GAMAsmVsize[,'weights'],
-coord.type='alpha', proj.type='vert.axis')
+coord.type='alpha', scat.type='vert.axis')
 summary(fitGAMAsmVsize)
 #We turn the ellipse plotting off to speed things up:
 plot(fitGAMAsmVsize, doellipse=FALSE, unlog='x')
 
 #This is obviously a poor fit since the y data has a non-linear dependence on x. Let's try
-#logging the y-axis and converting the errors appropriately:
-
-GAMAsmVsize[,'logrekpc']=log10(GAMAsmVsize[,'rekpc'])
-GAMAsmVsize[,'elogrekpc']=log10(1+GAMAsmVsize[,'erekpc']/GAMAsmVsize[,'rekpc'])
+#using the logged y-axis and converted errors:
 
 fitGAMAsmVsizelogre=hyper.fit(GAMAsmVsize[,c('logmstar', 'logrekpc')],
 vars=GAMAsmVsize[,c('elogmstar', 'elogrekpc')]^2, weights=GAMAsmVsize[,'weights'],
-coord.type='alpha', proj.type='vert.axis')
+coord.type='alpha', scat.type='vert.axis')
 summary(fitGAMAsmVsizelogre)
 #We turn the ellipse plotting off to speed things up:
 plot(fitGAMAsmVsizelogre, doellipse=FALSE, unlog='xy')
@@ -508,7 +509,7 @@ plot(fitGAMAsmVsizelogre, doellipse=FALSE, unlog='xy')
 #We can compare to a fit with no errors used:
 
 fitGAMAsmVsizelogrenoerr=hyper.fit(GAMAsmVsize[,c('logmstar', 'logrekpc')],
-weights=GAMAsmVsize[,'weights'], coord.type='alpha', proj.type='vert.axis')
+weights=GAMAsmVsize[,'weights'], coord.type='alpha', scat.type='vert.axis')
 summary(fitGAMAsmVsizelogrenoerr)
 #We turn the ellipse plotting off to speed things up:
 plot(fitGAMAsmVsizelogrenoerr, doellipse=FALSE, unlog='xy')

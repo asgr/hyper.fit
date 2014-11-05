@@ -1,5 +1,5 @@
 exportPattern("^[[:alpha:]]+")
-
+S3method(convert, hyper.plane.param)
 import("LaplacesDemon")
 import("magicaxis")
 import("MASS")

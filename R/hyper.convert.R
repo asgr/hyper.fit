@@ -1,4 +1,4 @@
-hyper.convert=function(parm,coord,beta=0,scat=0,in.coord.type='alpha',out.coord.type,in.proj.type='vert.axis',out.proj.type,in.vert.axis,out.vert.axis){
+hyper.convert=function(parm,coord,beta=0,scat=0,in.coord.type='alpha',out.coord.type,in.scat.type='vert.axis',out.scat.type,in.vert.axis,out.vert.axis){
   
   #Preamble
   
@@ -23,7 +23,7 @@ hyper.convert=function(parm,coord,beta=0,scat=0,in.coord.type='alpha',out.coord.
   
   
   if(missing(out.coord.type)){out.coord.type=in.coord.type}
-  if(missing(out.proj.type)){out.proj.type=in.proj.type}
+  if(missing(out.scat.type)){out.scat.type=in.scat.type}
   if(missing(in.vert.axis)){in.vert.axis=dims}
   if(missing(out.vert.axis)){out.vert.axis=in.vert.axis}
   
@@ -40,6 +40,9 @@ hyper.convert=function(parm,coord,beta=0,scat=0,in.coord.type='alpha',out.coord.
     normvec.orth[in.dims]=coord
     normvec.orth[in.vert.axis]=-1
     unitvec.orth=normvec.orth/sqrt(sum(normvec.orth^2))
+    beta.orth=beta*unitvec.orth[in.vert.axis]
+    unitvec.orth=unitvec.orth*sign(beta.orth)
+    beta.orth=abs(beta.orth)
   }
   if(in.coord.type=='theta'){
     normvec.orth=rep(0,dims)
@@ -47,15 +50,14 @@ hyper.convert=function(parm,coord,beta=0,scat=0,in.coord.type='alpha',out.coord.
     normvec.orth[in.dims]=tan(coord*pi/180)
     normvec.orth[in.vert.axis]=-1
     unitvec.orth=normvec.orth/sqrt(sum(normvec.orth^2))
+    beta.orth=beta*unitvec.orth[in.vert.axis]
+    unitvec.orth=unitvec.orth*sign(beta.orth)
+    beta.orth=abs(beta.orth)
   }
-  if(in.proj.type=='orth'){
-    if(in.coord.type!='normvec'){beta.orth=beta}
+  if(in.scat.type=='orth'){
     scat.orth=abs(scat)
   }
-  if(in.proj.type=='vert.axis'){
-    if(in.coord.type!='normvec'){
-      beta.orth=beta*unitvec.orth[in.vert.axis]
-    }
+  if(in.scat.type=='vert.axis'){
     scat.orth=abs(scat*unitvec.orth[in.vert.axis])
   }
   
@@ -84,20 +86,19 @@ hyper.convert=function(parm,coord,beta=0,scat=0,in.coord.type='alpha',out.coord.
     out.coord=atan(out.coord[out.dims])*180/pi
     names(out.coord)=paste('theta',out.dims,sep='')
   }
-  if(out.proj.type=='orth'){
-    if(out.coord.type=='normvec'){
-      out.beta=abs(beta.orth)
-    }else{
-      out.beta=beta.orth*-sign(unitvec.orth[out.vert.axis])
-    }
-    out.scat=scat.orth
+  if(out.coord.type=='normvec'){
+    out.beta=abs(beta.orth)
     names(out.beta)='beta.orth'
+  }else{
+    out.beta=beta.orth/unitvec.orth[out.vert.axis]
+    names(out.beta)='beta.vert'
+  }
+  if(out.scat.type=='orth'){
+    out.scat=scat.orth
     names(out.scat)='scat.orth'
   }
-  if(out.proj.type=='vert.axis'){
-    out.beta=beta.orth/unitvec.orth[out.vert.axis]
+  if(out.scat.type=='vert.axis'){
     out.scat=scat.orth/abs(unitvec.orth[out.vert.axis])
-    names(out.beta)='beta.vert'
     names(out.scat)='scat.vert'
   }
   
@@ -107,9 +108,22 @@ hyper.convert=function(parm,coord,beta=0,scat=0,in.coord.type='alpha',out.coord.
     parm=c(out.coord,out.beta,out.scat)
   }
   
-  if(out.coord.type=='normvec' & out.proj.type=='orth'){out.vert.axis=NA}
+  if(out.coord.type=='normvec' & out.scat.type=='orth'){out.vert.axis=NA}
   
   names(unitvec.orth)=paste('unitvec',1:dims,sep='')
   
-  return=list(parm=parm,coord=out.coord,beta=out.beta,scat=out.scat,unitvec=unitvec.orth,beta.orth=beta.orth,scat.orth=scat.orth,coord.type=out.coord.type,proj.type=out.proj.type,vert.axis=out.vert.axis)
+  out=list(parm=parm,coord=out.coord,beta=out.beta,scat=out.scat,unitvec=unitvec.orth,beta.orth=beta.orth,scat.orth=scat.orth,coord.type=out.coord.type,scat.type=out.scat.type,vert.axis=out.vert.axis,dims=dims)
+  class(out)='hyper.plane.param'
+  return=out
+}
+
+convert=function(x,...){UseMethod("convert",x)}
+
+convert.hyper.plane.param=function(x,coord.type='alpha',scat.type='vert.axis',vert.axis){
+  parm=x$parm
+  in.coord.type=x$coord.type
+  in.scat.type=x$scat.type
+  in.vert.axis=x$vert.axis
+  if(missing(vert.axis)){vert.axis=x$dims}
+  return=hyper.convert(parm=parm,in.coord.type=in.coord.type,out.coord.type=coord.type,in.scat.type=in.scat.type,out.scat.type=scat.type,in.vert.axis=in.vert.axis,out.vert.axis=vert.axis)
 }

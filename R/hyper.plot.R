@@ -7,14 +7,14 @@ plot.hyper.fit=function(x,...){
   scat=x$parm.vert.axis[3]
   weights=x$weights
   coord.type='alpha'
-  proj.type='vert.axis'
+  scat.type='vert.axis'
   if(x$dims>3){stop('Default plots only exist for 2d/3d data!')}
   if(x$dims==2){out=hyper.plot2d(X=X, covarray=covarray, fitobj=x, weights=weights, ...)}
   if(x$dims==3){out=hyper.plot3d(X=X, covarray=covarray, fitobj=x, weights=weights, ...)}
   return=out
 }
 
-hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm.errorscale=1,vert.axis,weights,k.vec,coord.type='alpha',proj.type='orth',doellipse=TRUE,sigscale=c(0,4),trans=1,dobar=FALSE,position='topright',...){
+hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm.errorscale=1,vert.axis,weights,k.vec,coord.type='alpha',scat.type='orth',doellipse=TRUE,sigscale=c(0,4),trans=1,dobar=FALSE,position='topright',...){
   if(missing(X)){stop('You must provide X matrix/ data-frame !')}
   checkX=as.numeric(unlist(X))
   if(any(is.null(checkX) | is.na(as.numeric(checkX)) | is.nan(as.numeric(checkX)) | is.infinite(as.numeric(checkX)))){stop('All elements of X must be real numbers, with no NULL, NA, NAN or infinite values.')}
@@ -32,7 +32,7 @@ hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm
     beta=fitobj$parm.vert.axis[2]
     scat=fitobj$parm.vert.axis[3]
     coord.type='alpha'
-    proj.type='vert.axis'
+    scat.type='vert.axis'
   }else{
     coord=parm.coord
     beta=parm.beta
@@ -59,11 +59,11 @@ hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm
     if(length(k.vec) != dims){stop(paste('The length of k.vec (',length(k.vec),') must be the same as the dimensions provided (',dims,')',sep=''))}
   }else{k.vec=FALSE}
   
-  final.fit.vert=hyper.convert(coord=coord,beta=beta,scat=scat,in.coord.type=coord.type,out.coord.type='alpha',in.proj.type=proj.type,out.proj.type='vert.axis',in.vert.axis=vert.axis,out.vert.axis=dims)
+  final.fit.vert=hyper.convert(coord=coord,beta=beta,scat=scat,in.coord.type=coord.type,out.coord.type='alpha',in.scat.type=scat.type,out.scat.type='vert.axis',in.vert.axis=vert.axis,out.vert.axis=dims)
   alphas=final.fit.vert$coord
   beta.vert=final.fit.vert$beta
   scat.vert=final.fit.vert$scat
-  final.fit.normvec.orth=hyper.convert(coord=coord,beta=beta,scat=scat,in.coord.type=coord.type,out.coord.type='normvec',in.proj.type=proj.type,out.proj.type='orth',in.vert.axis=vert.axis,out.vert.axis=vert.axis)
+  final.fit.normvec.orth=hyper.convert(coord=coord,beta=beta,scat=scat,in.coord.type=coord.type,out.coord.type='normvec',in.scat.type=scat.type,out.scat.type='orth',in.vert.axis=vert.axis,out.vert.axis=vert.axis)
   coord.orth=final.fit.normvec.orth$coord
   beta.orth=final.fit.normvec.orth$beta
   scat.orth=final.fit.normvec.orth$scat
@@ -86,7 +86,7 @@ hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm
   return=sigmas
 }
 
-hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm.errorscale=1,vert.axis,weights,k.vec,coord.type='alpha',proj.type='orth',doellipse=TRUE,sigscale=c(0,4),trans=1,...){
+hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm.errorscale=1,vert.axis,weights,k.vec,coord.type='alpha',scat.type='orth',doellipse=TRUE,sigscale=c(0,4),trans=1,...){
   if(missing(X)){stop('You must provide X matrix/ data-frame !')}
   checkX=as.numeric(unlist(X))
   if(any(is.null(checkX) | is.na(as.numeric(checkX)) | is.nan(as.numeric(checkX)) | is.infinite(as.numeric(checkX)))){stop('All elements of X must be real numbers, with no NULL, NA, NAN or infinite values.')}
@@ -104,7 +104,7 @@ hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm
     beta=fitobj$parm.vert.axis[3]
     scat=fitobj$parm.vert.axis[4]
     coord.type='alpha'
-    proj.type='vert.axis'
+    scat.type='vert.axis'
   }else{
     coord=parm.coord
     beta=parm.beta
@@ -131,11 +131,11 @@ hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm
     if(length(k.vec) != dims){stop(paste('The length of k.vec (',length(k.vec),') must be the same as the dimensions provided (',dims,')',sep=''))}
   }else{k.vec=FALSE}
   
-  final.fit.vert=hyper.convert(coord=coord,beta=beta,scat=scat,in.coord.type=coord.type,out.coord.type='alpha',in.proj.type=proj.type,out.proj.type='vert.axis',in.vert.axis=vert.axis,out.vert.axis=dims)
+  final.fit.vert=hyper.convert(coord=coord,beta=beta,scat=scat,in.coord.type=coord.type,out.coord.type='alpha',in.scat.type=scat.type,out.scat.type='vert.axis',in.vert.axis=vert.axis,out.vert.axis=dims)
   alphas=final.fit.vert$coord
   beta.vert=final.fit.vert$beta
   scat.vert=final.fit.vert$scat
-  final.fit.normvec.orth=hyper.convert(coord=coord,beta=beta,scat=scat,in.coord.type=coord.type,out.coord.type='normvec',in.proj.type=proj.type,out.proj.type='orth',in.vert.axis=vert.axis,out.vert.axis=vert.axis)
+  final.fit.normvec.orth=hyper.convert(coord=coord,beta=beta,scat=scat,in.coord.type=coord.type,out.coord.type='normvec',in.scat.type=scat.type,out.scat.type='orth',in.vert.axis=vert.axis,out.vert.axis=vert.axis)
   coord.orth=final.fit.normvec.orth$coord
   beta.orth=final.fit.normvec.orth$beta
   scat.orth=final.fit.normvec.orth$scat

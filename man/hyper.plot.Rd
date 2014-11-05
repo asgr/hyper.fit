@@ -13,17 +13,17 @@ These functions produce helpful 2d and 3d diagnostic plots for post hyper.fit an
 \method{plot}{hyper.fit}(x, ...)
 
 hyper.plot2d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat,
-parm.errorscale = 1, vert.axis, weights, k.vec, coord.type = 'alpha', proj.type = 'orth',
+parm.errorscale = 1, vert.axis, weights, k.vec, coord.type = 'alpha', scat.type = 'orth',
 doellipse = TRUE, sigscale=c(0,4), trans=1, dobar=FALSE, position='topright', ...)
 
 hyper.plot3d(X, covarray, vars, fitobj, parm.coord, parm.beta, parm.scat,
-parm.errorscale = 1, vert.axis, weights, k.vec, coord.type = 'alpha', proj.type = 'orth',
+parm.errorscale = 1, vert.axis, weights, k.vec, coord.type = 'alpha', scat.type = 'orth',
 doellipse = TRUE, sigscale=c(0,4),trans=1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-An object of class hyper.fit. This is the only structure that needs to be provided when executing plot(fitobj) class dependent plotting, which will use the plot.hyper.fit function.  
+Argument for the class dependent plot.hyper.fit function. An object of class hyper.fit. This is the only structure that needs to be provided when executing plot(fitobj) class dependent plotting, which will use the plot.hyper.fit function.  
 }
   \item{X}{
 A position matrix with the N (number of data points) rows by d (number of dimensions) columns.
@@ -61,7 +61,7 @@ A vector defining the direction of an exponential sampling distribution in the d
   \item{coord.type}{
 This specifies whether the parm.coord parameter is defined in terms of the unit vector of the line (alpha) or for the values of the angles that form the unit vector (theta).
 }
-  \item{proj.type}{
+  \item{scat.type}{
 This specifies whether the parm.beta and the parm.scat are defined as orthogonal to the plane (orth) or along the vert.axis of interest (vert.axis).
 }
   \item{doellipse}{
@@ -80,7 +80,7 @@ Logical specifying whether a magbar colour scale is added to the 2D plot. Only a
 If dobar=TRUE, then position specifies where the magbar colour scale is placed within the plot. Specify one of 'bottom', 'bottomleft', 'left', 'topleft', 'top', 'topright', 'right', 'bottomright' and 'centre'.
 }
   \item{\dots}{
-Arguments to pass to magplot (hyper.plot2d) or plot3d (hyper.plot3d). When executing the hyper.fit class function plot.hyper.fit then ellipses are first passed to hyper.plot2d / hyper.plot3d and then onto magplot / plot3d for any unmatched arguments.
+Arguments to pass to magplot (hyper.plot2d) or plot3d (hyper.plot3d). When executing the hyper.fit class function plot.hyper.fit dots/ellipses are first passed to hyper.plot2d / hyper.plot3d and then onto magplot / plot3d for any unmatched arguments.
 }
 }
 \value{
@@ -96,7 +96,7 @@ Aaron Robotham and Danail Obreschkow
   \code{\link{hyper.basic}}, \code{\link{hyper.convert}}, \code{\link{hyper.data}}, \code{\link{hyper.fit}}, \code{\link{hyper.plot}}, \code{\link{hyper.sigcor}}, \code{\link{hyper.summary}}
 }
 \examples{
-################### A very simple 2D example ###################
+#### A very simple 2D example ####
 
 #Make the simple data:
 
@@ -120,7 +120,7 @@ simpfit2werr=hyper.fit(simpledata2, vars=simpledata2err)
 summary(simpfit2werr)
 plot(simpfit2werr)
 
-################### A 2D example with fitting a line ###################
+#### A 2D example with fitting a line ####
 
 #Setup the initial data:
 
@@ -164,7 +164,7 @@ hyper.plot2d(X=X, covarray=covarray, fitobj=fitline, trans=0.2, asp=1)
 #Or even easier:
 plot(fitline, trans=0.2, asp=1)
 
-################### A 3D example with fitting a plane ###################
+#### A 3D example with fitting a plane ####
 
 \dontrun{
 
@@ -223,21 +223,21 @@ sz=zerrang, corxy=corxyang, corxz=corxzang, coryz=coryzang)
 X=cbind(mockplane$x, mockplane$y, mockplane$z)
 covarray=makecovarray3d(mockplane$sx, mockplane$sy, mockplane$sz, mockplane$corxy,
 mockplane$corxz, mockplane$coryz)
-fitplane=hyper.fit(X=X, covarray=covarray, coord.type='theta', proj='orth')
+fitplane=hyper.fit(X=X, covarray=covarray, coord.type='theta', scat.type='orth')
 hyper.plot3d(X=X, covarray=covarray, fitobj=fitplane)
 #Or even easier:
 plot(fitplane)
 }
 
-################### Example using the data from Hogg 2010 ###################
+#### Example using the data from Hogg 2010 ####
 
 #Example using the data from Hogg 2010: http://arxiv.org/pdf/1008.4686v1.pdf
 
 #Full data
 
-hogg=read.table(system.file('data/hogg.tab', package='hyper.fit'), header=TRUE)
+data(hogg)
 fithogg=hyper.fit(X=cbind(hogg$x, hogg$y), covarray=makecovarray2d(hogg$sx, hogg$sy,
-hogg$corxy), coord.type='theta', proj.type='orth')
+hogg$corxy), coord.type='theta', scat.type='orth')
 hyper.plot2d(X=cbind(hogg$x, hogg$y), covarray=makecovarray2d(hogg$sx, hogg$sy,
 hogg$corxy), fitobj=fithogg, trans=0.2, xlim=c(0, 300), ylim=c(0, 700))
 #Or even easier:
@@ -246,10 +246,10 @@ plot(fithogg, trans=0.2)
 #We now do exercise 17 of Hogg 2010 using trimmed data, where we remove the high tension
 #data point 3 (which we can see as the reddest point in the above plot:
 
-hogg=read.table(system.file('data/hogg.tab', package='hyper.fit'), header=TRUE)
+data(hogg)
 hoggtrim=hogg[-3,]
 fithoggtrim=hyper.fit(X=cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$sx,
-hoggtrim$sy, hoggtrim$corxy), coord.type='theta', proj.type='orth', algo.func='LA')
+hoggtrim$sy, hoggtrim$corxy), coord.type='theta', scat.type='orth', algo.func='LA')
 hyper.plot2d(X=cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$sx,
 hoggtrim$sy, hoggtrim$corxy), fitobj=fithoggtrim, trans=0.2, xlim=c(0, 300), ylim=c(0, 700))
 #Or even easier:
@@ -259,19 +259,19 @@ plot(fithoggtrim, trans=0.2)
 hyper.plot2d(cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$sx,
 hoggtrim$sy, hoggtrim$corxy), fitobj=fithogg, trans=0.2, xlim=c(0, 300), ylim=c(0, 700))
 
-################### Example using 'real' data with intrinsic scatter ###################
+#### Example using 'real' data with intrinsic scatter ####
 
-intrin=read.table(system.file('data/intrin.tab', package='hyper.fit'), header=TRUE)
+data(intrin)
 fitintrin=hyper.fit(X=cbind(intrin$x, intrin$y), vars=cbind(intrin$sx,
-intrin$sy)^2, coord.type='theta', proj.type='orth', algo.func='LA')
+intrin$sy)^2, coord.type='theta', scat.type='orth', algo.func='LA')
 hyper.plot2d(cbind(intrin$x, intrin$y), covarray=makecovarray2d(intrin$sx,
 intrin$sy, intrin$corxy), fitobj=fitintrin, trans=0.1, pch='.', asp=1)
 #Or even easier:
 plot(fitintrin, trans=0.1, pch='.', asp=1)
 
-################### Example using flaring trumpet data ###################
+#### Example using flaring trumpet data ####
 
-trumpet=read.table(system.file('data/trumpet.tab', package='hyper.fit'), header=TRUE)
+data(trumpet)
 fittrumpet=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$sx,
 trumpet$sy,trumpet$corxy), coord.type='theta', algo.func='LA')
 hyper.plot2d(cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$sx,
@@ -281,40 +281,37 @@ plot(fittrumpet, trans=0.1, pch='.', asp=1)
 #If you look at the ?hyper.fit example we find that zero intrinsic scatter is actually
 #preferred, but we don't see this in the above plot.
 
-################### Example using 6dFGS Fundamental Plane data ###################
+#### Example using 6dFGS Fundamental Plane data ####
 
-FP6dFGS=read.table(system.file('data/FP6dFGS.tab', package='hyper.fit'), header=TRUE)
+data(FP6dFGS)
 fitFP6dFGSw=hyper.fit(FP6dFGS[,c('logIe_J', 'logsigma', 'logRe_J')],
 vars=FP6dFGS[,c('elogIe_J', 'elogsigma', 'elogRe_J')]^2, weights=FP6dFGS[,'weights'],
-coord.type='alpha', proj.type='vert.axis')
+coord.type='alpha', scat.type='vert.axis')
 #We turn the ellipse plotting off to speed things up:
 plot(fitFP6dFGSw, doellipse=FALSE, alpha=0.5)
 
-################### Example using GAMA mass-size relation data ###################
+#### Example using GAMA mass-size relation data ####
 
 data(GAMAsmVsize)
 fitGAMAsmVsize=hyper.fit(GAMAsmVsize[,c('logmstar', 'rekpc')],
 vars=GAMAsmVsize[,c('elogmstar', 'erekpc')]^2, weights=GAMAsmVsize[,'weights'],
-coord.type='alpha', proj.type='vert.axis')
+coord.type='alpha', scat.type='vert.axis')
 #We turn the ellipse plotting off to speed things up:
 plot(fitGAMAsmVsize, doellipse=FALSE, unlog='x')
 
 #This is obviously a poor fit since the y data has a non-linear dependence on x. Let's try
-#logging the y-axis and converting the errors appropriately:
-
-GAMAsmVsize[,'logrekpc']=log10(GAMAsmVsize[,'rekpc'])
-GAMAsmVsize[,'elogrekpc']=log10(1+GAMAsmVsize[,'erekpc']/GAMAsmVsize[,'rekpc'])
+#using the logged y-axis and converted errors:
 
 fitGAMAsmVsizelogre=hyper.fit(GAMAsmVsize[,c('logmstar', 'logrekpc')],
 vars=GAMAsmVsize[,c('elogmstar', 'elogrekpc')]^2, weights=GAMAsmVsize[,'weights'],
-coord.type='alpha', proj.type='vert.axis')
+coord.type='alpha', scat.type='vert.axis')
 #We turn the ellipse plotting off to speed things up:
 plot(fitGAMAsmVsizelogre, doellipse=FALSE, unlog='xy')
 
 #We can compare to a fit with no errors used:
 
 fitGAMAsmVsizelogrenoerr=hyper.fit(GAMAsmVsize[,c('logmstar', 'logrekpc')],
-weights=GAMAsmVsize[,'weights'], coord.type='alpha', proj.type='vert.axis')
+weights=GAMAsmVsize[,'weights'], coord.type='alpha', scat.type='vert.axis')
 #We turn the ellipse plotting off to speed things up:
 plot(fitGAMAsmVsizelogrenoerr, doellipse=FALSE, unlog='xy')
 }
