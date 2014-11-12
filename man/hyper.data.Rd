@@ -5,6 +5,9 @@
 \alias{trumpet}
 \alias{FP6dFGS}
 \alias{GAMAsmVsize}
+\alias{convtest2dOpt}
+\alias{convtest2dLD}
+\alias{convtest1dNorm}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
@@ -20,6 +23,12 @@ trumpet:  Toy ASCII table that has trumpet-like covariance errors and no intrins
 FP6dFGS: 6dFGS fundamental plane data taken from table 8 of Campbell et al 2014. We use columns 6/7, 12/13, 18/19 for the FP parameters and their errors, and column 26 = 111111 to create a clean selection. Provided By Christina Magoulas.
 
 GAMAsmVsize: Galaxy mass vs size data taken from Lange et al 2014. Provided by Rebecca Lange.
+
+convtest2dOpt: Intrinsic scatter convergence test data for 2 DoF and optim fitted simulations, shown as an example in \code{\link{hyper.sigcor}}.
+
+convtest2dLD: Intrinsic scatter convergence test data for 2 DoF and LaplacesDemon fitted simulations, shown as an example in \code{\link{hyper.sigcor}}.
+
+convtest1dNorm: Intrinsic scatter convergence test data for 1 DoF and direct sample SD estimation, shown as an example in \code{\link{hyper.sigcor}}.
 }
 \usage{
 data(hogg)
@@ -27,6 +36,9 @@ data(intrin)
 data(trumpet)
 data(FP6dFGS)
 data(GAMAsmVsize)
+data(convtest2dOpt)
+data(convtest2dLD)
+data(convtest1dNorm)
 }
 \references{
 Robotham, A.S.G., & Obreschkow, D., 2014

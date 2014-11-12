@@ -1,5 +1,4 @@
-hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.errorscale=1,vert.axis,weights,k.vec,itermax=1e4,coord.type='alpha',scat.type='vert.axis',algo.func='optim',algo.method='default',Specs=list(alpha.star=0.44),doerrorscale=FALSE){
-  
+hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.errorscale=1,vert.axis,weights,k.vec,itermax=1e4,coord.type='alpha',scat.type='vert.axis',algo.func='optim',algo.method='default',Specs=list(Grid=seq(-0.1,0.1, len=5),dparm=NULL, CPUs=1, Packages=NULL, Dyn.libs=NULL),doerrorscale=FALSE){
   #MEGA TEDIOUS CODE PREAMBLE (CATCHING ERRORS AND INITIALISING STUFF)
   
   call=match.call(expand.dots = FALSE)
@@ -137,7 +136,7 @@ hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.erro
   }
 
   if(algo.func=='LD'){
-    if(algo.method=='default'){algo.method='CHARM'}
+    if(algo.method=='default'){algo.method='GG'}
     fit=LaplacesDemon(linelikemodel,Data=Data,Iterations=itermax,Algorithm=algo.method,Initial.Values=parm,Specs=Specs,Status=itermax/10)
     if(doerrorscale){getelements=parmoffset+3}else{getelements=parmoffset+2}
     parm=fit$Summary1[1:getelements,'Mean']
@@ -195,7 +194,9 @@ hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.erro
     out=list(parm=parm,parm.vert.axis=parm.vert.axis,fit=fit,sigcor=sigcor,parm.covar=parm.covar)
   }
   if(algo.func=='LD'){
-    out=list(parm=parm,parm.vert.axis=parm.vert.axis,fit=fit,zeroscatprob=zeroscatprob)
+    sigcor=hyper.sigcor(N,length(parm)-1)[1]*as.numeric(parm[parmoffset+2])
+    names(sigcor)=names(parm[parmoffset+2])
+    out=list(parm=parm,parm.vert.axis=parm.vert.axis,fit=fit,sigcor=sigcor,zeroscatprob=zeroscatprob)
   }
   if(doerrorscale){
     out$parm['errorscale']=abs(out$parm['errorscale'])

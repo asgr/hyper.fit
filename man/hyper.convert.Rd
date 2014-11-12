@@ -7,13 +7,18 @@
 Parameterisation conversion functions.
 }
 \description{
-This function allows the user to generically convert their current plane definition system to an alternative. The obvious use case might be when the user has an equation defined as a projection formula along a preferred axis (e.g. z=ax+by+c) and they want to find the orthogonal offset of the hyperplane to the origin, and the intrinsic scatter orthogonal to the hyperplane.
+The hyper.convert function allows the user to generically convert their current plane definition system to an alternative. The obvious use case might be when the user has an equation defined as a projection formula along a preferred axis (e.g. z=ax+by+c) and they want to find the orthogonal offset of the hyperplane to the origin, and the intrinsic scatter orthogonal to the hyperplane.
+
+To ease use, and minimise mistakes, hyper.convert creates an object of type hyper.plane.param which can then be converted using the class specific convert function. This has the advantage of knowing how the current projection is defined, and minmises the user inputs to simply the new projection desired.
 }
 \usage{
-\method{convert}{hyper.plane.param}(x,coord.type='alpha',scat.type='vert.axis',vert.axis)
-
 hyper.convert(parm, coord, beta = 0, scat = 0, in.coord.type = "alpha", out.coord.type,
 in.scat.type = "vert.axis", out.scat.type, in.vert.axis, out.vert.axis)
+
+#To ease usability the package also included a hyper.plane.param class specific convert
+#function:
+
+\method{convert}{hyper.plane.param}(x,coord.type='alpha',scat.type='vert.axis',vert.axis)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -123,10 +128,21 @@ out.vert.axis=2))
 
 #To simplify conversions and reduce mistakes you can use the class dependent method:
 temp=hyper.convert(coord=excoord.alpha, beta=exbeta.vert.axis, scat=exscat.vert.axis)
-print(convert(temp,coord.type='normvec')$parm)
-print(convert(temp,coord.type='theta')$parm)
-print(convert(temp,coord.type='theta',vert.axis=2)$parm)
-print(convert(temp,coord.type='theta',scat.type='orth')$parm)
+print(convert(temp, coord.type='normvec')$parm)
+print(convert(temp, coord.type='theta')$parm)
+print(convert(temp, coord.type='theta', vert.axis=2)$parm)
+print(convert(temp, coord.type='theta', scat.type='orth')$parm)
+#We can check the conversions by
+print(temp$parm)
+print(convert(convert(convert(convert(temp, 'normvec'), 'theta', 'vert.axis',1), 'alpha',
+'orth', 2))$parm)
+
+#The conversions back and forth won't return *exactly* the same values:
+print(all(convert(convert(convert(convert(temp, 'normvec'), 'theta', 'vert.axis', 1),'alpha',
+'orth', 2))$parm==temp$parm))
+#But they will be very close for the most part:
+print(all(round(convert(convert(convert(convert(temp, 'normvec'), 'theta', 'vert.axis', 1),
+'alpha', 'orth', 2))$parm)==temp$parm))
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

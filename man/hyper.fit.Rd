@@ -10,8 +10,8 @@ Top level line fitting function that uses downhill searches (optim/LaplaceApprox
 \usage{
 hyper.fit(X, covarray, vars, parm, parm.coord, parm.beta, parm.scat, parm.errorscale=1,
 vert.axis, weights, k.vec, itermax = 1e4, coord.type = 'alpha', scat.type = 'vert.axis',
-algo.func = 'optim', algo.method = 'default', Specs = list(alpha.star = 0.44),
-doerrorscale = FALSE)
+algo.func = 'optim', algo.method = 'default', Specs = list(Grid=seq(-0.1,0.1, len=5),
+dparm=NULL, CPUs=1, Packages=NULL, Dyn.libs=NULL), doerrorscale = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -73,7 +73,7 @@ If FALSE then the provided covariance are treated as it. If TRUE then the likeli
 \details{
 Setting doerrorscale to TRUE allows for stable solutions when errors are overestimated, e.g. when the intrinsic scatter is equal to zero but the data is more clustered around the optimal likelihood plane than expected from the data covariance array. See Examples below for a 2D scenario where this is helpful.
 
-algo.func="LD" also returns the probability that the generative model has exactly zero intrinsic scatter (zeroscatprob in the output). The other available functions (algo.func="optim" and algo.func="LA") can find exact solutions equal to zero since they are strictly mode finding (i.e. maximum likelihood) routines. algo.func="LD" is MCMC based, so naturally returns a mean/expectation which *must* have a finite positive value for the intrinsic scatter (it's not allowed to travel below zero).
+algo.func="LD" also returns the probability that the generative model has exactly zero intrinsic scatter (zeroscatprob in the output). The other available functions (algo.func="optim" and algo.func="LA") can find exact solutions equal to zero since they are strictly mode finding (i.e. maximum likelihood) routines. algo.func="LD" is MCMC based, so naturally returns a mean/expectation which *must* have a finite positive value for the intrinsic scatter (it's not allowed to travel below zero). The zeroscatprob output works better with a Metropolis type scheme, e.g. algo.method='CHARM', Specs=list(alpha.star = 0.44) works well for many cases.
 }
 \value{
 
@@ -89,13 +89,13 @@ The function returns a multi-component list containing:
   The direct output of the specified algo.func. So either the natural return from optim (class type "optim"), LaplaceApproximation (class type "laplace") or LaplacesDemon (class type "demonoid").
 }
 \item{sigcor}{
-  If algo.func="optim" or algo.func="LA" then this list element contains the unbiased population estimator for the intrinsic scatter. It uses the full correction from the hyper.sigcor function (i.e. element 3 of the correction vector generated). See \code{\link{hyper.sigcor}} for details on the different outputs.
+  If algo.func="optim" or algo.func="LA" then this list element contains the unbiased population estimator for the intrinsic scatter corrected via the sampbias2popunbias output of \code{\link{hyper.sigcor}}, i.e. it uses the full correction from hyper.sigcor (element 3 of the correction vector generated). If algo.func="LD" then this list element contains the unbiased population estimator for the intrinsic scatter corrected via the bias2unbias output of \code{\link{hyper.sigcor}}, i.e. it uses the standard deviation bias correction from hyper.sigcor (element 1 of the correction vector generated). See \code{\link{hyper.sigcor}} for details on the different outputs and the convergence tests the demonstrate why these different correction methods are desirable.
 }
 \item{parm.covar}{
   The covariance matrix for parm. Only for algo.func="optim" and algo.func="LA".
 }
 \item{zeroscatprob}{
-  The fraction of samples for the intrinsic scatter which are at *exactly* zero, which provides a guideline probability for the intrinsic scatter being truly zero, rather than the expectation which will always be a finite amount above zero. Only for algo.func="LD".
+  The fraction of samples for the intrinsic scatter which are at *exactly* zero, which provides a guideline probability for the intrinsic scatter being truly zero, rather than the expectation which will always be a finite amount above zero. Only for algo.func="LD". See Details above.
 }
 \item{hyper.plane}{
   Object class of type hyper.plane.param, as output by hyper.covert. This standardises the final fit in the users requested coord.type and scat.type, and allows easy conversion to other systems by using the class dependent convert function on it.
@@ -442,7 +442,7 @@ fittrumpetMCMC=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(
 trumpet$sy, trumpet$corxy), coord.type='normvec', algo.func='LD', itermax=1e5)
 
 #Assuming the user has specified the same initial seed we should find that the data
-#has exactly zero intrinsic scatter with ~52\% likelihood:
+#has exactly zero intrinsic scatter with ~47\% likelihood:
 
 print(fittrumpetMCMC$zeroscatprob)
 
@@ -451,8 +451,8 @@ print(fittrumpetMCMC$zeroscatprob)
 
 set.seed(650)
 fittrumpetMCMCerrscale=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(
-trumpet$sx, trumpet$sy, trumpet$corxy), coord.type='normvec', algo.func='LD', itermax=1e5,
-doerrorscale=TRUE)
+trumpet$sx, trumpet$sy, trumpet$corxy), itermax=1e5, coord.type='normvec', algo.func='LD',
+algo.method='CHARM', Specs=list(alpha.star = 0.44), doerrorscale=TRUE)
 
 #Assuming the user has specified the same initial seed we should find that the data
 #has exactly zero intrinsic scatter with ~69\% likelihood:
