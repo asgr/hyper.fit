@@ -160,10 +160,10 @@ summary.hyper.fit=function(object,...){
   cat(paste('\nThe sum of the log-likelihood for the best fit parameters:\n\n'))
   print(printLL)
   
-  if(class(object$fit)=='optim' | class(object$fit)=='laplace'){
-    cat(paste('\nUnbiased population estimator for the intrinsic scatter:\n\n'))
-    print(object$sigcor)
-  }
+
+  cat(paste('\nUnbiased population estimator for the intrinsic scatter:\n\n'))
+  print(object$sigcor)
+
   if(class(object$fit)=='demonoid'){
     cat(paste('\nProbability of exactly zero intrinsic scatter:\n\n'))
     print(object$zeroscatprob)
