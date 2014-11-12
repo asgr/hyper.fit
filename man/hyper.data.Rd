@@ -24,6 +24,8 @@ FP6dFGS: 6dFGS fundamental plane data taken from table 8 of Campbell et al 2014.
 
 GAMAsmVsize: Galaxy mass vs size data taken from Lange et al 2014. Provided by Rebecca Lange.
 
+TFR: Tully-Fisher Relation data taken from Obreschkow and Meyer 2013. Provided by Danail Obreschkow.
+
 convtest2dOpt: Intrinsic scatter convergence test data for 2 DoF and optim fitted simulations, shown as an example in \code{\link{hyper.sigcor}}.
 
 convtest2dLD: Intrinsic scatter convergence test data for 2 DoF and LaplacesDemon fitted simulations, shown as an example in \code{\link{hyper.sigcor}}.
@@ -36,6 +38,7 @@ data(intrin)
 data(trumpet)
 data(FP6dFGS)
 data(GAMAsmVsize)
+data(TFR)
 data(convtest2dOpt)
 data(convtest2dLD)
 data(convtest1dNorm)
@@ -49,7 +52,9 @@ Cluver, M., et al., 2014, ApJ, 782, 90 (http://arxiv.org/pdf/1401.0837v1.pdf)
 
 Hogg, D., Bovy, J., Lang, D., 2010 (http://arxiv.org/pdf/1008.4686v1.pdf)
 
-Lange, R., et al., MNRAS, submitted
+Lange, R., et al., MNRAS, accepted
+
+Obreschkow & Meyer, 2013, ApJ, 777, 140
 }
 \author{
 Aaron Robotham and Danail Obreschkow

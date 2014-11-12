@@ -513,6 +513,11 @@ weights=GAMAsmVsize[,'weights'], coord.type='alpha', scat.type='vert.axis')
 summary(fitGAMAsmVsizelogrenoerr)
 #We turn the ellipse plotting off to speed things up:
 plot(fitGAMAsmVsizelogrenoerr, doellipse=FALSE, unlog='xy')
+
+### Example using Tully-Fisher relation data ###
+
+TFRfit=hyper.fit(X=TFR[,c('logv','M_K')],vars=TFR[,c('logv_err','M_Kerr')]^2)
+plot(TFRfit, xlim=c(1.7,2.5), ylim=c(-19,-26))
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

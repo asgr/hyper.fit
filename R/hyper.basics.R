@@ -176,6 +176,6 @@ summary.hyper.fit=function(object,...){
   beta=object$parm.vert.axis[object$dims]
   scat=object$parm.vert.axis[object$dims+1]
   if(sign(beta)==1){signbeta=' + '}else{signbeta=' - '}
-  cat(paste('\nStandardised generative hyperplane equation vertically projected along dimension ',object$dims,' (',colnames(object$X)[object$dims],'):\n\n',sep=''))
-  cat(paste(parmname[object$dims],' ~ N(mu= ',paste(paste(paste(format(alphas,digits=4),parmname[1:(object$dims-1)],sep='*'),collapse=' + ',sep=''),sep=''),signbeta,format(abs(beta),digits=4),' , sigma= ',format(scat,digits=4),')\n',sep=''))
+  cat(paste('\nStandardised generative hyperplane equation with unbiased population\nestimator for the intrinsic scatter, vertically projected along dimension ',object$dims,' (',colnames(object$X)[object$dims],'):\n\n',sep=''))
+  cat(paste(parmname[object$dims],' ~ N(mu= ',paste(paste(paste(format(alphas,digits=4),parmname[1:(object$dims-1)],sep='*'),collapse=' + ',sep=''),sep=''),signbeta,format(abs(beta),digits=4),' , sigma= ',format(object$sigcor,digits=4),')\n',sep=''))
 }
