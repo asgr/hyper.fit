@@ -9,7 +9,7 @@
 \alias{convtest2dLD}
 \alias{convtest1dNorm}
 \alias{TFR}
-\alias{MBJ}
+\alias{MJB}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
@@ -43,7 +43,7 @@ data(trumpet)
 data(FP6dFGS)
 data(GAMAsmVsize)
 data(TFR)
-data(MBJ)
+data(MJB)
 data(convtest2dOpt)
 data(convtest2dLD)
 data(convtest1dNorm)
@@ -100,10 +100,10 @@ TFR=read.table(system.file('data/TFR.tab', package='hyper.fit'), header=TRUE)
 data(TFR)
 print(TFR[1:10,])
 
-MBJ=read.table(system.file('data/MBJ.tab', package='hyper.fit'), header=TRUE)
+MBJ=read.table(system.file('data/MJB.tab', package='hyper.fit'), header=TRUE)
 #or
-data(MBJ)
-print(MBJ[1:10,])
+data(MJB)
+print(MJB[1:10,])
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
