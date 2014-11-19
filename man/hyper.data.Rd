@@ -8,6 +8,8 @@
 \alias{convtest2dOpt}
 \alias{convtest2dLD}
 \alias{convtest1dNorm}
+\alias{TFR}
+\alias{MBJ}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
@@ -24,7 +26,9 @@ FP6dFGS: 6dFGS fundamental plane data taken from table 8 of Campbell et al 2014.
 
 GAMAsmVsize: Galaxy mass vs size data taken from Lange et al 2014. Provided by Rebecca Lange.
 
-TFR: Tully-Fisher Relation data taken from Obreschkow and Meyer 2013. Provided by Danail Obreschkow.
+TFR: Tully-Fisher Relation data taken from breschkow & Glazebrook 2014. Provided by Danail Obreschkow.
+
+MJB: Mase-Angular Momentum-Bulge/Total data taken from Obreschkow and Meyer 2013. Provided by Danail Obreschkow.
 
 convtest2dOpt: Intrinsic scatter convergence test data for 2 DoF and optim fitted simulations, shown as an example in \code{\link{hyper.sigcor}}.
 
@@ -39,6 +43,7 @@ data(trumpet)
 data(FP6dFGS)
 data(GAMAsmVsize)
 data(TFR)
+data(MBJ)
 data(convtest2dOpt)
 data(convtest2dLD)
 data(convtest1dNorm)
@@ -55,6 +60,8 @@ Hogg, D., Bovy, J., Lang, D., 2010 (http://arxiv.org/pdf/1008.4686v1.pdf)
 Lange, R., et al., MNRAS, accepted
 
 Obreschkow & Meyer, 2013, ApJ, 777, 140
+
+Obreschkow & Glazebrook, 2014, ApJ, 784, 26
 }
 \author{
 Aaron Robotham and Danail Obreschkow
@@ -87,6 +94,16 @@ GAMAsmVsize=read.table(system.file('data/GAMAsmVsize.tab', package='hyper.fit'),
 #or
 data(GAMAsmVsize)
 print(GAMAsmVsize[1:10,])
+
+TFR=read.table(system.file('data/TFR.tab', package='hyper.fit'), header=TRUE)
+#or
+data(TFR)
+print(TFR[1:10,])
+
+MBJ=read.table(system.file('data/MBJ.tab', package='hyper.fit'), header=TRUE)
+#or
+data(MBJ)
+print(MBJ[1:10,])
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

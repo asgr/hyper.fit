@@ -236,9 +236,9 @@ plot(fitplane)
 #Full data
 
 data(hogg)
-fithogg=hyper.fit(X=cbind(hogg$x, hogg$y), covarray=makecovarray2d(hogg$sx, hogg$sy,
+fithogg=hyper.fit(X=cbind(hogg$x, hogg$y), covarray=makecovarray2d(hogg$x_err, hogg$y_err,
 hogg$corxy), coord.type='theta', scat.type='orth')
-hyper.plot2d(X=cbind(hogg$x, hogg$y), covarray=makecovarray2d(hogg$sx, hogg$sy,
+hyper.plot2d(X=cbind(hogg$x, hogg$y), covarray=makecovarray2d(hogg$x_err, hogg$y_err,
 hogg$corxy), fitobj=fithogg, trans=0.2, xlim=c(0, 300), ylim=c(0, 700))
 #Or even easier:
 plot(fithogg, trans=0.2)
@@ -248,34 +248,34 @@ plot(fithogg, trans=0.2)
 
 data(hogg)
 hoggtrim=hogg[-3,]
-fithoggtrim=hyper.fit(X=cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$sx,
-hoggtrim$sy, hoggtrim$corxy), coord.type='theta', scat.type='orth', algo.func='LA')
-hyper.plot2d(X=cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$sx,
-hoggtrim$sy, hoggtrim$corxy), fitobj=fithoggtrim, trans=0.2, xlim=c(0, 300), ylim=c(0, 700))
+fithoggtrim=hyper.fit(X=cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$x_err,
+hoggtrim$y_err, hoggtrim$corxy), coord.type='theta', scat.type='orth', algo.func='LA')
+hyper.plot2d(X=cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$x_err,
+hoggtrim$y_err, hoggtrim$corxy), fitobj=fithoggtrim, trans=0.2, xlim=c(0, 300), ylim=c(0, 700))
 #Or even easier:
 plot(fithoggtrim, trans=0.2)
 
 #We can compare this against the previous fit with:
-hyper.plot2d(cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$sx,
-hoggtrim$sy, hoggtrim$corxy), fitobj=fithogg, trans=0.2, xlim=c(0, 300), ylim=c(0, 700))
+hyper.plot2d(cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$x_err,
+hoggtrim$y_err, hoggtrim$corxy), fitobj=fithogg, trans=0.2, xlim=c(0, 300), ylim=c(0, 700))
 
 #### Example using 'real' data with intrinsic scatter ####
 
 data(intrin)
-fitintrin=hyper.fit(X=cbind(intrin$x, intrin$y), vars=cbind(intrin$sx,
-intrin$sy)^2, coord.type='theta', scat.type='orth', algo.func='LA')
-hyper.plot2d(cbind(intrin$x, intrin$y), covarray=makecovarray2d(intrin$sx,
-intrin$sy, intrin$corxy), fitobj=fitintrin, trans=0.1, pch='.', asp=1)
+fitintrin=hyper.fit(X=cbind(intrin$x, intrin$y), vars=cbind(intrin$x_err,
+intrin$y_err)^2, coord.type='theta', scat.type='orth', algo.func='LA')
+hyper.plot2d(cbind(intrin$x, intrin$y), covarray=makecovarray2d(intrin$x_err,
+intrin$y_err, intrin$corxy), fitobj=fitintrin, trans=0.1, pch='.', asp=1)
 #Or even easier:
 plot(fitintrin, trans=0.1, pch='.', asp=1)
 
 #### Example using flaring trumpet data ####
 
 data(trumpet)
-fittrumpet=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$sx,
-trumpet$sy,trumpet$corxy), coord.type='theta', algo.func='LA')
-hyper.plot2d(cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$sx,
-trumpet$sy, trumpet$corxy), fitobj=fittrumpet, trans=0.1, pch='.', asp=1)
+fittrumpet=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$x_err,
+trumpet$y_err, trumpet$corxy), coord.type='theta', algo.func='LA')
+hyper.plot2d(cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$x_err,
+trumpet$y_err, trumpet$corxy), fitobj=fittrumpet, trans=0.1, pch='.', asp=1)
 #Or even easier:
 plot(fittrumpet, trans=0.1, pch='.', asp=1)
 #If you look at the ?hyper.fit example we find that zero intrinsic scatter is actually
@@ -285,7 +285,7 @@ plot(fittrumpet, trans=0.1, pch='.', asp=1)
 
 data(FP6dFGS)
 fitFP6dFGSw=hyper.fit(FP6dFGS[,c('logIe_J', 'logsigma', 'logRe_J')],
-vars=FP6dFGS[,c('elogIe_J', 'elogsigma', 'elogRe_J')]^2, weights=FP6dFGS[,'weights'],
+vars=FP6dFGS[,c('logIe_J_err', 'logsigma_err', 'logRe_J_err')]^2, weights=FP6dFGS[,'weights'],
 coord.type='alpha', scat.type='vert.axis')
 #We turn the ellipse plotting off to speed things up:
 plot(fitFP6dFGSw, doellipse=FALSE, alpha=0.5)
@@ -294,7 +294,7 @@ plot(fitFP6dFGSw, doellipse=FALSE, alpha=0.5)
 
 data(GAMAsmVsize)
 fitGAMAsmVsize=hyper.fit(GAMAsmVsize[,c('logmstar', 'rekpc')],
-vars=GAMAsmVsize[,c('elogmstar', 'erekpc')]^2, weights=GAMAsmVsize[,'weights'],
+vars=GAMAsmVsize[,c('logmstar_err', 'rekpc_err')]^2, weights=GAMAsmVsize[,'weights'],
 coord.type='alpha', scat.type='vert.axis')
 #We turn the ellipse plotting off to speed things up:
 plot(fitGAMAsmVsize, doellipse=FALSE, unlog='x')
@@ -303,7 +303,7 @@ plot(fitGAMAsmVsize, doellipse=FALSE, unlog='x')
 #using the logged y-axis and converted errors:
 
 fitGAMAsmVsizelogre=hyper.fit(GAMAsmVsize[,c('logmstar', 'logrekpc')],
-vars=GAMAsmVsize[,c('elogmstar', 'elogrekpc')]^2, weights=GAMAsmVsize[,'weights'],
+vars=GAMAsmVsize[,c('logmstar_err', 'logrekpc_err')]^2, weights=GAMAsmVsize[,'weights'],
 coord.type='alpha', scat.type='vert.axis')
 #We turn the ellipse plotting off to speed things up:
 plot(fitGAMAsmVsizelogre, doellipse=FALSE, unlog='xy')
@@ -317,7 +317,8 @@ plot(fitGAMAsmVsizelogrenoerr, doellipse=FALSE, unlog='xy')
 
 ### Example using Tully-Fisher relation data ###
 
-TFRfit=hyper.fit(X=TFR[,c('logv','M_K')],vars=TFR[,c('logv_err','M_Kerr')]^2)
+data(TFR)
+TFRfit=hyper.fit(X=TFR[,c('logv','M_K')],vars=TFR[,c('logv_err','M_K_err')]^2)
 plot(TFRfit, xlim=c(1.7,2.5), ylim=c(-19,-26))
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

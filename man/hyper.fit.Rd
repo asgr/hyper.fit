@@ -371,7 +371,7 @@ data(hogg)
 
 #Fit:
 
-fithogg=hyper.fit(X=cbind(hogg$x, hogg$y), covarray=makecovarray2d(hogg$sx, hogg$sy,
+fithogg=hyper.fit(X=cbind(hogg$x, hogg$y), covarray=makecovarray2d(hogg$x_err, hogg$y_err,
 hogg$corxy), coord.type='theta', scat.type='orth')
 summary(fithogg)
 plot(fithogg, trans=0.2)
@@ -379,8 +379,8 @@ plot(fithogg, trans=0.2)
 #We now do exercise 17 of Hogg 2010 using trimmed data:
 
 hoggtrim=hogg[-3,]
-fithoggtrim=hyper.fit(X=cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$sx,
-hoggtrim$sy, hoggtrim$corxy), coord.type='theta', scat.type='orth', algo.func='LA')
+fithoggtrim=hyper.fit(X=cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$x_err,
+hoggtrim$y_err, hoggtrim$corxy), coord.type='theta', scat.type='orth', algo.func='LA')
 summary(fithoggtrim)
 plot(fithoggtrim, trans=0.2)
 
@@ -393,7 +393,7 @@ print(fithoggtrim$fit$Summary1)
 #MCMC (exercise 18):
 
 fithoggtrimMCMC=hyper.fit(X=cbind(hoggtrim$x, hoggtrim$y), covarray=
-makecovarray2d(hoggtrim$sx, hoggtrim$sy, hoggtrim$corxy), coord.type='theta',
+makecovarray2d(hoggtrim$x_err, hoggtrim$y_err, hoggtrim$corxy), coord.type='theta',
 scat.type='orth', algo.func='LD')
 summary(fithoggtrimMCMC)
 
@@ -411,21 +411,21 @@ abline(v=quantile(fithoggtrimMCMC$fit$Posterior2[,3], c(0.95,0.99)), lty=2)
 
 data(intrin)
 
-fitintrin=hyper.fit(X=cbind(intrin$x, intrin$y), vars=cbind(intrin$sx,
-intrin$sy)^2, coord.type='theta', scat.type='orth', algo.func='LA')
+fitintrin=hyper.fit(X=cbind(intrin$x, intrin$y), vars=cbind(intrin$x_err,
+intrin$y_err)^2, coord.type='theta', scat.type='orth', algo.func='LA')
 summary(fitintrin)
 plot(fitintrin, trans=0.1, pch='.', asp=1)
 
-fitintrincor=hyper.fit(X=cbind(intrin$x, intrin$y), covarray=makecovarray2d(intrin$sx,
-intrin$sy, intrin$corxy), coord.type='theta', scat.type='orth', algo.func='LA')
+fitintrincor=hyper.fit(X=cbind(intrin$x, intrin$y), covarray=makecovarray2d(intrin$x_err,
+intrin$y_err, intrin$corxy), coord.type='theta', scat.type='orth', algo.func='LA')
 summary(fitintrincor)
 plot(fitintrincor, trans=0.1, pch='.', asp=1)
 
 #### Example using flaring trumpet data ####
 
 data(trumpet)
-fittrumpet=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$sx,
-trumpet$sy, trumpet$corxy), coord.type='normvec', algo.func='LA')
+fittrumpet=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$x_err,
+trumpet$y_err, trumpet$corxy), coord.type='normvec', algo.func='LA')
 summary(fittrumpet)
 plot(fittrumpet, trans=0.1, pch='.', asp=1)
 
@@ -438,8 +438,8 @@ plot(fittrumpet, trans=0.1, pch='.', asp=1)
 #following will take a couple of minutes to run:
 
 set.seed(650)
-fittrumpetMCMC=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$sx,
-trumpet$sy, trumpet$corxy), coord.type='normvec', algo.func='LD', itermax=1e5)
+fittrumpetMCMC=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$x_err,
+trumpet$y_err, trumpet$corxy), coord.type='normvec', algo.func='LD', itermax=1e5)
 
 #Assuming the user has specified the same initial seed we should find that the data
 #has exactly zero intrinsic scatter with ~47\% likelihood:
@@ -451,7 +451,7 @@ print(fittrumpetMCMC$zeroscatprob)
 
 set.seed(650)
 fittrumpetMCMCerrscale=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(
-trumpet$sx, trumpet$sy, trumpet$corxy), itermax=1e5, coord.type='normvec', algo.func='LD',
+trumpet$x_err, trumpet$y_err, trumpet$corxy), itermax=1e5, coord.type='normvec', algo.func='LD',
 algo.method='CHARM', Specs=list(alpha.star = 0.44), doerrorscale=TRUE)
 
 #Assuming the user has specified the same initial seed we should find that the data
@@ -468,14 +468,15 @@ data(FP6dFGS)
 #First we try the fit without using any weights:
 
 fitFP6dFGS=hyper.fit(FP6dFGS[,c('logIe_J', 'logsigma', 'logRe_J')], 
-vars=FP6dFGS[,c('elogIe_J', 'elogsigma', 'elogRe_J')]^2, coord.type='alpha', scat.type='vert.axis')
+vars=FP6dFGS[,c('logIe_J_err', 'logsigma_err', 'logRe_J_err')]^2, coord.type='alpha',
+scat.type='vert.axis')
 summary(fitFP6dFGS)
 plot(fitFP6dFGS, doellipse=FALSE, alpha=0.5)
 
 #Next we add the censoring weights provided by C. Magoulas:
 
 fitFP6dFGSw=hyper.fit(FP6dFGS[,c('logIe_J', 'logsigma', 'logRe_J')],
-vars=FP6dFGS[,c('elogIe_J', 'elogsigma', 'elogRe_J')]^2, weights=FP6dFGS[,'weights'],
+vars=FP6dFGS[,c('logIe_J_err', 'logsigma_err', 'logRe_J_err')]^2, weights=FP6dFGS[,'weights'],
 coord.type='alpha', scat.type='vert.axis')
 summary(fitFP6dFGSw)
 plot(fitFP6dFGSw, doellipse=FALSE, alpha=0.5)
@@ -490,7 +491,7 @@ in.coord.type='alpha'))
 
 data(GAMAsmVsize)
 fitGAMAsmVsize=hyper.fit(GAMAsmVsize[,c('logmstar', 'rekpc')],
-vars=GAMAsmVsize[,c('elogmstar', 'erekpc')]^2, weights=GAMAsmVsize[,'weights'],
+vars=GAMAsmVsize[,c('logmstar_err', 'rekpc_err')]^2, weights=GAMAsmVsize[,'weights'],
 coord.type='alpha', scat.type='vert.axis')
 summary(fitGAMAsmVsize)
 #We turn the ellipse plotting off to speed things up:
@@ -500,7 +501,7 @@ plot(fitGAMAsmVsize, doellipse=FALSE, unlog='x')
 #using the logged y-axis and converted errors:
 
 fitGAMAsmVsizelogre=hyper.fit(GAMAsmVsize[,c('logmstar', 'logrekpc')],
-vars=GAMAsmVsize[,c('elogmstar', 'elogrekpc')]^2, weights=GAMAsmVsize[,'weights'],
+vars=GAMAsmVsize[,c('logmstar_err', 'logrekpc_err')]^2, weights=GAMAsmVsize[,'weights'],
 coord.type='alpha', scat.type='vert.axis')
 summary(fitGAMAsmVsizelogre)
 #We turn the ellipse plotting off to speed things up:
@@ -516,8 +517,16 @@ plot(fitGAMAsmVsizelogrenoerr, doellipse=FALSE, unlog='xy')
 
 ### Example using Tully-Fisher relation data ###
 
-TFRfit=hyper.fit(X=TFR[,c('logv','M_K')],vars=TFR[,c('logv_err','M_Kerr')]^2)
+data(TFR)
+TFRfit=hyper.fit(X=TFR[,c('logv','M_K')],vars=TFR[,c('logv_err','M_K_err')]^2)
 plot(TFRfit, xlim=c(1.7,2.5), ylim=c(-19,-26))
+
+### Mase-Angular Momentum-Bulge/Total ###
+
+data(MJB)
+MJBfit=hyper.fit(X=MJB[,c('logM','logj','B.T')], covarray=makecovarray3d(MJB$logM_err,
+MJB$logj_err, MJB$B.T_err, MJB$corMJ, 0, 0))
+plot(MJBfit)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

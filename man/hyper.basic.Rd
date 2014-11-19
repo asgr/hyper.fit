@@ -36,13 +36,13 @@ ranrotcovmat2d: Function to generate a randomly rotated 2x2 covariance matrix.
 
 ranrotcovmat3d: Function to generate a randomly rotated 3x3 covariance matrix.
 
-makecovarray2d: Function to generate a 2x2 covariance matrix.
+makecovarray2d: Function to generate a  2x2xN covariance array.
 
-makecovarray3d: Function to generate a 3x3 covariance matrix.
+makecovarray3d: Function to generate a  3x3xN covariance array.
 
-makecovmat2d: Function to generate a 2x2xN covariance array.
+makecovmat2d: Function to generate a 2x2 covariance matrix.
 
-makecovmat3d:  Function to generate a 3x3xN covariance array.
+makecovmat3d:  Function to generate a 3x3 covariance matrix.
 
 projX:  Projection of position (or possibly velocity) elements along a vector (any number of dimensions, but matrices must conform).
 

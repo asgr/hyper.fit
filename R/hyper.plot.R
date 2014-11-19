@@ -148,7 +148,7 @@ hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm
   limy=c(min(X[,2]),max(abs(X[,2])))
   limz=c(min(X[,3]),max(abs(X[,3])))
   maxrange=max(c(range(limx),range(limy),range(limz)))
-  decorate3d(xlim=c(limx,limx+maxrange),ylim=c(limy,limy+maxrange),zlim=c(limz,limz+maxrange),aspect=1)
+  decorate3d(xlim=c(limx,limx+maxrange),ylim=c(limy,limy+maxrange),zlim=c(limz,limz+maxrange),aspect=1,xlab='',ylab='',zlab='')
   planes3d(alphas[1], alphas[2],-1, beta.vert,alpha=0.2)
   #planes3d(alphas[1], alphas[2],-1, beta.vert+scat.vert,alpha=0.05) #Seems to create glitches, currently removed.
   #planes3d(alphas[1], alphas[2],-1, beta.vert-scat.vert,alpha=0.05) #Seems to create glitches, currently removed.

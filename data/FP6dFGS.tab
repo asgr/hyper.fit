@@ -1,4 +1,4 @@
-  "logIe_J" "logsigma" "logRe_J" "elogIe_J" "elogsigma" "elogRe_J" "weights"
+  "logIe_J" "logsigma" "logRe_J" "logIe_J_err" "logsigma_err" "logRe_J_err" "weights"
   2.94      2.137      0.465     0.084      0.073       0.057      1.0        
   3.708     2.338      0.024     0.071      0.023       0.048      1.0        
   3.067     2.219      0.343     0.07       0.045       0.047      1.0        
