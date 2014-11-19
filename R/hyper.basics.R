@@ -151,7 +151,7 @@ summary.hyper.fit=function(object,...){
   print(printerrors)
   
   if(class(object$fit)=='optim' | class(object$fit)=='laplace'){
-  cat(paste('\nThe full paramter covariance matrix:\n\n'))
+  cat(paste('\nThe full parameter covariance matrix:\n\n'))
   print(object$parm.covar)
   }
   
