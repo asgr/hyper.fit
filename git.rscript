@@ -1,0 +1,4 @@
+tempdir=getwd()
+setwd('~/Work/R/hyper.fit/')
+system("git push origin master")
+setwd(tempdir)

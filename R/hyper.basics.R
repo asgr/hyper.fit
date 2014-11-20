@@ -128,7 +128,7 @@ summary.hyper.fit=function(object,...){
   if(class(object)!='hyper.fit'){stop('Object must be of type hyper.fit')}
   cat(paste('Call used was:\n\n'))
   print(object$call)
-  cat(paste('\nData supplied was ',object$dims,'d.\n\n',sep=''))
+  cat(paste('\nData supplied was ',object$N,'rows x ',object$dims,'cols.\n\n',sep=''))
   cat(paste('Requested parameters:\n\n'))
   print(object$parm)
   if(class(object$fit)=='optim' | class(object$fit)=='laplace'){
