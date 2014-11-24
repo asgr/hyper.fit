@@ -394,7 +394,7 @@ print(fithoggtrim$fit$Summary1)
 
 fithoggtrimMCMC=hyper.fit(X=cbind(hoggtrim$x, hoggtrim$y), covarray=
 makecovarray2d(hoggtrim$x_err, hoggtrim$y_err, hoggtrim$corxy), coord.type='theta',
-scat.type='orth', algo.func='LD')
+scat.type='orth', algo.func='LD', algo.method='CHARM', Specs=list(alpha.star = 0.44))
 summary(fithoggtrimMCMC)
 
 #We can get additional info from looking at the Summary1 output of the LaplacesDemon:

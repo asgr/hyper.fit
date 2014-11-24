@@ -24,11 +24,11 @@ trumpet:  Toy ASCII table that has trumpet-like covariance errors and no intrins
 
 FP6dFGS: 6dFGS fundamental plane data taken from table 8 of Campbell et al 2014. We use columns 6/7, 12/13, 18/19 for the FP parameters and their errors, and column 26 = 111111 to create a clean selection. Provided By Christina Magoulas.
 
-GAMAsmVsize: Galaxy mass vs size data taken from Lange et al 2014. Provided by Rebecca Lange.
+GAMAsmVsize: Galaxy mass vs size data taken from Lange et al 2014. Bottom right plot of Fig 3 (i.e. r-band elliptical relation data). Provided by Rebecca Lange.
 
-TFR: Tully-Fisher Relation data taken from breschkow & Glazebrook 2014. Provided by Danail Obreschkow.
+TFR: Tully-Fisher Relation data taken from Obreschkow and Meyer 2013. Provided by Danail Obreschkow.
 
-MJB: Mase-Angular Momentum-Bulge/Total data taken from Obreschkow and Meyer 2013. Provided by Danail Obreschkow.
+MJB: Mase-Angular Momentum-Bulge/Total data taken from Obreschkow & Glazebrook 2014. Provided by Danail Obreschkow.
 
 convtest2dOpt: Intrinsic scatter convergence test data for 2 DoF and optim fitted simulations, shown as an example in \code{\link{hyper.sigcor}}.
 
