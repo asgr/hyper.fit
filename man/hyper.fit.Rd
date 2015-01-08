@@ -5,7 +5,7 @@
 Top level function that attempts to fit a hyperplane to provided data.
 }
 \description{
-Top level line fitting function that uses downhill searches (optim/LaplaceApproximation) or MCMC (LaplacesDemon) to search out the best fitting parameters for a hyperplane (minimum a 1D line for 2D data), including the intrinsic scatter as part of the fit.
+Top level fitting function that uses downhill searches (optim/LaplaceApproximation) or MCMC (LaplacesDemon) to search out the best fitting parameters for a hyperplane (minimum a 1D line for 2D data), including the intrinsic scatter as part of the fit.
 }
 \usage{
 hyper.fit(X, covarray, vars, parm, parm.coord, parm.beta, parm.scat, parm.errorscale=1,
