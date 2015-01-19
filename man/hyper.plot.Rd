@@ -120,6 +120,29 @@ simpfit2werr=hyper.fit(simpledata2, vars=simpledata2err)
 summary(simpfit2werr)
 plot(simpfit2werr)
 
+#### Simple Example in hyper.fit paper ####
+
+#Fit with no error:
+
+xval = c(-1.22, -0.78, 0.44, 1.01, 1.22)
+yval = c(-0.15, 0.49, 1.17, 0.72, 1.22)
+
+fitnoerror=hyper.fit(cbind(xval, yval))
+plot(fitnoerror)
+
+#Fit with independent x and y error:
+
+xerr = c(0.12, 0.14, 0.20, 0.07, 0.06)
+yerr = c(0.13, 0.03, 0.07, 0.11, 0.08)
+fitwitherror=hyper.fit(cbind(xval, yval), vars=cbind(xerr, yerr)^2)
+plot(fitwitherror)
+
+#Fit with correlated x and y error:
+
+xycor = c(0.90, -0.40, -0.25, 0.00, -0.20)
+fitwitherrorandcor=hyper.fit(cbind(xval, yval), covarray=makecovarray2d(xerr, yerr, xycor))
+plot(fitwitherrorandcor)
+
 #### A 2D example with fitting a line ####
 
 #Setup the initial data:
