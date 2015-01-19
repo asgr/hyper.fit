@@ -40,6 +40,8 @@ v1.0.1
 
 Document fixes and added MJB dataset.
 
+Added examples from the hyper.fit paper.
+
 TO DO:
 
 Need to check how to fix the sigma adjustment when including errors- current implementation in hyper.sigcor only appears to converge correctly when there is no error in the data. Dan and I are looking into this.
