@@ -52,7 +52,7 @@ A vector defining the direction of an exponential sampling distribution in the d
 The maximum iterations to use for either the LaplaceApproximation function or LaplacesDemon function.
 }
   \item{coord.type}{
-This specifies whether the fit should be done in terms of the normal vector to the hyperplane (coord.type="normvec") gradients defined to produce values along the vert.axis dimension (coord.type="alpha") or by the values of the angles that form the gradients (coord.type="theta"). "theta" is the default since it will tend to produce a more numerically stable fit since changes in one angle will not impact the others as much as a change in the unit vector components.
+This specifies whether the fit should be done in terms of the normal vector to the hyperplane (coord.type="normvec") gradients defined to produce values along the vert.axis dimension (coord.type="alpha") or by the values of the angles that form the gradients (coord.type="theta"). "alpha" is the default since it is the most common means of parameterising hyperplane fits in the astronomy literature.
 }
   \item{scat.type}{
 This specifies whether the intrinsic scatter should be defined orthogonal to the plane (orth) or along the vert.axis of interest (vert.axis).
