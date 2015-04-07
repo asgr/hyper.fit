@@ -52,7 +52,7 @@ hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.erro
       text=paste(objname,'[,',vert.axis,']~',paste(paste(objname,'[,',usedims,']',sep=''),collapse ='+'),sep='')
       return=list(text=text,form=as.formula(text,env=env))
     }
-    if(any(checkcovarray>0)){
+    if(any(covarray[vert.axis,vert.axis,]>0)){
       startweights=1/sqrt(covarray[vert.axis,vert.axis,])
       startweights[is.infinite(startweights)]=max(startweights[is.finite(startweights)])
     }else{
