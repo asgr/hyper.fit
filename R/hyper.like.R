@@ -11,7 +11,7 @@ hyper.like=function(parm,X,covarray,weights=1,errorscale=1,k.vec=FALSE,output='s
   if(length(k.vec)> 1){
     #scat.vec=scat.orth/coord.orth
     scat.vec=scat.orth/(coord.orth/sqrt(eTe))
-    X=t(t(X)-k.vec*scat.vec^2)-arrayvecmult(covarray,k.vec)
+    X=t(t(X)-k.vec*scat.vec^2)#-arrayvecmult(covarray,k.vec)
   }
   originoffset=(X %*% coord.orth)/sqrt(eTe)-sqrt(eTe)
   #old originoffset=(X %*% coord.orth)/sqrt(eTe)-beta.orth

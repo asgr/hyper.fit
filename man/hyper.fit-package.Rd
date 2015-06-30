@@ -11,8 +11,8 @@ This package includes one main high level code for hyperplane fitting (hyper.fit
 \tabular{ll}{
 Package: \tab hyper.fit\cr
 Type: \tab Package\cr
-Version: \tab 1.0.1\cr
-Date: \tab 2015-01-19\cr
+Version: \tab 1.0.2\cr
+Date: \tab 2015-06-30\cr
 License: \tab GPL-3\cr
 }
 Most users will interact with this package through the high level hyper.fit and hyper.plot functions. The utility functions to construct covariance matrices and arrays will also be useful (see makecovmat2d and makecovarray2d).

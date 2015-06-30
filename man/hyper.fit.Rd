@@ -46,7 +46,7 @@ Which axis should the hyperplane equation be formulated for. This must be a numb
 Vector of multiplicative weights for each row of the X data matrix. i.e. if this is 2 then it is equivalent to having two identical data points with weights equal to 1. Should be either of length 1 (in which case elements are repeated as required) or the same length as the number of rows in the data matrix X.
 }
 \item{k.vec}{
-A vector defining the direction of an exponential sampling distribution in the data. The length is the scaling "a" of the generative exponent (i.e., exp(a*x)), and it points in the direction of *increasing* density (see example below). If provided, k.vec must be the same length as the dimensions of the data. k.vec has the most noticeable effect on the beta offset parameter. It is correcting for the phenomenom Astronomers often call Eddington bias.
+A vector defining the direction of an exponential sampling distribution in the data. The length is the scaling "a" of the generative exponent (i.e., exp(a*x)), and it points in the direction of *increasing* density (see example below). If provided, k.vec must be the same length as the dimensions of the data. k.vec has the most noticeable effect on the beta offset parameter. It is correcting for the phenomenom Astronomers often call Eddington bias. For discussion on the use of k.vec see Appendix B of Robotham & Obreschkow.
 }
   \item{itermax}{
 The maximum iterations to use for either the LaplaceApproximation function or LaplacesDemon function.
@@ -298,7 +298,9 @@ mock=data.frame(x=randatax, y=randatay, sx=sx, sy=sy, corxy=corxy)
 #Do the fit. Notice that the second element of k.vec has the positive sign, i.e. we are moving
 #data that has been shifted positively by the positive exponential slope in y back to where it
 #would exist without the slope (i.e. if it had an equal chance of being scattered in both
-#directions, rather than being preferentially offset in the direction of denser data):
+#directions, rather than being preferentially offset in the direction away from denser data).
+#This dense -> less-dense shift i s known as Eddington bias in astronomy, and is common in all
+#power-law distributions that have intrinsic scatter (e.g. Schechter LF and dark matter HMF).
 
 X=cbind(mock$x, mock$y)
 covarray=makecovarray2d(mock$sx, mock$sy, mock$corxy)

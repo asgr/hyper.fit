@@ -42,8 +42,22 @@ Document fixes and added MJB dataset.
 
 Added examples from the hyper.fit paper.
 
+v1.0.2
+
+Minor change of k.vec usage based on referee comments:
+
+X=t(t(X)-k.vec*scat.vec^2)-arrayvecmult(covarray,k.vec) ->
+
+X=t(t(X)-k.vec*scat.vec^2)
+
+DO has checked, and the latter should be correct.
+
 TO DO:
 
 Need to check how to fix the sigma adjustment when including errors- current implementation in hyper.sigcor only appears to converge correctly when there is no error in the data. Dan and I are looking into this.
 
 Perhaps add Nd generative Gaussian fitting option on top of the current (N-1)d plane + intrinsic scatter.
+
+Longer term: add generic generative distributions.
+
+Longer term: add correct treatment of truncations.
