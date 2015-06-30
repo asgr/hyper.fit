@@ -1,4 +1,4 @@
 tempdir=getwd()
 setwd('~/Work/R/hyper.fit/')
-system("git push origin master")
+system("git push -u origin master") #The -u adds the upstream ref so I can use Rstudio push button.
 setwd(tempdir)
