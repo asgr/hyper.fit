@@ -137,7 +137,7 @@ hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.erro
 
   if(algo.func=='LD'){
     if(algo.method=='default'){algo.method='GG'}
-    fit=LaplacesDemon(linelikemodel,Data=Data,Iterations=itermax,Algorithm=algo.method,Initial.Values=parm,Specs=Specs,Status=itermax/10,...)
+    fit=LaplacesDemon(linelikemodel,Data=Data,Iterations=itermax,Algorithm=algo.method,Initial.Values=parm,Specs=Specs,...)
     if(doerrorscale){getelements=parmoffset+3}else{getelements=parmoffset+2}
     parm=fit$Summary1[1:getelements,'Mean']
     if(parm[parmoffset+2]<0){
