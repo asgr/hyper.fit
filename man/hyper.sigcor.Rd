@@ -24,7 +24,7 @@
   
 }
 \references{
-  Robotham, A.S.G., & Obreschkow, D., 2014
+  Robotham, A.S.G., & Obreschkow, D., PASA, in press
 }
 \author{
   Aaron Robotham and Danail Obreschkow

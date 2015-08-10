@@ -169,7 +169,7 @@ projcovarray: Projection of covariance array along vector (length N).
 arrayvecmult: Matrix multiplication of array stack slices by vector (size dxN).
 }
 \references{
-Robotham, A.S.G., & Obreschkow, D., 2014
+Robotham, A.S.G., & Obreschkow, D., PASA, in press
 }
 \author{
 Aaron Robotham and Danail Obreschkow

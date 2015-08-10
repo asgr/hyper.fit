@@ -117,7 +117,7 @@ hyper.convert=function(parm,coord,beta=0,scat=0,in.coord.type='alpha',out.coord.
   return=out
 }
 
-convert=function(x,...){UseMethod("convert",x)}
+convert=function(x,...){UseMethod("convert")}
 
 convert.hyper.plane.param=function(x,coord.type='alpha',scat.type='vert.axis',vert.axis){
   parm=x$parm

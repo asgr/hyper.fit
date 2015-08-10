@@ -52,6 +52,12 @@ X=t(t(X)-k.vec*scat.vec^2)
 
 DO has checked, and the latter should be correct.
 
+v1.0.3
+
+Minor fixes to accompany the paper release.
+
+Added dots argument so that hyper.fit argumements are passed to optim, LA or LD.
+
 TO DO:
 
 Need to check how to fix the sigma adjustment when including errors- current implementation in hyper.sigcor only appears to converge correctly when there is no error in the data. Dan and I are looking into this.

@@ -104,7 +104,7 @@ hyper.convert returns a multi-component list of class hyper.plane.param containi
 }
 }
 \references{
-Robotham, A.S.G., & Obreschkow, D., 2014
+Robotham, A.S.G., & Obreschkow, D., PASA, in press
 }
 \author{
 Aaron Robotham and Danail Obreschkow

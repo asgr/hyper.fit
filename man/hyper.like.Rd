@@ -41,7 +41,7 @@ hyper.convert is a convenience function that manipulates different parameterisat
 If output='sum' then the output is the sum of the log likelihood. If output='val' then the output is the individual log likelihoods of the data provided. If output='sig' then the output represents the sigma tension of the data point with the current model, and can be thought of as -0.5chi^2 for each data point. 
 }
 \references{
-Robotham, A.S.G., & Obreschkow, D., 2014
+Robotham, A.S.G., & Obreschkow, D., PASA, in press
 }
 \author{
 Aaron Robotham and Danail Obreschkow

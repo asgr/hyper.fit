@@ -11,7 +11,7 @@ Top level fitting function that uses downhill searches (optim/LaplaceApproximati
 hyper.fit(X, covarray, vars, parm, parm.coord, parm.beta, parm.scat, parm.errorscale=1,
 vert.axis, weights, k.vec, itermax = 1e4, coord.type = 'alpha', scat.type = 'vert.axis',
 algo.func = 'optim', algo.method = 'default', Specs = list(Grid=seq(-0.1,0.1, len=5),
-dparm=NULL, CPUs=1, Packages=NULL, Dyn.libs=NULL), doerrorscale = FALSE)
+dparm=NULL, CPUs=1, Packages=NULL, Dyn.libs=NULL), doerrorscale = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -58,16 +58,19 @@ This specifies whether the fit should be done in terms of the normal vector to t
 This specifies whether the intrinsic scatter should be defined orthogonal to the plane (orth) or along the vert.axis of interest (vert.axis).
 }
   \item{algo.func}{
-If algo.func="optim" (default) hyper.fit will optimise using the R base optim function. If algo.func="LA" will optimise using the LaplaceApproximation function. If algo.func="LD" will optimise using the LaplacesDemon function. For both algo.func="LA" and algo.func="LD" the LaplacesDemon package will be used (see http://www.bayesian-inference.com/software).
+If \option{algo.func="optim"} (default) hyper.fit will optimise using the R base \code{\link{optim}} function. If \option{algo.func="LA"} will optimise using the \code{\link{LaplaceApproximation}} function. If \option{algo.func="LD"} will optimise using the \code{\link{LaplacesDemon}} function. For both \option{algo.func="LA"} and \option{algo.func="LD"} the \code{LaplacesDemon} package will be used (see http://www.bayesian-inference.com/software).
 }
   \item{algo.method}{
-Specifies the "method" argument of optim function when using algo.func="optim" (if not specified hyper.fit will use "Nelder-Mead" for optim). Specifies "Method" argument of LaplaceApproximation function when using algo.func="LA" (if not specified hyper.fit will use "NM" for LaplaceApproximation). Specifies "Algorithm" argument of LaplacesDemon function when using algo.func="LD" (if not specified hyper.fit will use "CHARM" for LaplacesDemon). When using algo.func="LD" the user can also specify further options via the Specs argument below.
+Specifies the \option{method} argument of \code{\link{optim}} function when using \option{algo.func="optim"} (if not specified hyper.fit will use "Nelder-Mead" for \code{optim}). Specifies \option{Method} argument of \code{\link{LaplaceApproximation}} function when using \option{algo.func="LA"} (if not specified hyper.fit will use "NM" for \code{LaplaceApproximation}). Specifies \option{Algorithm} argument of \code{\link{LaplacesDemon}} function when using \option{algo.func="LD"} (if not specified hyper.fit will use "CHARM" for \code{LaplacesDemon}). When using \option{algo.func="LD"} the user can also specify further options via the Specs argument below.
 }
   \item{Specs}{
 Inputs to pass to the LaplacesDemon function. Default Specs=list(alpha.star = 0.44) option is for the default CHARM algorithm (see algo.method above).
 }
   \item{doerrorscale}{
 If FALSE then the provided covariance are treated as it. If TRUE then the likelihood function is also allowed to rescale all errors by a uniform multiplicative value.
+}
+  \item{\dots}{
+Further arguments to be passed to \code{\link{optim}}, \code{\link{LaplaceApproximation}} or \code{\link{LaplacesDemon}} depending on the option used for \option{algo.func}.
 }
 }
 \details{
@@ -126,7 +129,7 @@ The function returns a multi-component list containing:
 }
 }
 \references{
-Robotham, A.S.G., & Obreschkow, D., 2014
+Robotham, A.S.G., & Obreschkow, D., PASA, in press
 }
 \author{
 Aaron Robotham and Danail Obreschkow

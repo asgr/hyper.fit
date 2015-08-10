@@ -87,7 +87,7 @@ Arguments to pass to magplot (hyper.plot2d) or plot3d (hyper.plot3d). When execu
 The plotting functions also return the sigma tension of the data points given the inputs. i.e. the output of hyper.like with output='sig'.
 }
 \references{
-Robotham, A.S.G., & Obreschkow, D., 2014
+Robotham, A.S.G., & Obreschkow, D., PASA, in press
 }
 \author{
 Aaron Robotham and Danail Obreschkow

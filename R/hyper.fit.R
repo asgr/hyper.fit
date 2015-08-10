@@ -1,4 +1,4 @@
-hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.errorscale=1,vert.axis,weights,k.vec,itermax=1e4,coord.type='alpha',scat.type='vert.axis',algo.func='optim',algo.method='default',Specs=list(Grid=seq(-0.1,0.1, len=5),dparm=NULL, CPUs=1, Packages=NULL, Dyn.libs=NULL),doerrorscale=FALSE){
+hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.errorscale=1,vert.axis,weights,k.vec,itermax=1e4,coord.type='alpha',scat.type='vert.axis',algo.func='optim',algo.method='default',Specs=list(Grid=seq(-0.1,0.1, len=5),dparm=NULL, CPUs=1, Packages=NULL, Dyn.libs=NULL),doerrorscale=FALSE,...){
   #MEGA TEDIOUS CODE PREAMBLE (CATCHING ERRORS AND INITIALISING STUFF)
   
   call=match.call(expand.dots = FALSE)
@@ -107,7 +107,7 @@ hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.erro
   #Run the optimisers
   if(algo.func=='optim'){
     if(algo.method=='default'){algo.method='Nelder-Mead'}
-    fit=optim(par=parm,fn=linelikemodel,Data=Data,hessian=TRUE,control=list(fnscale=-1),method=algo.method)
+    fit=optim(par=parm,fn=linelikemodel,Data=Data,hessian=TRUE,control=list(fnscale=-1),method=algo.method,...)
     parm=fit$par
     names(parm)=parm.names
     fit$Covar=suppressWarnings(try(solve(fit$hessian)))
@@ -122,7 +122,7 @@ hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.erro
 
   if(algo.func=='LA'){
     if(algo.method=='default'){algo.method='NM'}
-    fit=LaplaceApproximation(linelikemodel,Data=Data,Iterations=itermax,Method=algo.method,parm=parm,CovEst="Hessian")
+    fit=LaplaceApproximation(linelikemodel,Data=Data,Iterations=itermax,Method=algo.method,parm=parm,CovEst="Hessian",...)
     if(doerrorscale){getelements=parmoffset+3}else{getelements=parmoffset+2}
     parm=fit$Summary1[1:getelements,'Mode']
     if(parm[parmoffset+2]<0){
@@ -137,7 +137,7 @@ hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.erro
 
   if(algo.func=='LD'){
     if(algo.method=='default'){algo.method='GG'}
-    fit=LaplacesDemon(linelikemodel,Data=Data,Iterations=itermax,Algorithm=algo.method,Initial.Values=parm,Specs=Specs,Status=itermax/10)
+    fit=LaplacesDemon(linelikemodel,Data=Data,Iterations=itermax,Algorithm=algo.method,Initial.Values=parm,Specs=Specs,Status=itermax/10,...)
     if(doerrorscale){getelements=parmoffset+3}else{getelements=parmoffset+2}
     parm=fit$Summary1[1:getelements,'Mean']
     if(parm[parmoffset+2]<0){

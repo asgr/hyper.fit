@@ -49,7 +49,7 @@ data(convtest2dLD)
 data(convtest1dNorm)
 }
 \references{
-Robotham, A.S.G., & Obreschkow, D., 2014
+Robotham, A.S.G., & Obreschkow, D., PASA, in press
 
 Campbell, L., et al., 2014, MNRAS, 443, 1231 (http://mnras.oxfordjournals.org/content/443/2/1231)
 

@@ -27,7 +27,7 @@ Prints out basic summary information for hyper.fit objects output by the hyper.f
   Prints various summary outputs.
 }
 \references{
-  Robotham, A.S.G., & Obreschkow, D., 2014
+  Robotham, A.S.G., & Obreschkow, D., PASA, in press
 }
 \author{
   Aaron Robotham and Danail Obreschkow
