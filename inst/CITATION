@@ -8,6 +8,6 @@ Data with Multivariate Gaussian Uncertainties",
                     person("D.", "Obreschkow")),
          year = 2015,
          journal = "PASA",
-         number = "in press",
-         pages = "TBD",
+         volume = "32",
+         pages = "33",
          url = "http://hyperfit.icrar.org/")
