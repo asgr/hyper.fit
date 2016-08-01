@@ -205,6 +205,8 @@ plot(fitwitherrorandcor)
 
 #Setup the initial data:
 
+\dontrun{
+
 set.seed(650)
 sampN=200
 initscat=3
@@ -253,9 +255,13 @@ plot(fitline, parm.errorscale=fitlineerrscale$parm['errorscale'], trans=0.2, asp
 #Within errors the errorscale parameter is 1, i.e. the errors are realistic, which we know
 #they should be a priori since we made them ourselves.
 
+}
+
 #### A 2D example with exponential sampling & fitting a line ####
 
 #Setup the initial data:
+
+\dontrun{
 
 set.seed(650)
 
@@ -324,12 +330,16 @@ scat.type='vert.axis')
 summary(fitlinenoexp)
 plot(fitlinenoexp, trans=0.2, asp=1)
 
+}
+
 #The theta and intrinsic scatter are similar, but the offset is shifted significantly
 #away from zero.
 
 #### A 3D example with fitting a plane ####
 
 #Setup the initial data:
+
+\dontrun{
 
 set.seed(650)
 sampN=200
@@ -389,11 +399,15 @@ fitplane=hyper.fit(X=X, covarray=covarray, coord.type='theta', scat.type='orth')
 summary(fitplane)
 plot(fitplane)
 
+}
+
 #### Example using the data from Hogg 2010 ####
 
 #Example using the data from Hogg 2010: http://arxiv.org/pdf/1008.4686v1.pdf
 
 #Load data:
+
+\dontrun{
 
 data(hogg)
 
@@ -416,8 +430,6 @@ plot(fithoggtrim, trans=0.2)
 
 print(fithoggtrim$fit$Summary1)
 
-\dontrun{
-
 #MCMC (exercise 18):
 
 fithoggtrimMCMC=hyper.fit(X=cbind(hoggtrim$x, hoggtrim$y), covarray=
@@ -437,6 +449,8 @@ abline(v=quantile(fithoggtrimMCMC$fit$Posterior2[,3], c(0.95,0.99)), lty=2)
 
 #### Example using 'real' data with intrinsic scatter ####
 
+\dontrun{
+
 data(intrin)
 
 fitintrin=hyper.fit(X=cbind(intrin$x, intrin$y), vars=cbind(intrin$x_err,
@@ -449,7 +463,11 @@ intrin$y_err, intrin$corxy), coord.type='theta', scat.type='orth', algo.func='LA
 summary(fitintrincor)
 plot(fitintrincor, trans=0.1, pch='.', asp=1)
 
+}
+
 #### Example using flaring trumpet data ####
+
+\dontrun{
 
 data(trumpet)
 fittrumpet=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$x_err,
@@ -459,6 +477,8 @@ plot(fittrumpet, trans=0.1, pch='.', asp=1)
 
 #The best fit solution has a scat.orth very close to 0, so it is worth considering if the
 #data should truly have 0 intrinsic scatter.
+
+}
 
 \dontrun{
 
@@ -491,6 +511,8 @@ print(fittrumpetMCMCerrscale$zeroscatprob)
 
 #### Example using 6dFGS Fundamental Plane data ####
 
+\dontrun{
+
 data(FP6dFGS)
 
 #First we try the fit without using any weights:
@@ -501,7 +523,11 @@ scat.type='vert.axis')
 summary(fitFP6dFGS)
 plot(fitFP6dFGS, doellipse=FALSE, alpha=0.5)
 
+}
+
 #Next we add the censoring weights provided by C. Magoulas:
+
+\dontrun{
 
 fitFP6dFGSw=hyper.fit(FP6dFGS[,c('logIe_J', 'logsigma', 'logRe_J')],
 vars=FP6dFGS[,c('logIe_J_err', 'logsigma_err', 'logRe_J_err')]^2, weights=FP6dFGS[,'weights'],
@@ -515,7 +541,11 @@ print(hyper.convert(coord=fitFP6dFGSw$parm[1:2], beta=fitFP6dFGSw$parm[3],
 scat=fitFP6dFGSw$parm[4], in.scat.type='vert.axis', out.scat.type='orth',
 in.coord.type='alpha'))
 
+}
+
 #### Example using GAMA mass-size relation data ####
+
+\dontrun{
 
 data(GAMAsmVsize)
 fitGAMAsmVsize=hyper.fit(GAMAsmVsize[,c('logmstar', 'rekpc')],
@@ -543,18 +573,29 @@ summary(fitGAMAsmVsizelogrenoerr)
 #We turn the ellipse plotting off to speed things up:
 plot(fitGAMAsmVsizelogrenoerr, doellipse=FALSE, unlog='xy')
 
+}
+
 ### Example using Tully-Fisher relation data ###
+
+\dontrun{
 
 data(TFR)
 TFRfit=hyper.fit(X=TFR[,c('logv','M_K')],vars=TFR[,c('logv_err','M_K_err')]^2)
 plot(TFRfit, xlim=c(1.7,2.5), ylim=c(-19,-26))
 
+}
+
 ### Mase-Angular Momentum-Bulge/Total ###
+
+\dontrun{
 
 data(MJB)
 MJBfit=hyper.fit(X=MJB[,c('logM','logj','B.T')], covarray=makecovarray3d(MJB$logM_err,
 MJB$logj_err, MJB$B.T_err, MJB$corMJ, 0, 0))
 plot(MJBfit)
+
+}
+
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

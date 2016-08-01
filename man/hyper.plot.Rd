@@ -258,6 +258,8 @@ plot(fitplane)
 
 #Full data
 
+\dontrun{
+
 data(hogg)
 fithogg=hyper.fit(X=cbind(hogg$x, hogg$y), covarray=makecovarray2d(hogg$x_err, hogg$y_err,
 hogg$corxy), coord.type='theta', scat.type='orth')
@@ -282,7 +284,11 @@ plot(fithoggtrim, trans=0.2)
 hyper.plot2d(cbind(hoggtrim$x, hoggtrim$y), covarray=makecovarray2d(hoggtrim$x_err,
 hoggtrim$y_err, hoggtrim$corxy), fitobj=fithogg, trans=0.2, xlim=c(0, 300), ylim=c(0, 700))
 
+}
+
 #### Example using 'real' data with intrinsic scatter ####
+
+\dontrun{
 
 data(intrin)
 fitintrin=hyper.fit(X=cbind(intrin$x, intrin$y), vars=cbind(intrin$x_err,
@@ -292,7 +298,11 @@ intrin$y_err, intrin$corxy), fitobj=fitintrin, trans=0.1, pch='.', asp=1)
 #Or even easier:
 plot(fitintrin, trans=0.1, pch='.', asp=1)
 
+}
+
 #### Example using flaring trumpet data ####
+
+\dontrun{
 
 data(trumpet)
 fittrumpet=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$x_err,
@@ -304,7 +314,11 @@ plot(fittrumpet, trans=0.1, pch='.', asp=1)
 #If you look at the ?hyper.fit example we find that zero intrinsic scatter is actually
 #preferred, but we don't see this in the above plot.
 
+}
+
 #### Example using 6dFGS Fundamental Plane data ####
+
+\dontrun{
 
 data(FP6dFGS)
 fitFP6dFGSw=hyper.fit(FP6dFGS[,c('logIe_J', 'logsigma', 'logRe_J')],
@@ -313,7 +327,11 @@ coord.type='alpha', scat.type='vert.axis')
 #We turn the ellipse plotting off to speed things up:
 plot(fitFP6dFGSw, doellipse=FALSE, alpha=0.5)
 
+}
+
 #### Example using GAMA mass-size relation data ####
+
+\dontrun{
 
 data(GAMAsmVsize)
 fitGAMAsmVsize=hyper.fit(GAMAsmVsize[,c('logmstar', 'rekpc')],
@@ -338,11 +356,17 @@ weights=GAMAsmVsize[,'weights'], coord.type='alpha', scat.type='vert.axis')
 #We turn the ellipse plotting off to speed things up:
 plot(fitGAMAsmVsizelogrenoerr, doellipse=FALSE, unlog='xy')
 
+}
+
 ### Example using Tully-Fisher relation data ###
+
+\dontrun{
 
 data(TFR)
 TFRfit=hyper.fit(X=TFR[,c('logv','M_K')],vars=TFR[,c('logv_err','M_K_err')]^2)
 plot(TFRfit, xlim=c(1.7,2.5), ylim=c(-19,-26))
+
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
