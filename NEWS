@@ -52,7 +52,7 @@ X=t(t(X)-k.vec*scat.vec^2)
 
 DO has checked, and the latter should be correct.
 
-v1.0.3
+v1.0.3 (on CRAN)
 
 Minor fixes to accompany the paper release.
 

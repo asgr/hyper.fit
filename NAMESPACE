@@ -6,3 +6,7 @@ import("LaplacesDemon")
 import("magicaxis")
 import("MASS")
 import("rgl")
+
+importFrom("grDevices", "hsv")
+importFrom("graphics", "abline")
+importFrom("stats", "as.formula", "lm", "optim", "runif", "sd")

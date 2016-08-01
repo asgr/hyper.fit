@@ -12,7 +12,7 @@ Functions related to hyperplane fitting as presented in Robotham & Obreschkow 20
 Package: \tab hyper.fit\cr
 Type: \tab Package\cr
 Version: \tab 1.0.3\cr
-Date: \tab 2015-08-10\cr
+Date: \tab 2016-08-01\cr
 License: \tab GPL-3\cr
 }
 Most users will interact with this package through the high level hyper.fit and hyper.plot functions. The utility functions to construct covariance matrices and arrays will also be useful (see makecovmat2d and makecovarray2d).

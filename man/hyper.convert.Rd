@@ -18,7 +18,7 @@ in.scat.type = "vert.axis", out.scat.type, in.vert.axis, out.vert.axis)
 #To ease usability the package also included a hyper.plane.param class specific convert
 #function:
 
-\method{convert}{hyper.plane.param}(x,coord.type='alpha',scat.type='vert.axis',vert.axis)
+\method{convert}{hyper.plane.param}(x,coord.type='alpha',scat.type='vert.axis',vert.axis,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
