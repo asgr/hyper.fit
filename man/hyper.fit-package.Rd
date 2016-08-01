@@ -2,10 +2,10 @@
 \alias{hyper.fit-package}
 \docType{package}
 \title{
-Hyperplane Fitting Package
+\packageTitle{hyper.fit}
 }
 \description{
-Functions related to hyperplane fitting as presented in Robotham & Obreschkow 2015. Includes one main high level code for hyperplane fitting (hyper.fit). It also includes high level plotting and summary functions. In simple terms this allows the user to produce robust 1D linear fits for 2D x vs y type data, and robust 2D plane fits to 3D x vs y vs z type data. This hyperplane fitting works generically for any N-1 hyperplane model being fit to an N dimension data-set. All fits include intrinsic scatter in the generative hyperplane model.
+\packageDescription{hyper.fit}
 }
 \details{
 \tabular{ll}{
