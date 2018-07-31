@@ -23,7 +23,7 @@ Aaron Robotham and Danail Obreschkow
 Maintainer: Aaron Robotham <aaron.robotham@uwa.edu.au>
 }
 \references{
-Robotham, A.S.G., & Obreschkow, D., PASA, in press
+Robotham, A.S.G., & Obreschkow, D., PASA, 2015, 32, 33
 }
 \seealso{
   \code{\link{hyper.basic}}, \code{\link{hyper.convert}}, \code{\link{hyper.data}}, \code{\link{hyper.fit}}, \code{\link{hyper.plot}}, \code{\link{hyper.sigcor}}, \code{\link{hyper.summary}}

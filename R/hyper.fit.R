@@ -100,7 +100,7 @@ hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.erro
     LL=hyper.like(parm=convert.out, X=Data$data$X, covarray=Data$data$covarray, weights=Data$weights, errorscale=errorscale, k.vec=Data$k.vec, output='sum')
     LP=LL
     if(algo.func=='optim'){out=LP}
-    if(algo.func=='LA' | algo.func=='LD'){out=list(LP=LP,Dev=2*LL,Monitor=1,yhat=1,parm=parm)}
+    if(algo.func=='LA' | algo.func=='LD'){out=list(LP=LP,Dev=-2*LL,Monitor=1,yhat=1,parm=parm)}
     return=out
   }
   
