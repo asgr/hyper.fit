@@ -1,4 +1,4 @@
-hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.errorscale=1,vert.axis,weights,k.vec,itermax=1e4,coord.type='alpha',scat.type='vert.axis',algo.func='optim',algo.method='default',Specs=list(Grid=seq(-0.1,0.1, len=5),dparm=NULL, CPUs=1, Packages=NULL, Dyn.libs=NULL),doerrorscale=FALSE,...){
+hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.errorscale=1,vert.axis,weights,k.vec,prior,itermax=1e4,coord.type='alpha',scat.type='vert.axis',algo.func='optim',algo.method='default',Specs=list(Grid=seq(-0.1,0.1, len=5),dparm=NULL, CPUs=1, Packages=NULL, Dyn.libs=NULL),doerrorscale=FALSE,...){
   #MEGA TEDIOUS CODE PREAMBLE (CATCHING ERRORS AND INITIALISING STUFF)
   
   call=match.call(expand.dots = FALSE)
@@ -76,7 +76,8 @@ hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.erro
     parm=c(start.fit$parm)
   }
   parm.names=names(parm)
-  Data=list(data=list(X=X,covarray=covarray),mon.names='',parm.names=parm.names,N=N,weights=weights,doerrorscale=doerrorscale,algo.func=algo.func)
+  if(missing(prior)){prior=function(x){0}}
+  Data=list(data=list(X=X,covarray=covarray),mon.names='',parm.names=parm.names,N=N,weights=weights,doerrorscale=doerrorscale,algo.func=algo.func,prior=prior)
 
   if(!missing(k.vec)){
     if(length(k.vec) != dims){stop(paste('The length of k.vec (',length(k.vec),') must be the same as the dimensions provided (',dims,')',sep=''))}
@@ -98,7 +99,7 @@ hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.erro
     }else{errorscale=1}
     convert.out=hyper.convert(parm=parm[1:(parmoffset+2)],in.coord.type=coord.type,out.coord.type='normvec',in.scat.type=scat.type,out.scat.type='orth',in.vert.axis=vert.axis,out.vert.axis=vert.axis)$parm
     LL=hyper.like(parm=convert.out, X=Data$data$X, covarray=Data$data$covarray, weights=Data$weights, errorscale=errorscale, k.vec=Data$k.vec, output='sum')
-    LP=LL
+    LP=LL+Data$prior(parm)
     if(algo.func=='optim'){out=LP}
     if(algo.func=='LA' | algo.func=='LD'){out=list(LP=LP,Dev=-2*LL,Monitor=1,yhat=1,parm=parm)}
     return=out

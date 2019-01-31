@@ -58,6 +58,10 @@ Minor fixes to accompany the paper release.
 
 Added dots argument so that hyper.fit argumements are passed to optim, LA or LD.
 
+v1.1.0
+
+Added the option for a prior function that can take the parameters and should return a logged likelihood.
+
 TO DO:
 
 Need to check how to fix the sigma adjustment when including errors- current implementation in hyper.sigcor only appears to converge correctly when there is no error in the data. Dan and I are looking into this.

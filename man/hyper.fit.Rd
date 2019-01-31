@@ -9,9 +9,10 @@ Top level fitting function that uses downhill searches (optim/LaplaceApproximati
 }
 \usage{
 hyper.fit(X, covarray, vars, parm, parm.coord, parm.beta, parm.scat, parm.errorscale=1,
-vert.axis, weights, k.vec, itermax = 1e4, coord.type = 'alpha', scat.type = 'vert.axis',
-algo.func = 'optim', algo.method = 'default', Specs = list(Grid=seq(-0.1,0.1, len=5),
-dparm=NULL, CPUs=1, Packages=NULL, Dyn.libs=NULL), doerrorscale = FALSE, ...)
+vert.axis, weights, k.vec, prior, itermax = 1e4, coord.type = 'alpha',
+scat.type = 'vert.axis', algo.func = 'optim', algo.method = 'default',
+Specs = list(Grid=seq(-0.1,0.1, len=5), dparm=NULL, CPUs=1, Packages=NULL, Dyn.libs=NULL),
+doerrorscale = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -45,8 +46,11 @@ Which axis should the hyperplane equation be formulated for. This must be a numb
   \item{weights}{
 Vector of multiplicative weights for each row of the X data matrix. i.e. if this is 2 then it is equivalent to having two identical data points with weights equal to 1. Should be either of length 1 (in which case elements are repeated as required) or the same length as the number of rows in the data matrix X.
 }
-\item{k.vec}{
+  \item{k.vec}{
 A vector defining the direction of an exponential sampling distribution in the data. The length is the scaling "a" of the generative exponent (i.e., exp(a*x)), and it points in the direction of *increasing* density (see example below). If provided, k.vec must be the same length as the dimensions of the data. k.vec has the most noticeable effect on the beta offset parameter. It is correcting for the phenomenom Astronomers often call Eddington bias. For discussion on the use of k.vec see Appendix B of Robotham & Obreschkow.
+}
+  \item{prior}{
+A function that will take in \option{parm} and return a logged-likelihood that will be added to the data-model log-likelihood to give the true log-posterior. By default this will add 0, which means it is strictly an improper prior over infinite domain.
 }
   \item{itermax}{
 The maximum iterations to use for either the LaplaceApproximation function or LaplacesDemon function.
@@ -245,6 +249,16 @@ covarray=makecovarray2d(mock$sx, mock$sy, mock$corxy)
 fitline=hyper.fit(X=X, covarray=covarray, coord.type='theta')
 summary(fitline)
 plot(fitline, trans=0.2, asp=1)
+
+#We can add increasingly strenuous priors on theta (which becomes much like fixing theta):
+
+fitline_p1=hyper.fit(X=X, covarray=covarray, coord.type='theta',
+                  prior=function(parm){dnorm(parm[1],mean=40,sd=1,log=TRUE)})
+plot(fitline_p1, trans=0.2, asp=1)
+
+fitline_p2=hyper.fit(X=X, covarray=covarray, coord.type='theta',
+                  prior=function(parm){dnorm(parm[1],mean=40,sd=0.01,log=TRUE)})
+plot(fitline_p2, trans=0.2, asp=1)
 
 #We can test to see if the errors are compatable with the intrinsic scatter:
 

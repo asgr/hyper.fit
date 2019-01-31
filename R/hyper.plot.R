@@ -73,14 +73,14 @@ hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm
   corxy=covarray[1,2,]/(sx*sy)
   
   sigmas=hyper.like(parm=final.fit.normvec.orth$parm,X=X,covarray=covarray,weights=weights,k.vec=k.vec,output='sig',errorscale=parm.errorscale)
-  colscale=hsv(magmap(sigmas,lo=sigscale[1],hi=sigscale[2],flip=TRUE,type='num')$map,alpha=trans)
+  colscale=hsv(magmap(sigmas,locut=sigscale[1],hicut=sigscale[2],flip=TRUE,type='num')$map,alpha=trans)
   magplot(X,col=colscale,xlab=colnames(X)[1],ylab=colnames(X)[2],...)
   if(doellipse){magerr(x=X[,1],y=X[,2],xlo=sx,ylo=sy,corxy=corxy,col=colscale,fill=TRUE)}
   abline(beta.vert,alphas)
   abline(beta.vert+scat.vert,alphas,lty=2)
   abline(beta.vert-scat.vert,alphas,lty=2)
   if(dobar){
-    colscale=hsv(magmap(seq(sigscale[1],sigscale[2],len=100),lo=sigscale[1],hi=sigscale[2],flip=TRUE,type='num')$map)
+    colscale=hsv(magmap(seq(sigscale[1],sigscale[2],len=100),locut=sigscale[1],hicut=sigscale[2],flip=TRUE,type='num')$map)
     magbar(position=position,range=sigscale,col=colscale,title='Sigma Offset')
   }
   return=sigmas
@@ -141,7 +141,7 @@ hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm
   scat.orth=final.fit.normvec.orth$scat
   
   sigmas=hyper.like(parm=final.fit.normvec.orth$parm,X=X,covarray=covarray,weights=weights,k.vec=k.vec,output='sig',errorscale=parm.errorscale)
-  colscale=hsv(magmap(sigmas,lo=sigscale[1],hi=sigscale[2],flip=TRUE,type='num')$map,alpha=trans)
+  colscale=hsv(magmap(sigmas,locut=sigscale[1],hicut=sigscale[2],flip=TRUE,type='num')$map,alpha=trans)
   
   plot3d(X,col=colscale,...)
   limx=c(min(X[,1]),max(abs(X[,1])))
