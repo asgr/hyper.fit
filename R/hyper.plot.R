@@ -1,5 +1,5 @@
 plot.hyper.fit=function(x,...){
-  if(class(x)!='hyper.fit'){stop('Object must be of type hyper.fit')}
+  if(!inherits(x,'hyper.fit')){stop('Object must be of type hyper.fit')}
   X=x$X
   covarray=x$covarray
   coord=x$parm.vert.axis[1]
@@ -27,7 +27,7 @@ hyper.plot2d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm
   if(vert.axis>dims){stop(paste('The vertical dimension (',vert.axis,') cannot be higher than the number of dimensions provided (',dims,')',sep=''))}
   
   if(!missing(fitobj)){
-    if(class(fitobj)!='hyper.fit'){stop('fitobj class is of the wrong type!. Must be of type \'hyper.fit\'.')}
+    if(!inherits(fitobj,'hyper.fit')){stop('fitobj class is of the wrong type!. Must be of type \'hyper.fit\'.')}
     coord=fitobj$parm.vert.axis[1]
     beta=fitobj$parm.vert.axis[2]
     scat=fitobj$parm.vert.axis[3]
@@ -99,7 +99,7 @@ hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm
   
   if(dims<2){stop('The X matrix must have 2 or more columns (i.e. 2 or more dimensions for fitting)')}
   if(!missing(fitobj)){
-    if(class(fitobj)!='hyper.fit'){stop('fitobj class is of the wrong type!. Must be of type \'hyper.fit\'.')}
+    if(!inherits(fitobj,'hyper.fit')){stop('fitobj class is of the wrong type!. Must be of type \'hyper.fit\'.')}
     coord=fitobj$parm.vert.axis[1:2]
     beta=fitobj$parm.vert.axis[3]
     scat=fitobj$parm.vert.axis[4]

@@ -125,20 +125,20 @@ arrayvecmult=function(array,vec){
 }
 
 summary.hyper.fit=function(object,...){
-  if(class(object)!='hyper.fit'){stop('Object must be of type hyper.fit')}
+  if(!inherits(object,'hyper.fit')){stop('Object must be of type hyper.fit')}
   cat(paste('Call used was:\n\n'))
   print(object$call)
   cat(paste('\nData supplied was ',object$N,'rows x ',object$dims,'cols.\n\n',sep=''))
   cat(paste('Requested parameters:\n\n'))
   print(object$parm)
-  if(class(object$fit)=='optim' | class(object$fit)=='laplace'){
+  if(inherits(object$fit,'optim') | inherits(object$fit,'laplace')){
     if(object$parm.covar[1] != 'singular' & object$parm.covar[1] !='unstable'){
       printerrors=sqrt(diag(object$parm.covar))
     }else{
       printerrors=rep(object$parm.covar[1],length(object$parm))
     }
   }
-  if(class(object$fit)=='demonoid'){
+  if(inherits(object$fit,'demonoid')){
     if(object$args$doerrorscale){
       printerrors=object$fit$Summary1[1:(object$dims+2),'SD']
     }else{
@@ -150,7 +150,7 @@ summary.hyper.fit=function(object,...){
   cat(paste('\nErrors for parameters:\n\n'))
   print(printerrors)
   
-  if(class(object$fit)=='optim' | class(object$fit)=='laplace'){
+  if(inherits(object$fit,'optim') | inherits(object$fit,'laplace')){
   cat(paste('\nThe full parameter covariance matrix:\n\n'))
   print(object$parm.covar)
   }
@@ -164,7 +164,7 @@ summary.hyper.fit=function(object,...){
   cat(paste('\nUnbiased population estimator for the intrinsic scatter:\n\n'))
   print(object$sigcor)
 
-  if(class(object$fit)=='demonoid'){
+  if(inherits(object$fit,'demonoid')){
     cat(paste('\nProbability of exactly zero intrinsic scatter:\n\n'))
     print(object$zeroscatprob)
   }

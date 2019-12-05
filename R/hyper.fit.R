@@ -112,7 +112,7 @@ hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.erro
     parm=fit$par
     names(parm)=parm.names
     fit$Covar=suppressWarnings(try(solve(fit$hessian)))
-    if(class(fit$Covar) != 'try-error'){
+    if(!inherits(fit$Covar,'try-error')){
       fit$Covar=fit$Covar*sign(fit$Covar[1,1])
     }
     if(parm[parmoffset+2]<0){
@@ -185,7 +185,7 @@ hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.erro
   }
   
   if(algo.func=='optim' | algo.func=='LA'){
-    if(class(fit$Covar) != 'try-error'){
+    if(!inherits(fit$Covar,'try-error')){
       parm.covar=fit$Covar
       colnames(parm.covar)=names(parm)
       rownames(parm.covar)=names(parm)

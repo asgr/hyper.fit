@@ -62,6 +62,10 @@ v1.1.0
 
 Added the option for a prior function that can take the parameters and should return a logged likelihood.
 
+v1.1.1
+
+Changed class checks to inherits (more robust way of doing this)
+
 TO DO:
 
 Need to check how to fix the sigma adjustment when including errors- current implementation in hyper.sigcor only appears to converge correctly when there is no error in the data. Dan and I are looking into this.
