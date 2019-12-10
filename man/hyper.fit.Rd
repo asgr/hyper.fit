@@ -131,6 +131,12 @@ The function returns a multi-component list containing:
 \item{LL}{
   A list containing elements sum (the total log-likelihodd), val (the individual log likelihoods) and sig (the effective sigma offsets). See hyper.like for more information on these outputs.
 }
+\item{func}{
+  A function that can take the input \option{X} and output the target \option{vert.axis}.
+}
+\item{predict.vert.axis}{
+  Vector of \option{vert.axis} predictions.
+}
 }
 \references{
 Robotham, A.S.G., & Obreschkow, D., PASA, in press
