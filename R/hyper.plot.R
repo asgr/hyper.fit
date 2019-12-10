@@ -156,7 +156,9 @@ hyper.plot3d=function(X,covarray,vars,fitobj,parm.coord,parm.beta,parm.scat,parm
   if(doellipse){
     par3d(skipRedraw=T)
     for(i in 1:length(X[,1])){
-      plot3d(ellipse3d(covarray[,,i],centre=X[i,],level=0.6826895,subdivide=2,smooth=T),col=colscale[i],add=T,lit=FALSE,alpha=trans)
+      if(all(covarray[,,i]!=0)){
+        plot3d(ellipse3d(covarray[,,i],centre=X[i,],level=0.6826895,subdivide=2,smooth=T),col=colscale[i],add=T,lit=FALSE,alpha=trans)
+      }
     }
     par3d(skipRedraw=F)
   }

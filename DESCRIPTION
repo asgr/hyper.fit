@@ -1,8 +1,8 @@
 Package: hyper.fit
 Type: Package
 Title: Generic N-Dimensional Hyperplane Fitting with Heteroscedastic Covariant Errors and Intrinsic Scatter
-Version: 1.1.1
-Date: 2019-12-05
+Version: 1.1.2
+Date: 2019-12-10
 Author: Aaron Robotham and Danail Obreschkow
 Maintainer: Aaron Robotham <aaron.robotham@uwa.edu.au>
 Description: Includes two main high level codes for hyperplane fitting (hyper.fit) and visualising (hyper.plot2d / hyper.plot3d). In simple terms this allows the user to produce robust 1D linear fits for 2D x vs y type data, and robust 2D plane fits to 3D x vs y vs z type data. This hyperplane fitting works generically for any N-1 hyperplane model being fit to a N dimension dataset. All fits include intrinsic scatter in the generative model orthogonal to the hyperplane.
