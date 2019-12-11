@@ -216,7 +216,7 @@ hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.erro
   class(out)='hyper.fit'
   if(algo.func=='optim'){class(out$fit)='optim'} 
   
-  out$func=function(x, parm.vert.axis){
+  out$func=function(x, dim='all', parm.vert.axis){
     output=rep(0, dim(x)[1])
     if(doerrorscale){
       parm.limit = 3
@@ -224,7 +224,9 @@ hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.erro
       parm.limit = 2
     }
     for(i in 1:(length(parm.vert.axis)-parm.limit)){
-      output = output + x[,i]*parm.vert.axis[i]
+      if(dim[1]=='all' | i %in% dim){
+        output = output + x[,i]*parm.vert.axis[i]
+      }
     }
     output = output + parm.vert.axis[i+1]
     return(output)
