@@ -59,6 +59,7 @@ hyper.fit=function(X,covarray,vars,parm,parm.coord,parm.beta,parm.scat,parm.erro
       startweights=rep(1,N)
     }
     startfit=lm(makeformula('X',dims=dims,vert.axis=vert.axis,env=environment())$form,weights=startweights*weights)
+    startfit$coef[is.na(startfit$coef)]=0
     start.alphas=startfit$coef[2:dims]
     start.beta.vert=startfit$coef[1]
     start.scat.vert=sd(startfit$residuals)
