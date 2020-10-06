@@ -65,10 +65,10 @@ This specifies whether the intrinsic scatter should be defined orthogonal to the
 If \option{algo.func="optim"} (default) hyper.fit will optimise using the R base \code{\link{optim}} function. If \option{algo.func="LA"} will optimise using the \code{\link{LaplaceApproximation}} function. If \option{algo.func="LD"} will optimise using the \code{\link{LaplacesDemon}} function. For both \option{algo.func="LA"} and \option{algo.func="LD"} the \code{LaplacesDemon} package will be used (see http://www.bayesian-inference.com/software).
 }
   \item{algo.method}{
-Specifies the \option{method} argument of \code{\link{optim}} function when using \option{algo.func="optim"} (if not specified hyper.fit will use "Nelder-Mead" for \code{optim}). Specifies \option{Method} argument of \code{\link{LaplaceApproximation}} function when using \option{algo.func="LA"} (if not specified hyper.fit will use "NM" for \code{LaplaceApproximation}). Specifies \option{Algorithm} argument of \code{\link{LaplacesDemon}} function when using \option{algo.func="LD"} (if not specified hyper.fit will use "CHARM" for \code{LaplacesDemon}). When using \option{algo.func="LD"} the user can also specify further options via the Specs argument below.
+Specifies the \option{method} argument of \code{\link{optim}} function when using \option{algo.func="optim"} (if not specified hyper.fit will use "Nelder-Mead" for \code{optim}). Specifies \option{Method} argument of \code{\link{LaplaceApproximation}} function when using \option{algo.func="LA"} (if not specified hyper.fit will use "NM" for \code{LaplaceApproximation}). Specifies \option{Algorithm} argument of \code{\link{LaplacesDemon}} function when using \option{algo.func="LD"} (if not specified hyper.fit will use "GG" (i.e. Griddy Gibbs) for \code{LaplacesDemon}, but consider also using "CHARM"). When using \option{algo.func="LD"} the user can also specify further options via the Specs argument below.
 }
   \item{Specs}{
-Inputs to pass to the LaplacesDemon function. Default Specs=list(alpha.star = 0.44) option is for the default CHARM algorithm (see algo.method above).
+Inputs to pass to the LaplacesDemon function. Default \option{Specs} is for the default GG (Griddy Gibbs) algorithm (see \option{algo.method} above). If using CHARM, then you probably want to set \option{Specs}=list(alpha.star = 0.44).
 }
   \item{doerrorscale}{
 If FALSE then the provided covariance are treated as it. If TRUE then the likelihood function is also allowed to rescale all errors by a uniform multiplicative value.
