@@ -33,7 +33,7 @@ Prints out basic summary information for hyper.fit objects output by the hyper.f
   Aaron Robotham and Danail Obreschkow
 }
 \seealso{
-  \code{\link{hyper.basic}}, \code{\link{hyper.convert}}, \code{\link{hyper.data}}, \code{\link{hyper.fit}}, \code{\link{hyper.plot}}, \code{\link{hyper.sigcor}}, \code{\link{hyper.summary}}
+  \code{\link{hyper.basic}}, \code{\link{hyper.convert}}, \code{\link{hyper.fit-data}}, \code{\link{hyper.fit}}, \code{\link{hyper.plot}}, \code{\link{hyper.sigcor}}, \code{\link{hyper.summary}}
 }
 
 \examples{

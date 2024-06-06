@@ -30,7 +30,7 @@
   Aaron Robotham and Danail Obreschkow
 }
 \seealso{
-  \code{\link{hyper.basic}}, \code{\link{hyper.convert}}, \code{\link{hyper.data}}, \code{\link{hyper.fit}}, \code{\link{hyper.plot}}, \code{\link{hyper.sigcor}}, \code{\link{hyper.summary}}
+  \code{\link{hyper.basic}}, \code{\link{hyper.convert}}, \code{\link{hyper.fit-data}}, \code{\link{hyper.fit}}, \code{\link{hyper.plot}}, \code{\link{hyper.sigcor}}, \code{\link{hyper.summary}}
 }
 \examples{
 #The below will take *a long* time to run- of the order a few days for the LD tests.
@@ -41,12 +41,12 @@ testvec=c(5,10,20,50,100)
 
 set.seed(650)
 
-fittestmean={}
+convtest2dOpt={}
 for(Nsamp in testvec){
   print(paste('Nsamp=', Nsamp))
   fittest=matrix(0, nrow=Ngen, ncol=3)
   for(i in 1:Ngen){
-    if(i %% 100==0){print(paste('Ngen=',i))}
+    if(i \%\% 100==0){print(paste('Ngen=',i))}
     mockx=runif(Nsamp, -100, 100)
     mocky=mockx*tan(45*pi/180)+rnorm(Nsamp, sd=sdsamp)
     fittest[i,]=hyper.fit(X=cbind(mockx,mocky), coord.type='theta', scat.type='vert.axis')$parm
@@ -55,12 +55,12 @@ for(Nsamp in testvec){
   mean(fittest[,3])*hyper.sigcor(Nsamp, 2)))
 }
 
-fittestmeanLD={}
+convtest2dLD={}
 for(Nsamp in testvec){
   print(paste('Nsamp=', Nsamp))
   fittest=matrix(0, nrow=Ngen, ncol=3)
   for(i in 1:Ngen){
-    if(i %% 100==0){print(paste('Ngen=',i))}
+    if(i \%\% 100==0){print(paste('Ngen=',i))}
     mockx=runif(Nsamp, -100, 100)
     mocky=mockx*tan(45*pi/180)+rnorm(Nsamp, sd=sdsamp)
     fittest[i,]=hyper.fit(X=cbind(mockx,mocky), coord.type='theta', scat.type='vert.axis',
@@ -72,12 +72,12 @@ for(Nsamp in testvec){
   mean(fittest[,3])*hyper.sigcor(Nsamp, 2)))
 }
 
-normtestmean={}
+convtest1dNorm={}
 for(Nsamp in testvec){
   print(paste('Nsamp=', Nsamp))
   normtest={}
   for(i in 1:Ngen){
-    if(i %% 100==0){print(paste('Ngen=',i))}
+    if(i \%\% 100==0){print(paste('Ngen=',i))}
     normtemp=rnorm(Nsamp, sd=sdsamp)
     normtest=c(normtest, sqrt(sum((normtemp-mean(normtemp))^2)/Nsamp))
   }

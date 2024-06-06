@@ -93,7 +93,7 @@ Robotham, A.S.G., & Obreschkow, D., PASA, in press
 Aaron Robotham and Danail Obreschkow
 }
 \seealso{
-  \code{\link{hyper.basic}}, \code{\link{hyper.convert}}, \code{\link{hyper.data}}, \code{\link{hyper.fit}}, \code{\link{hyper.plot}}, \code{\link{hyper.sigcor}}, \code{\link{hyper.summary}}
+  \code{\link{hyper.basic}}, \code{\link{hyper.convert}}, \code{\link{hyper.fit-data}}, \code{\link{hyper.fit}}, \code{\link{hyper.plot}}, \code{\link{hyper.sigcor}}, \code{\link{hyper.summary}}
 }
 \examples{
 #### A very simple 2D example ####
@@ -189,7 +189,7 @@ plot(fitline, trans=0.2, asp=1)
 
 #### A 3D example with fitting a plane ####
 
-\dontrun{
+\donttest{
 
 #Setup the initial data:
 
@@ -258,7 +258,7 @@ plot(fitplane)
 
 #Full data
 
-\dontrun{
+\donttest{
 
 data(hogg)
 fithogg=hyper.fit(X=cbind(hogg$x, hogg$y), covarray=makecovarray2d(hogg$x_err, hogg$y_err,
@@ -288,7 +288,7 @@ hoggtrim$y_err, hoggtrim$corxy), fitobj=fithogg, trans=0.2, xlim=c(0, 300), ylim
 
 #### Example using 'real' data with intrinsic scatter ####
 
-\dontrun{
+\donttest{
 
 data(intrin)
 fitintrin=hyper.fit(X=cbind(intrin$x, intrin$y), vars=cbind(intrin$x_err,
@@ -302,7 +302,7 @@ plot(fitintrin, trans=0.1, pch='.', asp=1)
 
 #### Example using flaring trumpet data ####
 
-\dontrun{
+\donttest{
 
 data(trumpet)
 fittrumpet=hyper.fit(X=cbind(trumpet$x, trumpet$y), covarray=makecovarray2d(trumpet$x_err,
@@ -318,7 +318,7 @@ plot(fittrumpet, trans=0.1, pch='.', asp=1)
 
 #### Example using 6dFGS Fundamental Plane data ####
 
-\dontrun{
+\donttest{
 
 data(FP6dFGS)
 fitFP6dFGSw=hyper.fit(FP6dFGS[,c('logIe_J', 'logsigma', 'logRe_J')],
@@ -331,7 +331,7 @@ plot(fitFP6dFGSw, doellipse=FALSE, alpha=0.5)
 
 #### Example using GAMA mass-size relation data ####
 
-\dontrun{
+\donttest{
 
 data(GAMAsmVsize)
 fitGAMAsmVsize=hyper.fit(GAMAsmVsize[,c('logmstar', 'rekpc')],
@@ -360,7 +360,7 @@ plot(fitGAMAsmVsizelogrenoerr, doellipse=FALSE, unlog='xy')
 
 ### Example using Tully-Fisher relation data ###
 
-\dontrun{
+\donttest{
 
 data(TFR)
 TFRfit=hyper.fit(X=TFR[,c('logv','M_K')],vars=TFR[,c('logv_err','M_K_err')]^2)

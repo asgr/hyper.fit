@@ -175,7 +175,7 @@ Robotham, A.S.G., & Obreschkow, D., PASA, in press
 Aaron Robotham and Danail Obreschkow
 }
 \seealso{
-  \code{\link{hyper.basic}}, \code{\link{hyper.convert}}, \code{\link{hyper.data}}, \code{\link{hyper.fit}}, \code{\link{hyper.plot}}, \code{\link{hyper.sigcor}}, \code{\link{hyper.summary}}
+  \code{\link{hyper.basic}}, \code{\link{hyper.convert}}, \code{\link{hyper.fit-data}}, \code{\link{hyper.fit}}, \code{\link{hyper.plot}}, \code{\link{hyper.sigcor}}, \code{\link{hyper.summary}}
 }
 \examples{
 extheta=30    #Experiment with changing this
@@ -247,9 +247,7 @@ print(arrayvecmult(array(1:24,c(2,3,4)),1:3))
 
 #Note that the following is not allowed:
 
-\dontrun{
-print(arrayvecmult(array(1:24,c(3,2,4)),1:3))
-}
+try(arrayvecmult(array(1:24,c(3,2,4)),1:3))
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
