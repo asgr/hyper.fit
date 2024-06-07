@@ -1,6 +1,6 @@
+\docType{package}
 \name{hyper.fit package}
 \alias{hyper.fit-package}
-\docType{package}
 \title{
 \packageTitle{hyper.fit}
 }

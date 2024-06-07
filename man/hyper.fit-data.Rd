@@ -1,3 +1,4 @@
+\docType{data}
 \name{hyper.fit-data}
 \alias{hyper.fit-data}
 \alias{hogg}
