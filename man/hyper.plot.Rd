@@ -96,6 +96,7 @@ Aaron Robotham and Danail Obreschkow
   \code{\link{hyper.basic}}, \code{\link{hyper.convert}}, \code{\link{hyper.fit-data}}, \code{\link{hyper.fit}}, \code{\link{hyper.plot}}, \code{\link{hyper.sigcor}}, \code{\link{hyper.summary}}
 }
 \examples{
+\donttest{
 #### A very simple 2D example ####
 
 #Make the simple data:
@@ -186,6 +187,8 @@ fitline=hyper.fit(X=X, covarray=covarray, coord.type='theta')
 hyper.plot2d(X=X, covarray=covarray, fitobj=fitline, trans=0.2, asp=1)
 #Or even easier:
 plot(fitline, trans=0.2, asp=1)
+
+}
 
 #### A 3D example with fitting a plane ####
 

@@ -39,7 +39,7 @@ Prints out basic summary information for hyper.fit objects output by the hyper.f
 \examples{
 #### Example using 6dFGS Fundamental Plane data ####
 
-FP6dFGS=read.table(system.file('data/FP6dFGS.tab', package='hyper.fit'), header=TRUE)
+data(FP6dFGS)
 fitFP6dFGSw=hyper.fit(FP6dFGS[,c('logIe_J', 'logsigma', 'logRe_J')],
 vars=FP6dFGS[,c('logIe_J_err', 'logsigma_err', 'logRe_J_err')]^2, weights=FP6dFGS[,'weights'],
 coord.type='alpha', scat.type='vert.axis')
