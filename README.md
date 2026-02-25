@@ -10,65 +10,15 @@ Core package containing all the tools for N-dimensional hyperplane fitting with 
 
 ## Installation
 
-### Getting R
-
-First things first, you will probably want to install a recent version of **R** that lets you build packages from source. The advantage of choosing this route is you can then update bleeding edge versions directly from GitHub. If you rely on the pre-built binaries on CRAN you might be waiting much longer.
-
-#### Mac
-
-For Mac just get the latest binaries from the **R** project pages:
-
-<https://cloud.r-project.org/bin/macosx/>
-
-#### Windows
-
-For Windows just get the latest binaries from the **R** project pages:
-
-<https://cloud.r-project.org/bin/windows/>
-
-#### Linux
-
-Debian:	`sudo apt-get install r-base r-base-dev`
-
-Fedora:	`sudo yum install R`
-
-Suse:	More of a pain, see here <https://cloud.r-project.org/bin/linux/suse/README.html>
-
-Ubuntu:	`sudo apt-get install r-base-dev`
-
-All the info on binaries is here: <https://cloud.r-project.org/bin/linux/>
-
-If you have a poorly supported version of Linux (e.g. CentOS) you will need to install **R** from source with the development flags (this bit is important). You can read more here: <https://cloud.r-project.org/sources.html>
-
-Now you have the development version of **R** installed (hopefully) I would also suggest you get yourself **R-Studio**. It is a very popular and well maintained **R** IDE that gives you a lot of helpful shortcuts to scripting and analysing with **R**. The latest version can be grabbed from <https://www.rstudio.com/products/rstudio/> where you almost certainly want the free Desktop version.
-
-If you wish to use the command line version of **R** on Mac (why?!) then you might need to separately install **XQuartz** and set the DISPLAY system variable via something like export DISPLAY=:0 (this is not an issue for most people however).
-
-### Build Tools
-
-Some of **hyper.fit** requires compiling, so here is what you might need depending on your platform.
-
-#### Linux Users
-
-You know what you are doing. You do you!
-
-#### Mac Users
-
-You should not need to install separate compilers with any **R** after v4.0.0, but in case you are stuck on a museum version you can follow the extra instructions here:
-
-[https://mac.r-project.org/tools/](https://mac.r-project.org/tools/)
-
-#### Windows Users
-
-Windows users might need to go through a couple of additional steps depending on how their system is set up, but most likely you will need to at least install *Rtools* for later parts of this course, which are available at [https://cran.r-project.org/bin/windows/Rtools/](https://cran.r-project.org/bin/windows/Rtools/) and follow the instructions about how to link these into your system path. You will know it is working because the following will not be empty:
-
-```R
-Sys.which("make")
-```
-
 ### Getting hyper.fit
 
-Source installation from GitHub should be easy:
+Currently **hyper.fit** is on CRAN, which means you can install easily with:
+
+```R
+install.packages('hyper.fit')
+```
+
+If that does not work for some reason, source installation from GitHub should be easy:
 
 ```R
 install.packages('remotes')
@@ -153,7 +103,6 @@ A general purpose hyperplane fitting package intended to be used for 1D line fit
 Code:
 
 Aaron Robotham
-Danail Obreschkow
 
 ## References
 
