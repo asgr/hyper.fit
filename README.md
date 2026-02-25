@@ -1,0 +1,174 @@
+# hyper.fit (R package)
+
+<!-- badges: start -->
+![R-CMD-check](https://github.com/asgr/hyper.fit/workflows/R-CMD-check/badge.svg)
+<!-- badges: end -->
+
+## Synopsis
+
+Core package containing all the tools for N-dimensional hyperplane fitting with errors. In simple terms this allows the user to produce robust 1D linear fits for 2D x vs y type data, and robust 2D plane fits to 3D x vs y vs z type data. This hyperplane fitting works generically for any N-1 hyperplane model being fit to a N dimension dataset. All fits include intrinsic scatter in the generative model orthogonal to the hyperplane.
+
+## Installation
+
+### Getting R
+
+First things first, you will probably want to install a recent version of **R** that lets you build packages from source. The advantage of choosing this route is you can then update bleeding edge versions directly from GitHub. If you rely on the pre-built binaries on CRAN you might be waiting much longer.
+
+#### Mac
+
+For Mac just get the latest binaries from the **R** project pages:
+
+<https://cloud.r-project.org/bin/macosx/>
+
+#### Windows
+
+For Windows just get the latest binaries from the **R** project pages:
+
+<https://cloud.r-project.org/bin/windows/>
+
+#### Linux
+
+Debian:	`sudo apt-get install r-base r-base-dev`
+
+Fedora:	`sudo yum install R`
+
+Suse:	More of a pain, see here <https://cloud.r-project.org/bin/linux/suse/README.html>
+
+Ubuntu:	`sudo apt-get install r-base-dev`
+
+All the info on binaries is here: <https://cloud.r-project.org/bin/linux/>
+
+If you have a poorly supported version of Linux (e.g. CentOS) you will need to install **R** from source with the development flags (this bit is important). You can read more here: <https://cloud.r-project.org/sources.html>
+
+Now you have the development version of **R** installed (hopefully) I would also suggest you get yourself **R-Studio**. It is a very popular and well maintained **R** IDE that gives you a lot of helpful shortcuts to scripting and analysing with **R**. The latest version can be grabbed from <https://www.rstudio.com/products/rstudio/> where you almost certainly want the free Desktop version.
+
+If you wish to use the command line version of **R** on Mac (why?!) then you might need to separately install **XQuartz** and set the DISPLAY system variable via something like export DISPLAY=:0 (this is not an issue for most people however).
+
+### Build Tools
+
+Some of **hyper.fit** requires compiling, so here is what you might need depending on your platform.
+
+#### Linux Users
+
+You know what you are doing. You do you!
+
+#### Mac Users
+
+You should not need to install separate compilers with any **R** after v4.0.0, but in case you are stuck on a museum version you can follow the extra instructions here:
+
+[https://mac.r-project.org/tools/](https://mac.r-project.org/tools/)
+
+#### Windows Users
+
+Windows users might need to go through a couple of additional steps depending on how their system is set up, but most likely you will need to at least install *Rtools* for later parts of this course, which are available at [https://cran.r-project.org/bin/windows/Rtools/](https://cran.r-project.org/bin/windows/Rtools/) and follow the instructions about how to link these into your system path. You will know it is working because the following will not be empty:
+
+```R
+Sys.which("make")
+```
+
+### Getting hyper.fit
+
+Source installation from GitHub should be easy:
+
+```R
+install.packages('remotes')
+remotes::install_github("asgr/hyper.fit")
+library(hyper.fit)
+```
+
+A few Mac people seem to have issues with the above due to the backend used to download files. A work around seems to be to either use devtools (which I do not use as the default since it has a few more dependencies, and is tricky to install on HPCs):
+
+```R
+install.packages('devtools')
+devtools::install_github("asgr/hyper.fit")
+library(hyper.fit)
+```
+
+Or try the following:
+
+```R
+Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS="true")
+remotes::install_github("asgr/hyper.fit")
+```
+
+I also have these options set by default in my .Rprofile, which seems to help with some of the remote install issues some people face:
+
+```R
+options(download.file.method = "libcurl")
+options(repos="http://cran.rstudio.com/")
+options(rpubs.upload.method = "internal")
+```
+
+If all of these do not work than the nuclear option is to download (or clone) the GitHub repo, cd to where the tar.gz file is and run in the **console** (or **Terminal** on Mac):
+
+```console
+R CMD install hyper.fit_X.Y.Z.tar.gz
+```
+
+where X, Y and Z should be set as appropriate for the version downloaded (check the name of the file basically).
+
+If none of the above works then you should consider burning your computer in sacrifice to the IO Gods. Then buy a newer *better* computer, and try all the above steps again.
+
+Failing all of the above, please email me for help (or perhaps raise an Issue here, if it really does not seem like a local issue).
+
+#### Package Dependencies
+
+The above should also install the required packages. If you have trouble with this you can try installing the required packages manually first and then retry the installation for **hyper.fit**:
+
+```R
+install.packages(c('magicaxis', 'MASS', 'rgl', 'LaplacesDemon')) # Required packages
+install.packages('remotes')
+remotes::install_github("asgr/hyper.fit")
+```
+
+Assuming you have installed all of the packages that you need/want, you should now be able to load **hyper.fit** within **R** with the usual:
+
+```R
+library(hyper.fit)
+```
+
+## Code Example
+
+```R
+# A very simple 2D example: fit a line to x vs y data
+
+simpledata = cbind(x=1:10, y=c(12.2, 14.2, 15.9, 18.0, 20.1, 22.1, 23.9, 26.0, 27.9, 30.1))
+simpfit = hyper.fit(simpledata)
+summary(simpfit)
+plot(simpfit)
+```
+
+To find more long-form examples, including complicated fitting use-cases, please check the help documentation. You can browse these with:
+
+```R
+?hyper.fit
+```
+
+## Motivation
+
+A general purpose hyperplane fitting package intended to be used for 1D line fitting (2D data) or 2D plane fitting (3D data) and beyond. It was originally developed to support fitting of galaxy scaling relations in astronomy, but it serves as a general purpose regression tool with intrinsic scatter in its own right.
+
+## Contributors
+
+Code:
+
+Aaron Robotham
+Danail Obreschkow
+
+## References
+
+Main introduction:
+
+Robotham A.S.G., & Obreschkow D., 2015, PASA, 32, 33
+
+## Resources
+
+<https://ui.adsabs.harvard.edu/abs/2015PASA...32...33R/abstract>
+
+## Forums
+
+Please sign up to <http://profit.freeforums.net/> if you want to ask a question (or browse the questions asked).
+
+## License
+
+GPL-3
