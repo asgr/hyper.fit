@@ -4,7 +4,7 @@ test_that("hyperplane parameters round-trip between coordinate systems", {
 
   normal <- convert(original, coord.type = "normvec", scat.type = "orth")
   expect_equal(normal$coord, c(normvec1 = -0.4, normvec2 = 0.2))
-  expect_equal(normal$scat, 4 / sqrt(5))
+  expect_equal(normal$scat, c(scat.orth = 4 / sqrt(5)))
 
   round_trip <- convert(
     normal,
