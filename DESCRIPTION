@@ -11,3 +11,5 @@ Description: High level functions for hyperplane fitting (hyper.fit and visualis
 License: LGPL-3
 Depends: R (>= 3.00), magicaxis, MASS, rgl, LaplacesDemon
 Remotes: asgr/LaplacesDemon
+Suggests: testthat (>= 3.0.0)
+Config/testthat/edition: 3
